@@ -1,0 +1,43 @@
+{'asthma_children': 'asthma_children.liftover.logistic.assoc.tsv.gz'}
+Building DAG of jobs...
+Job stats:
+job                                count    min threads    max threads
+-------------------------------  -------  -------------  -------------
+all                                    1              1              1
+run_susie_on_summary_statistics        1              1              1
+total                                  2              1              1
+
+
+[Wed Jan 31 11:11:59 2024]
+Job 1: working on phenotype=asthma_children
+Reason: Missing output files: data/finemapping/asthma_children
+DAG of jobs will be updated after completion.
+
+
+        module load parallel;
+        printf "%s\n" 20 15 22 7 10 19 1 8 9 13 12 21 16 6 3 5 11 18 14 17 2 4 | parallel -j 5 "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/run_susie_on_summary_statistics.R --chromosome {} --sumstats data/processed_sumstats/asthma_children/chr{}.sumstats.txt.gz --LDBlocks_info /project2/haky/Data/LD_blocks/hg38/EUR/hg38_fourier_ls-all.bed --output_folder data/finemapping/asthma_children --phenotype asthma_children"
+        
+
+[Wed Jan 31 11:11:59 2024]
+localrule all:
+    input: data/finemapping/asthma_children
+    jobid: 0
+    reason: Input files updated by another job: data/finemapping/asthma_children
+    resources: mem_mb=<TBD>, disk_mb=<TBD>, tmpdir=/scratch/midway3/temi, partition=caslake, time=02:00:00, account=pi-haky, nodes=1, gpu=0, mem_cpu=4, cpu_task=8
+
+Job stats:
+job                                count    min threads    max threads
+-------------------------------  -------  -------------  -------------
+all                                    1              1              1
+run_susie_on_summary_statistics        1              1              1
+total                                  2              1              1
+
+Reasons:
+    (check individual jobs above for details)
+    input files updated by another job:
+        all
+    missing output files:
+        run_susie_on_summary_statistics
+
+This was a dry-run (flag -n). The order of jobs does not reflect the order of execution.
+The run involves checkpoint jobs, which will result in alteration of the DAG of jobs (e.g. adding more jobs) after their completion.

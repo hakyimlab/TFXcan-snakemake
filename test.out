@@ -1,0 +1,153 @@
+Building DAG of jobs...
+Job stats:
+job             count    min threads    max threads
+------------  -------  -------------  -------------
+all                 1              1              1
+calculate_LD        5              1              1
+count               5              1              1
+total              11              1              1
+
+
+[Fri Jan 19 12:41:45 2024]
+Job 14: working on phenotype=asthma_adults
+Reason: Missing output files: data/LD/asthma_adults
+
+
+        module load parallel;
+        dname=`dirname data/LD/asthma_adults/asthma_adults.chr{}`;
+        mkdir -p ${dname};
+        /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_LD.R --bfile_pattern /project2/haky/Data/1000G/plink_ref_panel/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased --snplist_pattern data/processed_sumstats/asthma_adults/asthma_adults.chr{}.SNPsForLD --output_pattern data/LD/asthma_adults/asthma_adults.chr{}
+        
+
+[Fri Jan 19 12:41:45 2024]
+Job 8: working on phenotype=prostate_cancer_risk
+Reason: Missing output files: data/LD/prostate_cancer_risk
+
+
+        module load parallel;
+        dname=`dirname data/LD/prostate_cancer_risk/prostate_cancer_risk.chr{}`;
+        mkdir -p ${dname};
+        /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_LD.R --bfile_pattern /project2/haky/Data/1000G/plink_ref_panel/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased --snplist_pattern data/processed_sumstats/prostate_cancer_risk/prostate_cancer_risk.chr{}.SNPsForLD --output_pattern data/LD/prostate_cancer_risk/prostate_cancer_risk.chr{}
+        
+
+[Fri Jan 19 12:41:45 2024]
+Job 11: working on phenotype=asthma_children
+Reason: Missing output files: data/LD/asthma_children
+
+
+        module load parallel;
+        dname=`dirname data/LD/asthma_children/asthma_children.chr{}`;
+        mkdir -p ${dname};
+        /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_LD.R --bfile_pattern /project2/haky/Data/1000G/plink_ref_panel/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased --snplist_pattern data/processed_sumstats/asthma_children/asthma_children.chr{}.SNPsForLD --output_pattern data/LD/asthma_children/asthma_children.chr{}
+        
+
+[Fri Jan 19 12:41:45 2024]
+Job 2: working on phenotype=testosterone
+Reason: Missing output files: data/LD/testosterone
+
+
+        module load parallel;
+        dname=`dirname data/LD/testosterone/testosterone.chr{}`;
+        mkdir -p ${dname};
+        /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_LD.R --bfile_pattern /project2/haky/Data/1000G/plink_ref_panel/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased --snplist_pattern data/processed_sumstats/testosterone/testosterone.chr{}.SNPsForLD --output_pattern data/LD/testosterone/testosterone.chr{}
+        
+
+[Fri Jan 19 12:41:45 2024]
+Job 5: working on phenotype=asthma
+Reason: Missing output files: data/LD/asthma
+
+
+        module load parallel;
+        dname=`dirname data/LD/asthma/asthma.chr{}`;
+        mkdir -p ${dname};
+        /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_LD.R --bfile_pattern /project2/haky/Data/1000G/plink_ref_panel/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased --snplist_pattern data/processed_sumstats/asthma/asthma.chr{}.SNPsForLD --output_pattern data/LD/asthma/asthma.chr{}
+        
+
+[Fri Jan 19 12:41:45 2024]
+rule count:
+    input: data/LD/prostate_cancer_risk
+    output: data/prostate_cancer_risk.count.txt
+    jobid: 7
+    reason: Missing output files: data/prostate_cancer_risk.count.txt; Input files updated by another job: data/LD/prostate_cancer_risk
+    wildcards: phenotype=prostate_cancer_risk
+    resources: mem_mb=<TBD>, disk_mb=<TBD>, tmpdir=<TBD>, partition=caslake, time=02:00:00, account=pi-haky, nodes=1, gpu=0, mem_cpu=4, cpu_task=8
+
+
+        ls data/LD/prostate_cancer_risk | wc -l > 'data/prostate_cancer_risk.count.txt'
+        
+
+[Fri Jan 19 12:41:45 2024]
+rule count:
+    input: data/LD/asthma_children
+    output: data/asthma_children.count.txt
+    jobid: 10
+    reason: Missing output files: data/asthma_children.count.txt; Input files updated by another job: data/LD/asthma_children
+    wildcards: phenotype=asthma_children
+    resources: mem_mb=<TBD>, disk_mb=<TBD>, tmpdir=<TBD>, partition=caslake, time=02:00:00, account=pi-haky, nodes=1, gpu=0, mem_cpu=4, cpu_task=8
+
+
+        ls data/LD/asthma_children | wc -l > 'data/asthma_children.count.txt'
+        
+
+[Fri Jan 19 12:41:45 2024]
+rule count:
+    input: data/LD/asthma_adults
+    output: data/asthma_adults.count.txt
+    jobid: 13
+    reason: Missing output files: data/asthma_adults.count.txt; Input files updated by another job: data/LD/asthma_adults
+    wildcards: phenotype=asthma_adults
+    resources: mem_mb=<TBD>, disk_mb=<TBD>, tmpdir=<TBD>, partition=caslake, time=02:00:00, account=pi-haky, nodes=1, gpu=0, mem_cpu=4, cpu_task=8
+
+
+        ls data/LD/asthma_adults | wc -l > 'data/asthma_adults.count.txt'
+        
+
+[Fri Jan 19 12:41:45 2024]
+rule count:
+    input: data/LD/testosterone
+    output: data/testosterone.count.txt
+    jobid: 1
+    reason: Missing output files: data/testosterone.count.txt; Input files updated by another job: data/LD/testosterone
+    wildcards: phenotype=testosterone
+    resources: mem_mb=<TBD>, disk_mb=<TBD>, tmpdir=<TBD>, partition=caslake, time=02:00:00, account=pi-haky, nodes=1, gpu=0, mem_cpu=4, cpu_task=8
+
+
+        ls data/LD/testosterone | wc -l > 'data/testosterone.count.txt'
+        
+
+[Fri Jan 19 12:41:45 2024]
+rule count:
+    input: data/LD/asthma
+    output: data/asthma.count.txt
+    jobid: 4
+    reason: Missing output files: data/asthma.count.txt; Input files updated by another job: data/LD/asthma
+    wildcards: phenotype=asthma
+    resources: mem_mb=<TBD>, disk_mb=<TBD>, tmpdir=<TBD>, partition=caslake, time=02:00:00, account=pi-haky, nodes=1, gpu=0, mem_cpu=4, cpu_task=8
+
+
+        ls data/LD/asthma | wc -l > 'data/asthma.count.txt'
+        
+
+[Fri Jan 19 12:41:45 2024]
+localrule all:
+    input: data/testosterone.count.txt, data/asthma.count.txt, data/prostate_cancer_risk.count.txt, data/asthma_children.count.txt, data/asthma_adults.count.txt
+    jobid: 0
+    reason: Input files updated by another job: data/testosterone.count.txt, data/asthma_children.count.txt, data/prostate_cancer_risk.count.txt, data/asthma.count.txt, data/asthma_adults.count.txt
+    resources: mem_mb=<TBD>, disk_mb=<TBD>, tmpdir=/scratch/midway3/temi, partition=caslake, time=02:00:00, account=pi-haky, nodes=1, gpu=0, mem_cpu=4, cpu_task=8
+
+Job stats:
+job             count    min threads    max threads
+------------  -------  -------------  -------------
+all                 1              1              1
+calculate_LD        5              1              1
+count               5              1              1
+total              11              1              1
+
+Reasons:
+    (check individual jobs above for details)
+    input files updated by another job:
+        all, count
+    missing output files:
+        calculate_LD, count
+
+This was a dry-run (flag -n). The order of jobs does not reflect the order of execution.

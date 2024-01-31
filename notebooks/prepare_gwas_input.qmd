@@ -1,0 +1,285 @@
+---
+
+
+---
+```{r}
+library(data.table)
+library(tidyverse)
+library(glue)
+```
+
+```{r}
+work_dir <- '/project2/haky/temi/projects/TFXcan-snakemake'
+sumstats_dir <- "/project2/haky/temi/projects/l-TFPred/experiments/AR_phenotypes/data/gwas_cat_sumstats"
+```
+
+```{r}
+meta <- data.table::fread(glue('{sumstats_dir}/metadata.txt'))
+meta
+```
+
+```{r}
+# testosterone_gwas <- data.table::fread(file.path(gwas_folder, 'testosterone_gwas_sumstats.gcg.txt.gz'))
+# #asthma_gwas <- data.table::fread(file.path(gwas_folder, 'asthma_gwas_sumstats.gcg.txt.gz'))
+# prostate_cancer_gwas <- data.table::fread(file.path(gwas_folder, 'prostate_cancer_risk_gwas_sumstats.gcg.txt.gz')) 
+# #psoriasis_gwas <- data.table::fread(file.path(gwas_folder, 'psoriasis_gwas_sumstats.txt.gz')) 
+# bph_gwas <- data.table::fread(file.path(gwas_folder, 'bph_gwas_sumstats.gcg.txt.gz'))
+
+# gwas_phenotypes_list <- list(testosterone = testosterone_gwas, prostate_cancer = prostate_cancer_gwas, bph = bph_gwas)
+# lapply(gwas_phenotypes_list, colnames)
+```
+
+```{r}
+gwas_folder <- '/project2/haky/temi/projects/l-TFPred/experiments/AR_phenotypes/data/processed_sumstats/'
+out_folder <- '/project2/haky/temi/projects/TFPred/data/GWAS_sumstats'
+gwas_folder <- '/project2/haky/temi/projects/l-TFPred/experiments/AR_phenotypes/data/processed_sumstats/'
+run_script <- '/project2/haky/temi/projects/TFPred/scripts/clump_gwas_summary_statistics.sbatch'
+
+
+out <- lapply(seq_along(meta$phenotype), function(i){
+    pheno_folder <- glue('{out_folder}/{meta$phenotype[i]}')
+    if(!dir.exists(pheno_folder)){
+        dir.create(pheno_folder)
+    }
+
+    if(!file.exists(file.path(pheno_folder, glue('{meta$phenotype[i]}.gwas_sumstats.processed.txt')))){
+        data.table::fread(file.path(gwas_folder, glue('{meta$phenotype[i]}_gwas_sumstats.gcg.txt.gz'))) %>%
+            dplyr::mutate(SNP=paste(chrom, pos, A2, A1, sep='_'), P=p_value) %>%
+            data.table::fwrite(., file.path(pheno_folder, glue('{meta$phenotype[i]}.gwas_sumstats.processed.txt')), col.names=T, row.names=F, sep='\t', quote=F)
+    }
+    
+    print(glue('sbatch --export=phenotype={meta$phenotype[i]},pheno_folder={pheno_folder} {run_script}'))
+        #dplyr::mutate(p_value_adj = p.adjust(p_value, method = 'bonferroni')) 
+
+    # if(nrow(dt %>% dplyr::filter(p_value_adj < 0.01)) <= 10){
+    #     return(NULL)
+    # } else {
+    #     dt %>% 
+    #         dplyr::filter(p_value_adj < 0.01) %>% 
+    #         data.table::fwrite(., file.path(work_dir, 'data/sumstats', glue('{meta$phenotype[i]}.gwas_sumstats.txt.gz')), col.names=T, row.names=F, quote=F, compress='gzip')
+
+    #     dt %>% 
+    #         dplyr::slice_max(order_by=desc(p_value_adj), n=1000) %>%
+    #         data.table::fwrite(., file.path(work_dir, 'data/sumstats', glue('{meta$phenotype[i]}_no-hits.gwas_sumstats.txt.gz')), col.names=T, row.names=F, quote=F, compress='gzip')
+        
+    #     phenotypes <- c(meta$phenotype[i], 
+    #         glue('{meta$phenotype[i]}_no-hits'))
+    #     sumstats <- c(sumstat=glue('{meta$phenotype[i]}.gwas_sumstats.txt.gz'), 
+    #         glue('{meta$phenotype[i]}_no-hits.gwas_sumstats.txt.gz'))
+    # }
+
+    # return(cbind(phenotype = phenotypes, sumstat=sumstats))
+})
+```
+
+```{r}
+print(glue('{run_script} '))
+```
+
+
+### Asthma
+
+```{r}
+asthma_folder <- '/project2/haky/temi/projects/TFPred/data/asthma'
+asthma_phenotypes <- c('asthma_adults', 'asthma_children')
+
+#gwas_folder <- '/project2/haky/temi/projects/l-TFPred/experiments/AR_phenotypes/data/processed_sumstats/'
+out_folder <- asthma_folder
+#gwas_folder <- '/project2/haky/temi/projects/l-TFPred/experiments/AR_phenotypes/data/processed_sumstats/'
+run_script <- '/project2/haky/temi/projects/TFPred/scripts/clump_gwas_summary_statistics.sbatch'
+
+out <- lapply(seq_along(asthma_phenotypes), function(i){
+    pheno_folder <- glue('{out_folder}/{asthma_phenotypes[i]}')
+    if(!dir.exists(pheno_folder)){
+        dir.create(pheno_folder)
+    }
+
+    if(!file.exists(file.path(pheno_folder, glue('{asthma_phenotypes[i]}.gwas_sumstats.processed.txt')))){
+        data.table::fread(file.path(out_folder, glue('{asthma_phenotypes[i]}.logistic.assoc.tsv.gz'))) %>%
+            dplyr::mutate(SNP=paste(chr, pos, alt, ref, sep='_'), P=pval) %>%
+            dplyr::rename(chrom=chr) %>%
+            data.table::fwrite(., file.path(pheno_folder, glue('{asthma_phenotypes[i]}.gwas_sumstats.processed.txt')), col.names=T, row.names=F, sep='\t', quote=F)
+    }
+    
+    print(glue('sbatch --export=phenotype={asthma_phenotypes[i]},pheno_folder={pheno_folder} {run_script}'))
+})
+```
+
+```{r}
+print(glue('{run_script} '))
+```
+
+```{r}
+Filter(Negate(is.null), out) %>%
+    do.call('rbind', .) %>%
+    data.table::fwrite('/project2/haky/temi/projects/TFXcan-snakemake/metadata/metadata_gwas.txt', col.names=T, row.names=F, quote=F)
+```
+
+```{r}
+testosterone_gwas <- bph_gwas %>%
+    dplyr::mutate(p_value_adj = p.adjust(p_value, method = 'bonferroni')) %>%
+    dplyr::filter(p_value_adj < 0.05)
+data.table::fwrite(testosterone_gwas, file.path(work_dir, 'testosterone.gwas.sumstats.txt.gz'), col.names=T, row.names=F, quote=F, compress='gzip')
+testosterone_gwas |> dim()
+```
+
+```{r}
+data.frame(info = 'testosterone', gwas_sumstat = 'testosterone.gwas.sumstats.txt.gz') %>%
+    data.table::fwrite('/project2/haky/temi/projects/TFXcan-snakemake/metadata/metadata_gwas.txt', col.names=T, row.names=F, quote=F)
+```
+
+
+### Analyse Enpact predictions
+
+```{r}
+enpact_folder <- '/project2/haky/temi/projects/TFXcan-snakemake/data/enpact_predictions'
+```
+```{r}
+meta <- data.table::fread('/project2/haky/temi/projects/TFXcan-snakemake/metadata/metadata_gwas.txt')
+meta
+```
+
+```{r}
+enpact_predictions <- lapply(meta$phenotype, function(each_phenotype){
+    list.files(enpact_folder, pattern = glue(".*({each_phenotype})_\\d.*"), full.names = T) %>%
+        data.table::fread(.)
+})
+names(enpact_predictions) <- meta$phenotype
+```
+
+```{r}
+# just making sure that all models are accounted for
+cnames <- lapply(enpact_predictions, colnames)
+enpact_models <- Reduce(f = intersect, x=cnames)[-1]
+```
+
+```{r}
+out_1 <- lapply(enpact_predictions, function(each_dt){
+
+    out <- lapply(enpact_models, function(each_model){
+        each_dt %>%
+            dplyr::pull(each_model)
+    }) 
+    names(out) <- enpact_models
+    return(out)
+
+
+    # return(out)
+    
+    # apply(combn(names(.), m=2), 2, function(each_col){
+    #     nn <- paste(each_col, collapse=':')
+    #     tt <- t.test(ar_out[[each_col[1]]],ar_out[[each_col[2]]])
+    #     rr <- rbind(statistic = tt$statistic, pvalue = tt$p.value) |> 
+    #         as.data.frame()
+    #     names(rr) <- nn
+    #     return(rr)
+    # })
+})
+
+names(out_1) <- names(enpact_predictions)
+```
+
+```{r}
+
+out_2 <- apply(combn(names(out_1), m=2), 2, function(each_col){
+    nn <- paste(each_col, collapse=':')
+
+    jj <- lapply(enpact_models, function(each_model){
+        tt <- t.test(out_1[[each_col[1]]][[each_model]], out_1[[each_col[2]]][[each_model]])
+        rr <- rbind(pvalue = tt$p.value) |> #statistic = tt$statistic, 
+            as.data.frame()
+        return(rr)
+    })
+    jj <- do.call('cbind', jj)
+    names(jj) <- enpact_models
+    rownames(jj) <- nn
+    return(jj)
+})
+
+out_3 <- do.call('rbind', out_2) %>%
+    as.data.frame() %>%
+    tibble::rownames_to_column('pair_test')
+
+```
+
+```{r}
+out_4 <- out_3 %>%
+    tidyr::pivot_longer(cols=!pair_test, names_to = "enpact_model", values_to = "p_value") %>%
+    dplyr::mutate(neg_log_p_value = -log10(p_value))
+```
+
+```{r}
+out_4 %>%
+    ggplot(., aes(pair_test, enpact_model, fill= neg_log_p_value)) + 
+    geom_tile() +
+    scale_fill_gradient(low="white", high="red") +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+```{r}
+#enpact_models <- c('locus', 'AR_Prostate', 'STAT1_Lung', 'REST_Endometrium', 'RUNX1_Blood', 'E2F1_Mammary-Gland')
+
+out <- lapply(enpact_predictions, function(each_dt){
+    each_dt %>%
+        dplyr::select(all_of(enpact_models))
+})
+```
+
+
+```{r}
+ar_out <- lapply(out, function(each_dt){
+    each_dt %>%
+        dplyr::pull(AR_Prostate)
+})
+```
+
+```{r}
+out_ttest <- apply(combn(names(ar_out), m=2), 2, function(each_col){
+    nn <- paste(each_col, collapse=':')
+    tt <- t.test(ar_out[[each_col[1]]],ar_out[[each_col[2]]])
+    rr <- rbind(statistic = tt$statistic, pvalue = tt$p.value) |> 
+        as.data.frame()
+    names(rr) <- nn
+    return(rr)
+})
+
+do.call('cbind', out_ttest) |> t() %>%
+    as.data.frame() %>%
+    tibble::rownames_to_column('pair_test') %>%
+    dplyr::arrange(pvalue)
+```
+
+
+
+```{r}
+lapply(out, function(each_dt){
+    each_dt %>%
+        dplyr::pull(AR_Prostate) %>%
+        summary()
+})
+```
+
+
+
+```{r}
+library(data.table)
+library(magrittr)
+library(dplyr)
+library(glue)
+```
+
+
+```{r}
+dt <- data.table::fread('/project2/haky/Data/1000G/metadata/samples_information.txt')
+```
+
+
+```{r}
+popuse <- c('AFR', 'AMR', 'EAS', 'EUR', 'SAS')
+outdir <- '/project2/haky/Data/1000G/metadata'
+dt %>% 
+    dplyr::select(`Sample name`, `Superpopulation code`) %>% 
+    dplyr::filter(`Superpopulation code` %in% popuse) %>% 
+    dplyr::group_by(`Superpopulslation code`) %>% 
+    group_walk(~ data.table::fwrite(as.data.frame(cbind(.x$`Sample name`, .x$`Sample name`)), glue('{outdir}/{.y$`Superpopulation code`}.samples.txt'), quote=F, col.names=F, row.names=F, sep='\t'))
+```

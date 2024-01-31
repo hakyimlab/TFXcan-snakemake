@@ -1,0 +1,702 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 100
+Job stats:
+job                       count    min threads    max threads
+----------------------  -------  -------------  -------------
+all                           1              1              1
+calculate_enpact_score        6              1              1
+total                         7              1              1
+
+Select jobs to execute...
+
+[Tue Dec 12 17:34:14 2023]
+Job 21: working on testosterone_no-hits
+Reason: Missing output files: data/enpact_predictions/AR_phenotypes_GWAS_testosterone_no-hits_2023-12-12.csv.gz
+
+
+            /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_enpact_score.R --input_file data/aggregated_predictions/AR_phenotypes_GWAS_aggByCollect_testosterone_no-hits.csv.gz --output_file data/enpact_predictions/AR_phenotypes_GWAS_testosterone_no-hits_2023-12-12.csv.gz --enpact_models_directory /project2/haky/temi/projects/TFPred-snakemake/output/models --filters_date 2023-12-01 --filters_type logistic
+        
+sbatch: Verify job submission ...
+sbatch: Using a shared partition ...
+sbatch: Partition: caslake
+sbatch: QOS-Flag: caslake
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 21 with external jobid 'Submitted batch job 11262241'.
+
+[Tue Dec 12 17:34:14 2023]
+Job 23: working on asthma
+Reason: Missing output files: data/enpact_predictions/AR_phenotypes_GWAS_asthma_2023-12-12.csv.gz
+
+
+            /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_enpact_score.R --input_file data/aggregated_predictions/AR_phenotypes_GWAS_aggByCollect_asthma.csv.gz --output_file data/enpact_predictions/AR_phenotypes_GWAS_asthma_2023-12-12.csv.gz --enpact_models_directory /project2/haky/temi/projects/TFPred-snakemake/output/models --filters_date 2023-12-01 --filters_type logistic
+        
+sbatch: Verify job submission ...
+sbatch: Using a shared partition ...
+sbatch: Partition: caslake
+sbatch: QOS-Flag: caslake
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 23 with external jobid 'Submitted batch job 11262242'.
+
+[Tue Dec 12 17:34:14 2023]
+Job 25: working on asthma_no-hits
+Reason: Missing output files: data/enpact_predictions/AR_phenotypes_GWAS_asthma_no-hits_2023-12-12.csv.gz
+
+
+            /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_enpact_score.R --input_file data/aggregated_predictions/AR_phenotypes_GWAS_aggByCollect_asthma_no-hits.csv.gz --output_file data/enpact_predictions/AR_phenotypes_GWAS_asthma_no-hits_2023-12-12.csv.gz --enpact_models_directory /project2/haky/temi/projects/TFPred-snakemake/output/models --filters_date 2023-12-01 --filters_type logistic
+        
+sbatch: Verify job submission ...
+sbatch: Using a shared partition ...
+sbatch: Partition: caslake
+sbatch: QOS-Flag: caslake
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 25 with external jobid 'Submitted batch job 11262243'.
+
+[Tue Dec 12 17:34:14 2023]
+Job 27: working on prostate_cancer_risk
+Reason: Missing output files: data/enpact_predictions/AR_phenotypes_GWAS_prostate_cancer_risk_2023-12-12.csv.gz
+
+
+            /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_enpact_score.R --input_file data/aggregated_predictions/AR_phenotypes_GWAS_aggByCollect_prostate_cancer_risk.csv.gz --output_file data/enpact_predictions/AR_phenotypes_GWAS_prostate_cancer_risk_2023-12-12.csv.gz --enpact_models_directory /project2/haky/temi/projects/TFPred-snakemake/output/models --filters_date 2023-12-01 --filters_type logistic
+        
+sbatch: Verify job submission ...
+sbatch: Using a shared partition ...
+sbatch: Partition: caslake
+sbatch: QOS-Flag: caslake
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 27 with external jobid 'Submitted batch job 11262244'.
+
+[Tue Dec 12 17:34:14 2023]
+Job 29: working on prostate_cancer_risk_no-hits
+Reason: Missing output files: data/enpact_predictions/AR_phenotypes_GWAS_prostate_cancer_risk_no-hits_2023-12-12.csv.gz
+
+
+            /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_enpact_score.R --input_file data/aggregated_predictions/AR_phenotypes_GWAS_aggByCollect_prostate_cancer_risk_no-hits.csv.gz --output_file data/enpact_predictions/AR_phenotypes_GWAS_prostate_cancer_risk_no-hits_2023-12-12.csv.gz --enpact_models_directory /project2/haky/temi/projects/TFPred-snakemake/output/models --filters_date 2023-12-01 --filters_type logistic
+        
+sbatch: Verify job submission ...
+sbatch: Using a shared partition ...
+sbatch: Partition: caslake
+sbatch: QOS-Flag: caslake
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 29 with external jobid 'Submitted batch job 11262245'.
+
+[Tue Dec 12 17:34:14 2023]
+Job 19: working on testosterone
+Reason: Missing output files: data/enpact_predictions/AR_phenotypes_GWAS_testosterone_2023-12-12.csv.gz
+
+
+            /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_enpact_score.R --input_file data/aggregated_predictions/AR_phenotypes_GWAS_aggByCollect_testosterone.csv.gz --output_file data/enpact_predictions/AR_phenotypes_GWAS_testosterone_2023-12-12.csv.gz --enpact_models_directory /project2/haky/temi/projects/TFPred-snakemake/output/models --filters_date 2023-12-01 --filters_type logistic
+        
+sbatch: Verify job submission ...
+sbatch: Using a shared partition ...
+sbatch: Partition: caslake
+sbatch: QOS-Flag: caslake
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 19 with external jobid 'Submitted batch job 11262246'.
+[Tue Dec 12 17:34:54 2023]
+Finished job 21.
+1 of 7 steps (14%) done
+[Tue Dec 12 17:34:55 2023]
+Finished job 23.
+2 of 7 steps (29%) done
+[Tue Dec 12 17:34:56 2023]
+Finished job 25.
+3 of 7 steps (43%) done
+[Tue Dec 12 17:34:58 2023]
+Finished job 29.
+4 of 7 steps (57%) done
+[Tue Dec 12 17:35:20 2023]
+Finished job 27.
+5 of 7 steps (71%) done
+[Tue Dec 12 17:35:21 2023]
+Finished job 19.
+6 of 7 steps (86%) done
+Select jobs to execute...
+
+[Tue Dec 12 17:35:21 2023]
+localrule all:
+    input: data/sumstats/testosterone.gwas_sumstats.txt.gz, data/sumstats/testosterone_no-hits.gwas_sumstats.txt.gz, data/sumstats/asthma.gwas_sumstats.txt.gz, data/sumstats/asthma_no-hits.gwas_sumstats.txt.gz, data/sumstats/prostate_cancer_risk.gwas_sumstats.txt.gz, data/sumstats/prostate_cancer_risk_no-hits.gwas_sumstats.txt.gz, data/processed_sumstats/testosterone.processed_sumstats.txt, data/processed_sumstats/testosterone_no-hits.processed_sumstats.txt, data/processed_sumstats/asthma.processed_sumstats.txt, data/processed_sumstats/asthma_no-hits.processed_sumstats.txt, data/processed_sumstats/prostate_cancer_risk.processed_sumstats.txt, data/processed_sumstats/prostate_cancer_risk_no-hits.processed_sumstats.txt, data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_testosterone.json, data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_testosterone_no-hits.json, data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_asthma.json, data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_asthma_no-hits.json, data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_prostate_cancer_risk.json, data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_prostate_cancer_risk_no-hits.json, data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_testosterone.json, data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_testosterone_no-hits.json, data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_asthma.json, data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_asthma_no-hits.json, data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_prostate_cancer_risk.json, data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_prostate_cancer_risk_no-hits.json, data/enpact_predictions/AR_phenotypes_GWAS_testosterone_2023-12-12.csv.gz, data/enpact_predictions/AR_phenotypes_GWAS_testosterone_no-hits_2023-12-12.csv.gz, data/enpact_predictions/AR_phenotypes_GWAS_asthma_2023-12-12.csv.gz, data/enpact_predictions/AR_phenotypes_GWAS_asthma_no-hits_2023-12-12.csv.gz, data/enpact_predictions/AR_phenotypes_GWAS_prostate_cancer_risk_2023-12-12.csv.gz, data/enpact_predictions/AR_phenotypes_GWAS_prostate_cancer_risk_no-hits_2023-12-12.csv.gz
+    jobid: 0
+    reason: Input files updated by another job: data/enpact_predictions/AR_phenotypes_GWAS_asthma_no-hits_2023-12-12.csv.gz, data/enpact_predictions/AR_phenotypes_GWAS_testosterone_no-hits_2023-12-12.csv.gz, data/enpact_predictions/AR_phenotypes_GWAS_prostate_cancer_risk_2023-12-12.csv.gz, data/enpact_predictions/AR_phenotypes_GWAS_testosterone_2023-12-12.csv.gz, data/enpact_predictions/AR_phenotypes_GWAS_prostate_cancer_risk_no-hits_2023-12-12.csv.gz, data/enpact_predictions/AR_phenotypes_GWAS_asthma_2023-12-12.csv.gz
+    resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=/scratch/midway3/temi, partition=caslake, time=02:00:00, account=pi-haky, nodes=1, gpu=0, mem_cpu=4, cpu_task=8
+
+[Tue Dec 12 17:35:21 2023]
+Finished job 0.
+7 of 7 steps (100%) done
+Complete log: .snakemake/log/2023-12-12T173413.895982.snakemake.log
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 100
+Job stats:
+job                              count    min threads    max threads
+-----------------------------  -------  -------------  -------------
+aggregate_predictions                3              1              1
+all                                  1              1              1
+calculate_enpact_score               3              1              1
+create_enformer_configuration        3              1              1
+predict_with_enformer                3              1              1
+process_summary_statistics           3              1              1
+total                               16              1              1
+
+Select jobs to execute...
+
+[Mon Jan  8 12:34:14 2024]
+Job 2: working on phenotype=asthma
+Reason: Missing output files: data/processed_sumstats/asthma.processed_sumstats.txt; Set of input files has changed since last execution
+
+
+        /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/process_summary_statistics.R --summary_stats_file data/sumstats/asthma.gwas_sumstats.ALL.filtered.txt.gz --output_file data/processed_sumstats/asthma.processed_sumstats.txt
+        
+sbatch: Verify job submission ...
+sbatch: Using a shared partition ...
+sbatch: Partition: caslake
+sbatch: QOS-Flag: caslake
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 2 with external jobid 'Submitted batch job 12739575'.
+
+[Mon Jan  8 12:34:14 2024]
+Job 1: working on phenotype=testosterone
+Reason: Missing output files: data/processed_sumstats/testosterone.processed_sumstats.txt; Set of input files has changed since last execution
+
+
+        /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/process_summary_statistics.R --summary_stats_file data/sumstats/testosterone.gwas_sumstats.ALL.filtered.txt.gz --output_file data/processed_sumstats/testosterone.processed_sumstats.txt
+        
+sbatch: Verify job submission ...
+sbatch: Using a shared partition ...
+sbatch: Partition: caslake
+sbatch: QOS-Flag: caslake
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 1 with external jobid 'Submitted batch job 12739576'.
+
+[Mon Jan  8 12:34:15 2024]
+Job 3: working on phenotype=prostate_cancer_risk
+Reason: Missing output files: data/processed_sumstats/prostate_cancer_risk.processed_sumstats.txt; Set of input files has changed since last execution
+
+
+        /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/process_summary_statistics.R --summary_stats_file data/sumstats/prostate_cancer_risk.gwas_sumstats.ALL.filtered.txt.gz --output_file data/processed_sumstats/prostate_cancer_risk.processed_sumstats.txt
+        
+sbatch: Verify job submission ...
+sbatch: Using a shared partition ...
+sbatch: Partition: caslake
+sbatch: QOS-Flag: caslake
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 3 with external jobid 'Submitted batch job 12739577'.
+[Mon Jan  8 12:34:36 2024]
+Finished job 2.
+1 of 16 steps (6%) done
+Select jobs to execute...
+
+[Mon Jan  8 12:34:36 2024]
+Job 5: working on phenotype=asthma
+Reason: Missing output files: data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_asthma.json; Input files updated by another job: data/processed_sumstats/asthma.processed_sumstats.txt
+
+
+            /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/create_enformer_config.R --runname AR_phenotypes_GWAS --phenotype asthma --base_directives config/enformer_base.yaml --project_directory data --predictors_file data/processed_sumstats/asthma.processed_sumstats.txt --model /project2/haky/Data/enformer/raw --fasta_file /project2/haky/Data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta --parameters_file data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_asthma.json --date 2023-12-12
+        
+sbatch: Verify job submission ...
+sbatch: Partition: beagle3
+sbatch: QOS-Flag: beagle3
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 5 with external jobid 'Submitted batch job 12739598'.
+[Mon Jan  8 12:34:37 2024]
+Finished job 1.
+2 of 16 steps (12%) done
+Select jobs to execute...
+
+[Mon Jan  8 12:34:37 2024]
+Job 4: working on phenotype=testosterone
+Reason: Missing output files: data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_testosterone.json; Input files updated by another job: data/processed_sumstats/testosterone.processed_sumstats.txt
+
+
+            /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/create_enformer_config.R --runname AR_phenotypes_GWAS --phenotype testosterone --base_directives config/enformer_base.yaml --project_directory data --predictors_file data/processed_sumstats/testosterone.processed_sumstats.txt --model /project2/haky/Data/enformer/raw --fasta_file /project2/haky/Data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta --parameters_file data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_testosterone.json --date 2023-12-12
+        
+sbatch: Verify job submission ...
+sbatch: Partition: beagle3
+sbatch: QOS-Flag: beagle3
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 4 with external jobid 'Submitted batch job 12739600'.
+[Mon Jan  8 12:34:48 2024]
+Finished job 5.
+3 of 16 steps (19%) done
+Select jobs to execute...
+
+[Mon Jan  8 12:34:48 2024]
+Job 8: working on asthma
+Reason: Missing output files: data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_asthma.json; Input files updated by another job: data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_asthma.json
+
+
+            python3 /beagle3/haky/users/shared_pipelines/enformer_pipeline_aggregate/scripts/enformer_predict.py --parameters data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_asthma.json
+        
+sbatch: Verify job submission ...
+sbatch: Partition: beagle3
+sbatch: QOS-Flag: beagle3
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 8 with external jobid 'Submitted batch job 12739602'.
+[Mon Jan  8 12:34:49 2024]
+Finished job 4.
+4 of 16 steps (25%) done
+Select jobs to execute...
+
+[Mon Jan  8 12:34:49 2024]
+Job 7: working on testosterone
+Reason: Missing output files: data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_testosterone.json; Input files updated by another job: data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_testosterone.json
+
+
+            python3 /beagle3/haky/users/shared_pipelines/enformer_pipeline_aggregate/scripts/enformer_predict.py --parameters data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_testosterone.json
+        
+sbatch: Verify job submission ...
+sbatch: Partition: beagle3
+sbatch: QOS-Flag: beagle3
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 7 with external jobid 'Submitted batch job 12739603'.
+[Mon Jan  8 12:34:50 2024]
+Finished job 3.
+5 of 16 steps (31%) done
+Select jobs to execute...
+
+[Mon Jan  8 12:34:50 2024]
+Job 6: working on phenotype=prostate_cancer_risk
+Reason: Missing output files: data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_prostate_cancer_risk.json; Input files updated by another job: data/processed_sumstats/prostate_cancer_risk.processed_sumstats.txt
+
+
+            /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/create_enformer_config.R --runname AR_phenotypes_GWAS --phenotype prostate_cancer_risk --base_directives config/enformer_base.yaml --project_directory data --predictors_file data/processed_sumstats/prostate_cancer_risk.processed_sumstats.txt --model /project2/haky/Data/enformer/raw --fasta_file /project2/haky/Data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta --parameters_file data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_prostate_cancer_risk.json --date 2023-12-12
+        
+sbatch: Verify job submission ...
+sbatch: Partition: beagle3
+sbatch: QOS-Flag: beagle3
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 6 with external jobid 'Submitted batch job 12739604'.
+[Mon Jan  8 12:35:02 2024]
+Finished job 6.
+6 of 16 steps (38%) done
+Select jobs to execute...
+
+[Mon Jan  8 12:35:02 2024]
+Job 9: working on prostate_cancer_risk
+Reason: Missing output files: data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_prostate_cancer_risk.json; Input files updated by another job: data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_prostate_cancer_risk.json
+
+
+            python3 /beagle3/haky/users/shared_pipelines/enformer_pipeline_aggregate/scripts/enformer_predict.py --parameters data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_prostate_cancer_risk.json
+        
+sbatch: Verify job submission ...
+sbatch: Partition: beagle3
+sbatch: QOS-Flag: beagle3
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 9 with external jobid 'Submitted batch job 12739654'.
+[Mon Jan  8 12:40:37 2024]
+Finished job 8.
+7 of 16 steps (44%) done
+Select jobs to execute...
+
+[Mon Jan  8 12:40:37 2024]
+Job 13: working on phenotype=asthma
+Reason: Missing output files: data/aggregated_predictions/AR_phenotypes_GWAS_aggByCollect_asthma.csv.gz; Input files updated by another job: data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_asthma.json
+
+sbatch: Verify job submission ...
+sbatch: Partition: beagle3
+sbatch: QOS-Flag: beagle3
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 13 with external jobid 'Submitted batch job 12741132'.
+[Mon Jan  8 12:41:49 2024]
+Finished job 13.
+8 of 16 steps (50%) done
+Select jobs to execute...
+
+[Mon Jan  8 12:41:49 2024]
+Job 12: working on asthma
+Reason: Missing output files: data/enpact_predictions/AR_phenotypes_GWAS_asthma_2023-12-12.csv.gz; Input files updated by another job: data/aggregated_predictions/AR_phenotypes_GWAS_aggByCollect_asthma.csv.gz
+
+
+            /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_enpact_score.R --input_file data/aggregated_predictions/AR_phenotypes_GWAS_aggByCollect_asthma.csv.gz --output_file data/enpact_predictions/AR_phenotypes_GWAS_asthma_2023-12-12.csv.gz --enpact_models_directory /project2/haky/temi/projects/TFPred-snakemake/output/models --filters_date 2023-12-01 --filters_type logistic
+        
+sbatch: Verify job submission ...
+sbatch: Using a shared partition ...
+sbatch: Partition: caslake
+sbatch: QOS-Flag: caslake
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 12 with external jobid 'Submitted batch job 12741857'.
+[Mon Jan  8 12:42:39 2024]
+Finished job 9.
+9 of 16 steps (56%) done
+Select jobs to execute...
+
+[Mon Jan  8 12:42:39 2024]
+Job 15: working on phenotype=prostate_cancer_risk
+Reason: Missing output files: data/aggregated_predictions/AR_phenotypes_GWAS_aggByCollect_prostate_cancer_risk.csv.gz; Input files updated by another job: data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_prostate_cancer_risk.json
+
+sbatch: Verify job submission ...
+sbatch: Partition: beagle3
+sbatch: QOS-Flag: beagle3
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 15 with external jobid 'Submitted batch job 12742063'.
+[Mon Jan  8 12:43:13 2024]
+Finished job 12.
+10 of 16 steps (62%) done
+[Mon Jan  8 12:44:10 2024]
+Finished job 15.
+11 of 16 steps (69%) done
+Select jobs to execute...
+
+[Mon Jan  8 12:44:10 2024]
+Job 14: working on prostate_cancer_risk
+Reason: Missing output files: data/enpact_predictions/AR_phenotypes_GWAS_prostate_cancer_risk_2023-12-12.csv.gz; Input files updated by another job: data/aggregated_predictions/AR_phenotypes_GWAS_aggByCollect_prostate_cancer_risk.csv.gz
+
+
+            /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_enpact_score.R --input_file data/aggregated_predictions/AR_phenotypes_GWAS_aggByCollect_prostate_cancer_risk.csv.gz --output_file data/enpact_predictions/AR_phenotypes_GWAS_prostate_cancer_risk_2023-12-12.csv.gz --enpact_models_directory /project2/haky/temi/projects/TFPred-snakemake/output/models --filters_date 2023-12-01 --filters_type logistic
+        
+sbatch: Verify job submission ...
+sbatch: Using a shared partition ...
+sbatch: Partition: caslake
+sbatch: QOS-Flag: caslake
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 14 with external jobid 'Submitted batch job 12742276'.
+[Mon Jan  8 12:45:15 2024]
+Finished job 7.
+12 of 16 steps (75%) done
+Select jobs to execute...
+
+[Mon Jan  8 12:45:15 2024]
+Job 11: working on phenotype=testosterone
+Reason: Missing output files: data/aggregated_predictions/AR_phenotypes_GWAS_aggByCollect_testosterone.csv.gz; Input files updated by another job: data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_testosterone.json
+
+sbatch: Verify job submission ...
+sbatch: Partition: beagle3
+sbatch: QOS-Flag: beagle3
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 11 with external jobid 'Submitted batch job 12742380'.
+[Mon Jan  8 12:45:16 2024]
+Finished job 14.
+13 of 16 steps (81%) done
+[Mon Jan  8 12:46:36 2024]
+Finished job 11.
+14 of 16 steps (88%) done
+Select jobs to execute...
+
+[Mon Jan  8 12:46:36 2024]
+Job 10: working on testosterone
+Reason: Missing output files: data/enpact_predictions/AR_phenotypes_GWAS_testosterone_2023-12-12.csv.gz; Input files updated by another job: data/aggregated_predictions/AR_phenotypes_GWAS_aggByCollect_testosterone.csv.gz
+
+
+            /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_enpact_score.R --input_file data/aggregated_predictions/AR_phenotypes_GWAS_aggByCollect_testosterone.csv.gz --output_file data/enpact_predictions/AR_phenotypes_GWAS_testosterone_2023-12-12.csv.gz --enpact_models_directory /project2/haky/temi/projects/TFPred-snakemake/output/models --filters_date 2023-12-01 --filters_type logistic
+        
+sbatch: Verify job submission ...
+sbatch: Using a shared partition ...
+sbatch: Partition: caslake
+sbatch: QOS-Flag: caslake
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 10 with external jobid 'Submitted batch job 12742525'.
+[Mon Jan  8 12:47:46 2024]
+Finished job 10.
+15 of 16 steps (94%) done
+Select jobs to execute...
+
+[Mon Jan  8 12:47:46 2024]
+localrule all:
+    input: data/sumstats/testosterone.gwas_sumstats.ALL.filtered.txt.gz, data/sumstats/asthma.gwas_sumstats.ALL.filtered.txt.gz, data/sumstats/prostate_cancer_risk.gwas_sumstats.ALL.filtered.txt.gz, data/processed_sumstats/testosterone.processed_sumstats.txt, data/processed_sumstats/asthma.processed_sumstats.txt, data/processed_sumstats/prostate_cancer_risk.processed_sumstats.txt, data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_testosterone.json, data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_asthma.json, data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_prostate_cancer_risk.json, data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_testosterone.json, data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_asthma.json, data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_prostate_cancer_risk.json, data/enpact_predictions/AR_phenotypes_GWAS_testosterone_2023-12-12.csv.gz, data/enpact_predictions/AR_phenotypes_GWAS_asthma_2023-12-12.csv.gz, data/enpact_predictions/AR_phenotypes_GWAS_prostate_cancer_risk_2023-12-12.csv.gz
+    jobid: 0
+    reason: Input files updated by another job: data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_prostate_cancer_risk.json, data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_asthma.json, data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_asthma.json, data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_prostate_cancer_risk.json, data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_testosterone.json, data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_testosterone.json, data/processed_sumstats/testosterone.processed_sumstats.txt, data/processed_sumstats/prostate_cancer_risk.processed_sumstats.txt, data/enpact_predictions/AR_phenotypes_GWAS_prostate_cancer_risk_2023-12-12.csv.gz, data/enpact_predictions/AR_phenotypes_GWAS_testosterone_2023-12-12.csv.gz, data/processed_sumstats/asthma.processed_sumstats.txt, data/enpact_predictions/AR_phenotypes_GWAS_asthma_2023-12-12.csv.gz
+    resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=/scratch/midway3/temi, partition=caslake, time=02:00:00, account=pi-haky, nodes=1, gpu=0, mem_cpu=4, cpu_task=8
+
+[Mon Jan  8 12:47:46 2024]
+Finished job 0.
+16 of 16 steps (100%) done
+Complete log: .snakemake/log/2024-01-08T123414.132937.snakemake.log
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 100
+Job stats:
+job                              count    min threads    max threads
+-----------------------------  -------  -------------  -------------
+aggregate_predictions                2              1              1
+all                                  1              1              1
+calculate_enpact_score               2              1              1
+create_enformer_configuration        2              1              1
+predict_with_enformer                2              1              1
+process_summary_statistics           2              1              1
+total                               11              1              1
+
+Select jobs to execute...
+
+[Wed Jan 10 11:36:14 2024]
+Job 4: working on phenotype=asthma_children
+Reason: Missing output files: data/processed_sumstats/asthma_children.processed_sumstats.txt
+
+
+        /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/process_summary_statistics.R --summary_stats_file data/sumstats/asthma_children.gwas_sumstats.ALL.filtered.txt.gz --output_file data/processed_sumstats/asthma_children.processed_sumstats.txt
+        
+sbatch: Verify job submission ...
+sbatch: Using a shared partition ...
+sbatch: Partition: caslake
+sbatch: QOS-Flag: caslake
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 4 with external jobid 'Submitted batch job 13423632'.
+
+[Wed Jan 10 11:36:14 2024]
+Job 5: working on phenotype=asthma_adults
+Reason: Missing output files: data/processed_sumstats/asthma_adults.processed_sumstats.txt
+
+
+        /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/process_summary_statistics.R --summary_stats_file data/sumstats/asthma_adults.gwas_sumstats.ALL.filtered.txt.gz --output_file data/processed_sumstats/asthma_adults.processed_sumstats.txt
+        
+sbatch: Verify job submission ...
+sbatch: Using a shared partition ...
+sbatch: Partition: caslake
+sbatch: QOS-Flag: caslake
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 5 with external jobid 'Submitted batch job 13423633'.
+Terminating processes on user request, this might take some time.
+No --cluster-cancel given. Will exit after finishing currently running jobs.
+Traceback (most recent call last):
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/site-packages/snakemake/scheduler.py", line 512, in schedule
+    self._open_jobs.acquire()
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/threading.py", line 450, in acquire
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/threading.py", line 312, in wait
+    waiter.acquire()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/site-packages/snakemake/__init__.py", line 757, in snakemake
+    success = workflow.execute(
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/site-packages/snakemake/workflow.py", line 1091, in execute
+    success = self.scheduler.schedule()
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/site-packages/snakemake/scheduler.py", line 611, in schedule
+    self._executor.cancel()
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/site-packages/snakemake/executors/__init__.py", line 1142, in cancel
+    self.shutdown()
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/site-packages/snakemake/executors/__init__.py", line 845, in shutdown
+    self.wait_thread.join()
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/threading.py", line 1060, in join
+    self._wait_for_tstate_lock()
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/threading.py", line 1080, in _wait_for_tstate_lock
+    if lock.acquire(block, timeout):
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/snakemake", line 8, in <module>
+    sys.exit(main())
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/site-packages/snakemake/__init__.py", line 2954, in main
+    success = snakemake(
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/site-packages/snakemake/__init__.py", line 857, in snakemake
+    print_exception(ex, workflow.linemaps)
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/site-packages/snakemake/exceptions.py", line 82, in print_exception
+    log_verbose_traceback(ex)
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/site-packages/snakemake/exceptions.py", line 69, in log_verbose_traceback
+    tb = "Full " + "".join(traceback.format_exception(type(ex), ex, ex.__traceback__))
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/traceback.py", line 120, in format_exception
+    return list(TracebackException(
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/traceback.py", line 517, in __init__
+    self.stack = StackSummary.extract(
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/traceback.py", line 366, in extract
+    f.line
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/traceback.py", line 288, in line
+    self._line = linecache.getline(self.filename, self.lineno).strip()
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/linecache.py", line 30, in getline
+    lines = getlines(filename, module_globals)
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/linecache.py", line 46, in getlines
+    return updatecache(filename, module_globals)
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/linecache.py", line 136, in updatecache
+    with tokenize.open(fullname) as fp:
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/tokenize.py", line 394, in open
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/tokenize.py", line 363, in detect_encoding
+    first = read_or_stop()
+  File "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/python3.9/tokenize.py", line 321, in read_or_stop
+    return readline()
+KeyboardInterrupt
+Building DAG of jobs...
+LockException:
+Error: Directory cannot be locked. Please make sure that no other Snakemake process is trying to create the same files in the following directory:
+/project2/haky/temi/projects/TFXcan-snakemake
+If you are sure that no other instances of snakemake are running on this directory, the remaining lock was likely caused by a kill signal or a power loss. It can be removed with the --unlock argument.
+Unlocking working directory.
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 100
+Job stats:
+job                              count    min threads    max threads
+-----------------------------  -------  -------------  -------------
+aggregate_predictions                2              1              1
+all                                  1              1              1
+calculate_enpact_score               2              1              1
+create_enformer_configuration        2              1              1
+predict_with_enformer                2              1              1
+total                                9              1              1
+
+Select jobs to execute...
+
+[Wed Jan 10 11:38:03 2024]
+Job 9: working on phenotype=asthma_children
+Reason: Missing output files: data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_asthma_children.json
+
+
+            /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/create_enformer_config.R --runname AR_phenotypes_GWAS --phenotype asthma_children --base_directives config/enformer_base.yaml --project_directory data --predictors_file data/processed_sumstats/asthma_children.processed_sumstats.txt --model /project2/haky/Data/enformer/raw --fasta_file /project2/haky/Data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta --parameters_file data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_asthma_children.json --date 2023-12-12
+        
+sbatch: Verify job submission ...
+sbatch: Partition: beagle3
+sbatch: QOS-Flag: beagle3
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 9 with external jobid 'Submitted batch job 13423891'.
+
+[Wed Jan 10 11:38:04 2024]
+Job 10: working on phenotype=asthma_adults
+Reason: Missing output files: data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_asthma_adults.json
+
+
+            /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/create_enformer_config.R --runname AR_phenotypes_GWAS --phenotype asthma_adults --base_directives config/enformer_base.yaml --project_directory data --predictors_file data/processed_sumstats/asthma_adults.processed_sumstats.txt --model /project2/haky/Data/enformer/raw --fasta_file /project2/haky/Data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta --parameters_file data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_asthma_adults.json --date 2023-12-12
+        
+sbatch: Verify job submission ...
+sbatch: Partition: beagle3
+sbatch: QOS-Flag: beagle3
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 10 with external jobid 'Submitted batch job 13423892'.
+[Wed Jan 10 11:38:13 2024]
+Finished job 9.
+1 of 9 steps (11%) done
+Select jobs to execute...
+
+[Wed Jan 10 11:38:13 2024]
+Job 14: working on asthma_children
+Reason: Missing output files: data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_asthma_children.json; Input files updated by another job: data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_asthma_children.json
+
+
+            python3 /beagle3/haky/users/shared_pipelines/enformer_pipeline_aggregate/scripts/enformer_predict.py --parameters data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_asthma_children.json
+        
+sbatch: Verify job submission ...
+sbatch: Partition: beagle3
+sbatch: QOS-Flag: beagle3
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 14 with external jobid 'Submitted batch job 13423898'.
+[Wed Jan 10 11:38:14 2024]
+Finished job 10.
+2 of 9 steps (22%) done
+Select jobs to execute...
+
+[Wed Jan 10 11:38:14 2024]
+Job 15: working on asthma_adults
+Reason: Missing output files: data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_asthma_adults.json; Input files updated by another job: data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_asthma_adults.json
+
+
+            python3 /beagle3/haky/users/shared_pipelines/enformer_pipeline_aggregate/scripts/enformer_predict.py --parameters data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_asthma_adults.json
+        
+sbatch: Verify job submission ...
+sbatch: Partition: beagle3
+sbatch: QOS-Flag: beagle3
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 15 with external jobid 'Submitted batch job 13423899'.
+[Wed Jan 10 11:51:37 2024]
+Finished job 14.
+3 of 9 steps (33%) done
+Select jobs to execute...
+
+[Wed Jan 10 11:51:37 2024]
+Job 23: working on phenotype=asthma_children
+Reason: Missing output files: data/aggregated_predictions/AR_phenotypes_GWAS_aggByCollect_asthma_children.csv.gz; Input files updated by another job: data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_asthma_children.json
+
+sbatch: Verify job submission ...
+sbatch: Partition: beagle3
+sbatch: QOS-Flag: beagle3
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 23 with external jobid 'Submitted batch job 13426020'.
+[Wed Jan 10 11:51:48 2024]
+Finished job 23.
+4 of 9 steps (44%) done
+Select jobs to execute...
+
+[Wed Jan 10 11:51:48 2024]
+Job 22: working on asthma_children
+Reason: Missing output files: data/enpact_predictions/AR_phenotypes_GWAS_asthma_children_2023-12-12.csv.gz; Input files updated by another job: data/aggregated_predictions/AR_phenotypes_GWAS_aggByCollect_asthma_children.csv.gz
+
+
+            /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_enpact_score.R --input_file data/aggregated_predictions/AR_phenotypes_GWAS_aggByCollect_asthma_children.csv.gz --output_file data/enpact_predictions/AR_phenotypes_GWAS_asthma_children_2023-12-12.csv.gz --enpact_models_directory /project2/haky/temi/projects/TFPred-snakemake/output/models --filters_date 2023-12-01 --filters_type logistic
+        
+sbatch: Verify job submission ...
+sbatch: Using a shared partition ...
+sbatch: Partition: caslake
+sbatch: QOS-Flag: caslake
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 22 with external jobid 'Submitted batch job 13426110'.
+[Wed Jan 10 11:53:05 2024]
+Finished job 22.
+5 of 9 steps (56%) done
+[Wed Jan 10 11:53:46 2024]
+Finished job 15.
+6 of 9 steps (67%) done
+Select jobs to execute...
+
+[Wed Jan 10 11:53:46 2024]
+Job 25: working on phenotype=asthma_adults
+Reason: Missing output files: data/aggregated_predictions/AR_phenotypes_GWAS_aggByCollect_asthma_adults.csv.gz; Input files updated by another job: data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_asthma_adults.json
+
+sbatch: Verify job submission ...
+sbatch: Partition: beagle3
+sbatch: QOS-Flag: beagle3
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 25 with external jobid 'Submitted batch job 13426300'.
+[Wed Jan 10 11:53:57 2024]
+Finished job 25.
+7 of 9 steps (78%) done
+Select jobs to execute...
+
+[Wed Jan 10 11:53:57 2024]
+Job 24: working on asthma_adults
+Reason: Missing output files: data/enpact_predictions/AR_phenotypes_GWAS_asthma_adults_2023-12-12.csv.gz; Input files updated by another job: data/aggregated_predictions/AR_phenotypes_GWAS_aggByCollect_asthma_adults.csv.gz
+
+
+            /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_enpact_score.R --input_file data/aggregated_predictions/AR_phenotypes_GWAS_aggByCollect_asthma_adults.csv.gz --output_file data/enpact_predictions/AR_phenotypes_GWAS_asthma_adults_2023-12-12.csv.gz --enpact_models_directory /project2/haky/temi/projects/TFPred-snakemake/output/models --filters_date 2023-12-01 --filters_type logistic
+        
+sbatch: Verify job submission ...
+sbatch: Using a shared partition ...
+sbatch: Partition: caslake
+sbatch: QOS-Flag: caslake
+sbatch: Account: pi-haky
+sbatch: Verification: ***PASSED***
+Submitted job 24 with external jobid 'Submitted batch job 13426437'.
+[Wed Jan 10 11:54:37 2024]
+Finished job 24.
+8 of 9 steps (89%) done
+Select jobs to execute...
+
+[Wed Jan 10 11:54:37 2024]
+localrule all:
+    input: data/sumstats/testosterone.gwas_sumstats.ALL.filtered.txt.gz, data/sumstats/asthma.gwas_sumstats.ALL.filtered.txt.gz, data/sumstats/prostate_cancer_risk.gwas_sumstats.ALL.filtered.txt.gz, data/sumstats/asthma_children.gwas_sumstats.ALL.filtered.txt.gz, data/sumstats/asthma_adults.gwas_sumstats.ALL.filtered.txt.gz, data/processed_sumstats/testosterone.processed_sumstats.txt, data/processed_sumstats/asthma.processed_sumstats.txt, data/processed_sumstats/prostate_cancer_risk.processed_sumstats.txt, data/processed_sumstats/asthma_children.processed_sumstats.txt, data/processed_sumstats/asthma_adults.processed_sumstats.txt, data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_testosterone.json, data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_asthma.json, data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_prostate_cancer_risk.json, data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_asthma_children.json, data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_asthma_adults.json, data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_testosterone.json, data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_asthma.json, data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_prostate_cancer_risk.json, data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_asthma_children.json, data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_asthma_adults.json, data/enpact_predictions/AR_phenotypes_GWAS_testosterone_2023-12-12.csv.gz, data/enpact_predictions/AR_phenotypes_GWAS_asthma_2023-12-12.csv.gz, data/enpact_predictions/AR_phenotypes_GWAS_prostate_cancer_risk_2023-12-12.csv.gz, data/enpact_predictions/AR_phenotypes_GWAS_asthma_children_2023-12-12.csv.gz, data/enpact_predictions/AR_phenotypes_GWAS_asthma_adults_2023-12-12.csv.gz
+    jobid: 0
+    reason: Input files updated by another job: data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_asthma_children.json, data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_asthma_children.json, data/enformer_parameters/aggregation_config_AR_phenotypes_GWAS_asthma_adults.json, data/enpact_predictions/AR_phenotypes_GWAS_asthma_children_2023-12-12.csv.gz, data/enformer_parameters/enformer_parameters_AR_phenotypes_GWAS_asthma_adults.json, data/enpact_predictions/AR_phenotypes_GWAS_asthma_adults_2023-12-12.csv.gz
+    resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=/scratch/midway3/temi, partition=caslake, time=02:00:00, account=pi-haky, nodes=1, gpu=0, mem_cpu=4, cpu_task=8
+
+[Wed Jan 10 11:54:37 2024]
+Finished job 0.
+9 of 9 steps (100%) done
+Complete log: .snakemake/log/2024-01-10T113803.524127.snakemake.log

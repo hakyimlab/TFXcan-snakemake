@@ -1,0 +1,4 @@
+data/**
+logs/**
+.snakemake/**
+workflow/helpers/run/**

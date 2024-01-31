@@ -1,0 +1,12 @@
+
+
+summary statistics file should have
+chrom, pos, effect, non_effect, zscore, pvalue
+
+if chrom has 'chr' prefix, it will be stripped in the pipeline off else no bother.
+
+testosterone,testosterone.gwas_sumstats.txt.gz
+asthma,asthma.gwas_sumstats.txt.gz
+prostate_cancer_risk,prostate_cancer_risk.gwas_sumstats.txt.gz
+asthma_children,asthma_children.gwas_sumstats.txt.gz
+asthma_adults,asthma_adults.gwas_sumstats.txt.gz 

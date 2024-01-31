@@ -1,0 +1,2 @@
+phenotype,sumstat
+asthma_children,asthma_children.liftover.logistic.assoc.tsv.gz
