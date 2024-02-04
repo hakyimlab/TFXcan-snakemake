@@ -1,0 +1,31 @@
+---
+
+---
+
+
+```{r}
+library(data.table)
+library(susieR)
+library(tidyverse)
+```
+
+
+```{r}
+dt <- readRDS('/project2/haky/temi/projects/TFXcan-snakemake/data/finemapping/asthma_children/asthma_children.chr10.susie.RDS')
+```
+
+```{r}
+names(dt)
+```
+
+```{r}
+one <- dt[["chr10_8732702_10207433"]]
+summary(one$fit)
+```
+
+
+```{r}
+lapply(dt, function(each_entry){
+    summary(each_entry$fit)
+}) %>% Filter(Negate(is.null), .)
+```

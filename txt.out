@@ -1,43 +1,49 @@
 {'asthma_children': 'asthma_children.liftover.logistic.assoc.tsv.gz'}
 Building DAG of jobs...
 Job stats:
-job                                count    min threads    max threads
--------------------------------  -------  -------------  -------------
-all                                    1              1              1
-run_susie_on_summary_statistics        1              1              1
-total                                  2              1              1
+job                        count    min threads    max threads
+-----------------------  -------  -------------  -------------
+aggregate_predictions          1              1              1
+all                            1              1              1
+calculate_enpact_scores        1              1              1
+total                          3              1              1
 
 
-[Wed Jan 31 11:11:59 2024]
-Job 1: working on phenotype=asthma_children
-Reason: Missing output files: data/finemapping/asthma_children
+[Sun Feb  4 00:40:39 2024]
+Job 5: working on phenotype=asthma_children
+Reason: Missing output files: data/checkpoints/asthma_children.checkpoint
 DAG of jobs will be updated after completion.
+
+[Sun Feb  4 00:40:39 2024]
+Job 6: working on asthma_children
+Reason: Missing output files: data/enpact_predictions/asthma_children
 
 
         module load parallel;
-        printf "%s\n" 20 15 22 7 10 19 1 8 9 13 12 21 16 6 3 5 11 18 14 17 2 4 | parallel -j 5 "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/run_susie_on_summary_statistics.R --chromosome {} --sumstats data/processed_sumstats/asthma_children/chr{}.sumstats.txt.gz --LDBlocks_info /project2/haky/Data/LD_blocks/hg38/EUR/hg38_fourier_ls-all.bed --output_folder data/finemapping/asthma_children --phenotype asthma_children"
+        printf "%s\n" HG00100 HG00114 HG00099 HG00109 HG00111 HG00104 HG00105 HG00096 HG00103 HG00101 HG00102 HG00108 HG00097 HG00112 HG00106 HG00110 | parallel -j 5 '/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_enpact_scores.R --input_file data/aggregated_predictions/asthma_children/{}_aggByCollect_asthma_children.csv.gz --output_file data/enpact_predictions/asthma_children/{}.asthma_children.aggByCollect.2024-01-31.csv.gz --enpact_models_directory /project2/haky/temi/projects/TFPred-snakemake/output/models --filters_date 2023-12-01 --filters_type logistic'
         
 
-[Wed Jan 31 11:11:59 2024]
+[Sun Feb  4 00:40:39 2024]
 localrule all:
-    input: data/finemapping/asthma_children
+    input: data/processed_sumstats/asthma_children, data/finemapping/asthma_children, data/collection/asthma_children/asthma_children.filteredGWAS.txt.gz, data/collection/asthma_children/asthma_children.EnformerLoci.txt, data/enformer_parameters/enformer_parameters_Asthma_GWAS_asthma_children.json, data/enformer_parameters/aggregation_config_Asthma_GWAS_asthma_children.json, data/checkpoints/asthma_children.checkpoint, data/aggregated_predictions/asthma_children, data/enpact_predictions/asthma_children
     jobid: 0
-    reason: Input files updated by another job: data/finemapping/asthma_children
+    reason: Input files updated by another job: data/enpact_predictions/asthma_children, data/checkpoints/asthma_children.checkpoint
     resources: mem_mb=<TBD>, disk_mb=<TBD>, tmpdir=/scratch/midway3/temi, partition=caslake, time=02:00:00, account=pi-haky, nodes=1, gpu=0, mem_cpu=4, cpu_task=8
 
 Job stats:
-job                                count    min threads    max threads
--------------------------------  -------  -------------  -------------
-all                                    1              1              1
-run_susie_on_summary_statistics        1              1              1
-total                                  2              1              1
+job                        count    min threads    max threads
+-----------------------  -------  -------------  -------------
+aggregate_predictions          1              1              1
+all                            1              1              1
+calculate_enpact_scores        1              1              1
+total                          3              1              1
 
 Reasons:
     (check individual jobs above for details)
     input files updated by another job:
         all
     missing output files:
-        run_susie_on_summary_statistics
+        aggregate_predictions, calculate_enpact_scores
 
 This was a dry-run (flag -n). The order of jobs does not reflect the order of execution.
 The run involves checkpoint jobs, which will result in alteration of the DAG of jobs (e.g. adding more jobs) after their completion.

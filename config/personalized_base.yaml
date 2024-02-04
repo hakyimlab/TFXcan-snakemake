@@ -1,0 +1,7 @@
+---
+individuals: "/project2/haky/temi/projects/TFXcan-snakemake/metadata/individuals.txt"
+n_individuals: 16
+batch_individuals: 4
+vcf_files:
+  folder: "/project2/haky/Data/1000G/vcf_snps_only"
+  files_pattern: "ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.vcf.gz"

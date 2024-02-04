@@ -10,7 +10,7 @@ option_list <- list(
     make_option("--n", help='summary statistics sample size', default = 1000000L),
     make_option("--L", help='summary statistics sample size', default = 10L),
     make_option("--LDBlocks_info", help='A list of files to combine'),
-    make_option("--pip_threshold", default=0.8, help='threshold to filter SNPs by PIP'),
+    make_option("--pip_threshold", default=0.8, help='threshold to filter SNPs by PIP', type='numeric'),
     make_option("--genotypes_dosages_pattern", default='/project2/haky/Data/1000G/population_data/EUR/bfiles/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.geno.txt.gz', help=''),
     make_option("--output_folder", help='threshold to filter SNPs by PIP'),
     make_option("--phenotype", help='threshold to filter SNPs by PIP')
@@ -97,7 +97,7 @@ runSusiePerLDBlock <- function(ld_window, summary_stat){
     return(result)
 }
 
-split_ld_blocks <- LD_block[1:10, ] %>%
+split_ld_blocks <- LD_block %>%
         base::split(., f=.$split)
 
 susieRun <- list()

@@ -5,7 +5,8 @@ runname: 'Asthma_GWAS' # change this variable name
 date: "2024-01-31"
 metadata: "/project2/haky/temi/projects/TFXcan-snakemake/metadata/metadata_gwas.txt"
 scratch_dir: "/scratch/midway3/temi"
-delete_enformer_outputs: True # should you delete enformer predictions after aggregating them? Saves disk space
+delete_enformer_outputs: False # should you delete enformer predictions after aggregating them? Saves disk space
+personalized_predictions: True # should you run personalized predictions?
 
 enpact_models:
   directory: '/project2/haky/temi/projects/TFPred-snakemake/output/models'
@@ -30,6 +31,7 @@ plink:
 
 enformer: 
   base_directives: "config/enformer_base.yaml"
+  personalized_directives: "config/personalized_base.yaml"
   model: "/project2/haky/Data/enformer/raw"
   predict: "/beagle3/haky/users/shared_pipelines/enformer_pipeline_aggregate/scripts/enformer_predict.py"
   aggregate: "/beagle3/haky/users/shared_pipelines/enformer_pipeline_aggregate/scripts/aggregate/aggregate.py"
