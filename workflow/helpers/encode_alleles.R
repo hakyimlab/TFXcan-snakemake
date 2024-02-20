@@ -15,9 +15,12 @@ library(glue)
 library(tidyverse)
 library(data.table)
 
+# opt <- list()
+# opt$bfile <- '/project2/haky/Data/1000G/population_data/EUR/bfiles/ALL.chr22.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased'
+
 glue('INFO - processing {opt$bfile}')
 
-snp_annot <- fread(glue::glue("{opt$bfile}.bim")) %>% 
+snp_annot <- fread(glue::glue("{opt$bfile}.bim"), header=F) %>% 
     setnames(.,names(.), c("chr", "snp", "CM", "pos", "alt_vcf", "ref_vcf")) %>%
     dplyr::mutate(chr = gsub('chr', '', chr)) %>%
     dplyr::mutate(rsid = paste(chr, pos, ref_vcf, alt_vcf, sep=':')) %>%
@@ -27,18 +30,51 @@ snp_annot <- fread(glue::glue("{opt$bfile}.bim")) %>%
 
 data.table::fwrite(snp_annot, file=glue("{opt$output_prefix}.snp_annot.txt.gz"), sep='\t', quote=F, row.names=F, compress='gzip')
 
+# read in the fam file
+IDs <- data.table::fread(glue::glue("{opt$bfile}.fam"), header=F) %>% dplyr::pull(V1)
+IDs <- c('varID', IDs)
 
 genotype <- readr::read_table(glue::glue("{opt$bfile}.traw")) %>% 
     dplyr::mutate(CHR = gsub('chr', '', CHR)) %>%
-    tidyr::unite('varID', CHR, POS, COUNTED, ALT, sep = '_', remove=FALSE) %>%
-    dplyr::mutate(varID = paste(varID, sep='_')) %>%
-    dplyr::select(-c(CHR,`(C)M`,POS, COUNTED, ALT, SNP)) %>% 
-    setnames(.,names(.),gsub("0_", "", colnames(.)))
+    dplyr::inner_join( 
+        (snp_annot %>%
+            dplyr::select(chr, pos, varID) %>%
+            dplyr::mutate(chr = as.character(chr))
+        ), by=c('CHR' = 'chr', 'POS' = 'pos')
+    ) %>%
+        dplyr::select(-c(CHR,`(C)M`,POS, COUNTED, ALT, SNP)) %>% 
+        dplyr::relocate(varID) %>%
+        setnames(., names(.), gsub("0_", "", colnames(.))) %>%
+        setnames(., names(.), IDs)
+
 
 data.table::fwrite(genotype, file=glue("{opt$output_prefix}.geno.txt.gz"), sep='\t', quote=F, row.names=F, compress='gzip')
 
 
+# genotype <- readr::read_table(glue::glue("{opt$bfile}.traw")) %>% 
+#     dplyr::mutate(CHR = gsub('chr', '', CHR)) %>%
+#     tidyr::unite('varID', CHR, POS, COUNTED, ALT, sep = '_', remove=FALSE) %>%
+#     dplyr::mutate(varID = paste(varID, sep='_')) %>%
+#     dplyr::select(-c(CHR,`(C)M`,POS, COUNTED, ALT, SNP)) %>% 
+#     setnames(., names(.), gsub("0_", "", colnames(.))) %>%
+#     setnames(., names(.), IDs)
 
+# all(JOINED_DT$varID %in% snpannot$varID)
+# %>%
+#     tidyr::unite('varID', CHR, POS, COUNTED, ALT, sep = '_', remove=FALSE) %>%
+#     dplyr::mutate(varID = paste(varID, sep='_')) %>%
+#     dplyr::select(c(CHR,`(C)M`,POS, COUNTED, ALT, SNP)) %>% 
+#     setnames(., names(.), gsub("0_", "", colnames(.))) %>%
+#     setnames(., names(.), IDs)
+
+# library(data.table)
+# library(tidyverse)
+
+# snpannot <- data.table::fread('/project2/haky/Data/1000G/population_data/EUR/bfiles/ALL.chr22.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.snp_annot.txt.gz')
+# geno <- data.table::fread('/project2/haky/Data/1000G/population_data/EUR/bfiles/ALL.chr22.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.geno.txt.gz')
+# bim <- data.table::fread('/project2/haky/Data/1000G/population_data/EUR/bfiles/ALL.chr22.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.bim', header=F)
+# IDs <- data.table::fread('/project2/haky/Data/1000G/population_data/EUR/bfiles/ALL.chr22.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.fam', header=F) %>% dplyr::pull(V1)
+# IDs <- c('varID', IDs)
 
 
 # 1_51479_T_A_b37 1       2       2       2       2       2       1       1       1       2       1       1       2       1       2       1       1       2       1       2    >

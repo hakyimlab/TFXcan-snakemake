@@ -1,0 +1,104 @@
+---
+
+---
+
+
+```{r}
+library(data.table)
+library(susieR)
+library(tidyverse)
+library(RSQLite)
+```
+
+```{r}
+devtools::source_gist('https://gist.github.com/TemiPete/250d9922b9516691f83bb1fd999a3ccc')
+devtools::source_gist('https://gist.github.com/hakyim/38431b74c6c0bf90c12f')
+devtools::source_gist('https://gist.github.com/hakyim/5d2251ea1a86009499e4ffdf47fe2735')
+devtools::source_gist('https://gist.github.com/TemiPete/b309a46e25ecec93127fb6756e68fb14')
+```
+```{r}
+model_dir <- '/project2/haky/temi/projects/l-TFPred/models/EUR_Enpact'
+```
+
+```{r}
+model_summary <- data.table::fread(file.path(model_dir, 'database', 'Model_summary.txt'))
+weight_summary <- data.table::fread(file.path(model_dir, 'database', 'Weight_summary.txt'))
+head(weight_summary)
+head(model_summary)
+```
+
+Check how many NAs I have >> need to investigate these later
+```{r}
+is.na(model_summary$gene_id) %>% table
+```
+
+```{r}
+model_summary <- model_summary %>%
+    dplyr::filter(!is.na(gene_id) & !is.na(cv_R2_avg))
+```
+
+```{r}
+par(mar=c(5,5,4,2))
+with(model_summary, hist(rho_avg, cex.lab=1.5, main='', xlab='r', ylab='number of loci', col=adjustcolor('red', 0.3)))
+mtext(expression("Histogram of" ~ italic(r) ~ "(linearization)"), side=3, line=2, adj=0.05, cex=1.5)
+```
+
+
+```{r}
+model_summary %>% dplyr::reframe(frac_snps_used = n_snps_in_model / n_snps_in_window) %>% pull(frac_snps_used) %>% hist(main=NULL, xlab='Fraction of SNPs used', ylab='number of snps per window', cex.lab=1.5)
+mtext("Fraction of SNPs used per window", side=3, line=2, adj=0.05, cex=1.5)
+```
+
+
+```{r}
+model_summary %>% dplyr::pull(n_snps_in_model) %>% summary()
+```
+
+```{r}
+mm <- mean(weight_summary$beta)
+ss <- sd(weight_summary$beta)
+ww <- which(!between(weight_summary$beta, left=mm - (1*ss), right=mm+(1*ss)))
+length(ww)
+```
+```{r}
+par(mar=c(5,5,4,2))
+weight_summary$beta[ww] %>% sort() %>% plot(frame.plot=F, pch='.', cex.lab=1.5)
+mtext("Distribution of lTFPred-AR-Prostate weights", side=3, line=2, adj=0.05, cex=1.25)
+mtext("points shown are 1 s.d away from the mean", side=3, line=1, adj=0.05, cex=1.5)
+```
+
+
+
+```{r}
+susieRun <- readRDS('/project2/haky/temi/projects/TFXcan-snakemake/data/finemapping/asthma_children/asthma_children.chr13.susie.RDS')
+```
+
+
+```{r}
+all(rapply(susieRun, length) == 0)
+```
+
+
+```{r}
+filteredSNPs <- lapply(susieRun, function(x){
+        if(is.null(x$loci)){
+            return(NULL)
+        }
+        dt <- as.data.frame(x$loci)
+        if(nrow(dt) == 0){
+            return(NULL)
+        }
+        return(dt)
+    }) 
+    filteredSNPs <- Filter(Negate(is.null), filteredSNPs)
+```
+
+
+```{r}
+library(susieR)
+```
+
+
+```{r}
+susieRun[['chr9_4884926_6557589']][["fit"]] |> susieR::susie_plot(y='PIP')
+```

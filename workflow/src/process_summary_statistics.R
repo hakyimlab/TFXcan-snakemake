@@ -8,8 +8,12 @@ suppressPackageStartupMessages(library("optparse"))
 option_list <- list(
     make_option("--summary_stats_file", help='A transcription factor e.g. AR'),
     make_option("--output_folder", help='the output folder'),
-    make_option("--phenotype", help = 'a GWAS phenotype')
+    make_option("--phenotype", help = 'a GWAS phenotype'),
+    make_option("--pvalue_threshold", default=5e-8, type='numeric', help = 'a GWAS phenotype'),
+    make_option('--diagnostics_file', type='character', default=NULL, help='')
 )
+
+source('/project2/haky/temi/projects/TFXcan-snakemake/workflow/src/modules.R')
 
 opt <- parse_args(OptionParser(option_list=option_list))
 
@@ -20,9 +24,11 @@ library(glue)
 print(opt)
 
 # opt <- list()
-# opt$summary_stats_file <- '/project2/haky/temi/projects/TFXcan-snakemake/data/sumstats/testosterone.gwas_sumstats.ALL.filtered.txt.gz'
+# opt$summary_stats_file <- '/project2/haky/temi/projects/TFXcan-snakemake/data/sumstats/asthma_children.liftover.logistic.assoc.tsv.gz'
+# opt$pvalue_threshold <- 5e-8
 # opt$output_folder <- '/project2/haky/temi/projects/TFXcan-snakemake/data/processed_sumstats/testosterone'
-# opt$phenotype <- 'testosterone'
+# opt$phenotype <- 'asthma_children'
+# opt$diagnostics_folder <- '/project2/haky/temi/projects/TFXcan-snakemake/data/diagnostics'
 
 chrom_filter <- c(1:22, 'X', 'Y')
 if(!dir.exists(opt$output_folder)){dir.create(opt$output_folder)}
@@ -33,9 +39,9 @@ dt <- data.table::fread(opt$summary_stats_file) %>%
         .default = as.character(chrom)
     )) %>%
     dplyr::filter(chrom %in% chrom_filter) %>%
-    dplyr::mutate(SNP = paste(chrom, pos, alt, ref, sep='_')) %>%
-    dplyr::group_by(chrom)
-print(head(dt))
+    dplyr::mutate(SNP = paste(chrom, pos, ref, alt, sep='_'), adjP = p.adjust(pval, method='bonferroni')) %>%
+    dplyr::mutate(gwas_significant=ifelse(adjP <= opt$pvalue_threshold, 'YES', 'NO')) %>%
+    dplyr::group_by(chrom) 
 
 split_dt <- dt %>%
     base::split(f=.$chrom)
@@ -45,6 +51,42 @@ lapply(seq_along(split_dt), function(i){
     data.table::fwrite(split_dt[[i]], file=glue('{opt$output_folder}/chr{nn[i]}.sumstats.txt.gz'), 
         quote=F, col.names=T, row.names=F, sep='\t', compress='gzip')
 })
+
+
+if(!is.null(opt$diagnostics_file)){
+    if(!dir.exists(dirname(opt$diagnostics_file))){
+        dir.create(dirname(opt$diagnostics_file), recursive = TRUE)
+    }
+
+    print(glue('INFO - writing diagnostics for {opt$phenotype}'))
+
+    ah <- dt %>%
+        dplyr::group_by(chrom, gwas_significant) %>%
+        dplyr::summarise(n=n(), .groups = "drop") %>%
+        tidyr::complete(chrom, gwas_significant, fill = list(n=0)) %>%
+        tidyr::pivot_wider(id_cols = chrom, names_from=gwas_significant, values_from = n)
+
+    fil <- file(opt$diagnostics_file, open = "a")
+    cat("#### GWAS diagnostics", file = fil, sep = '\n')
+    cat(glue("## Number of GWAS significant loci at {opt$pvalue_threshold}"), file = fil, sep = '\n\n', append=T)
+    cat(paste0(colnames(ah), collapse = '\t'), file = fil, append = T, sep = '\n')
+    cat(apply(ah, 1, paste0, collapse='\t'), file = fil, append = T, sep = '\n')
+    close(fil)
+
+    out <- dt %>%
+        dplyr::select(chrom, pos, rsid, pval) %>%
+        setNames(c("chrom", "locus", 'id', 'pvalue')) %>%
+        prepare_manhattan_dt()
+
+    png(glue("{dirname(opt$diagnostics_file)}/{opt$phenotype}.gwas_manhattan.png"))
+    plot_manhattan_dt(out, signif= opt$pvalue_threshold, plot_id = FALSE)
+    dev.off()
+
+    png(glue("{dirname(opt$diagnostics_file)}/{opt$phenotype}.gwas_qqunif.png"))
+    qqunif(dt$pval)
+    dev.off()
+
+}
     
 # dt %>%
 #     dplyr::pull(SNP) %>% 

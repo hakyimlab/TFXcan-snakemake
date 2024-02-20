@@ -1,153 +1,106 @@
 Building DAG of jobs...
 Job stats:
-job             count    min threads    max threads
-------------  -------  -------------  -------------
-all                 1              1              1
-calculate_LD        5              1              1
-count               5              1              1
-total              11              1              1
+job                                count    min threads    max threads
+-------------------------------  -------  -------------  -------------
+aggregate_predictions                  1              1              1
+all                                    1              1              1
+calculate_enpact_scores                1              1              1
+collect_finemapping_results            1              1              1
+create_enformer_configuration          1              1              1
+predict_with_enformer                  1              1              1
+prepare_files_for_predictDB            1              1              1
+run_susie_on_summary_statistics        1              1              1
+total                                  8              1              1
 
 
-[Fri Jan 19 12:41:45 2024]
-Job 14: working on phenotype=asthma_adults
-Reason: Missing output files: data/LD/asthma_adults
-
-
-        module load parallel;
-        dname=`dirname data/LD/asthma_adults/asthma_adults.chr{}`;
-        mkdir -p ${dname};
-        /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_LD.R --bfile_pattern /project2/haky/Data/1000G/plink_ref_panel/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased --snplist_pattern data/processed_sumstats/asthma_adults/asthma_adults.chr{}.SNPsForLD --output_pattern data/LD/asthma_adults/asthma_adults.chr{}
-        
-
-[Fri Jan 19 12:41:45 2024]
-Job 8: working on phenotype=prostate_cancer_risk
-Reason: Missing output files: data/LD/prostate_cancer_risk
+[Wed Feb 14 19:23:46 2024]
+Job 2: working on phenotype=asthma_children
+Reason: Missing output files: data/finemapping/asthma_children
 
 
         module load parallel;
-        dname=`dirname data/LD/prostate_cancer_risk/prostate_cancer_risk.chr{}`;
-        mkdir -p ${dname};
-        /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_LD.R --bfile_pattern /project2/haky/Data/1000G/plink_ref_panel/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased --snplist_pattern data/processed_sumstats/prostate_cancer_risk/prostate_cancer_risk.chr{}.SNPsForLD --output_pattern data/LD/prostate_cancer_risk/prostate_cancer_risk.chr{}
+        printf "%s\n"  | parallel -j 12 "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/run_susie_on_summary_statistics.R --chromosome {} --sumstats data/processed_sumstats/asthma_children/chr{}.sumstats.txt.gz --LDBlocks_info /project2/haky/Data/LD_blocks/hg38/EUR/hg38_fourier_ls-all.bed --output_folder data/finemapping/asthma_children --phenotype asthma_children --pip_threshold 0.5 --diagnostics_file data/diagnostics/asthma_children.chr{}.susie_diagnostics.summary"
         
 
-[Fri Jan 19 12:41:45 2024]
-Job 11: working on phenotype=asthma_children
-Reason: Missing output files: data/LD/asthma_children
+[Wed Feb 14 19:23:46 2024]
+Job 3: working on phenotype=asthma_children
+Reason: Missing output files: data/collection/asthma_children/asthma_children.filteredGWAS.txt.gz, data/collection/asthma_children/asthma_children.EnformerLoci.txt; Input files updated by another job: data/finemapping/asthma_children
+
+
+        /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/collect_finemapping_results.R --finemapping_dir data/finemapping/asthma_children --phenotype asthma_children --filtered_sumstats data/collection/asthma_children/asthma_children.filteredGWAS.txt.gz --enformer_loci data/collection/asthma_children/asthma_children.EnformerLoci.txt
+        
+
+[Wed Feb 14 19:23:46 2024]
+Job 4: working on phenotype=asthma_children
+Reason: Missing output files: data/enformer_parameters/enformer_parameters_Asthma_GWAS_asthma_children.json; Input files updated by another job: data/collection/asthma_children/asthma_children.EnformerLoci.txt
+
+[Wed Feb 14 19:23:46 2024]
+Job 5: working on asthma_children
+Reason: Missing output files: data/enformer_parameters/aggregation_config_Asthma_GWAS_asthma_children.json; Input files updated by another job: data/enformer_parameters/enformer_parameters_Asthma_GWAS_asthma_children.json
+
+
+        python3 /beagle3/haky/users/shared_pipelines/enformer_pipeline_aggregate/scripts/enformer_predict.py --parameters data/enformer_parameters/enformer_parameters_Asthma_GWAS_asthma_children.json
+        
+
+[Wed Feb 14 19:23:46 2024]
+Job 6: working on phenotype=asthma_children
+Reason: Missing output files: data/checkpoints/asthma_children.checkpoint, data/aggregated_predictions/asthma_children; Input files updated by another job: data/enformer_parameters/aggregation_config_Asthma_GWAS_asthma_children.json; Code has changed since last execution; Params have changed since last execution
+
+[Wed Feb 14 19:23:46 2024]
+Job 7: working on asthma_children
+Reason: Missing output files: data/enpact_predictions/asthma_children; Input files updated by another job: data/checkpoints/asthma_children.checkpoint, data/aggregated_predictions/asthma_children
 
 
         module load parallel;
-        dname=`dirname data/LD/asthma_children/asthma_children.chr{}`;
-        mkdir -p ${dname};
-        /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_LD.R --bfile_pattern /project2/haky/Data/1000G/plink_ref_panel/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased --snplist_pattern data/processed_sumstats/asthma_children/asthma_children.chr{}.SNPsForLD --output_pattern data/LD/asthma_children/asthma_children.chr{}
+        mkdir -p data/enpact_predictions/asthma_children;
+        printf "%s\n"  | parallel -j 5 '/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_enpact_scores.R --input_file data/aggregated_predictions/asthma_children/{}_aggByCollect_asthma_children.csv.gz --output_file data/enpact_predictions/asthma_children/{}.asthma_children.aggByCollect.2024-01-31.csv.gz --enpact_models_directory /project2/haky/temi/projects/TFPred-snakemake/output/models --filters_date 2023-12-01 --filters_type logistic'
         
 
-[Fri Jan 19 12:41:45 2024]
-Job 2: working on phenotype=testosterone
-Reason: Missing output files: data/LD/testosterone
-
-
-        module load parallel;
-        dname=`dirname data/LD/testosterone/testosterone.chr{}`;
-        mkdir -p ${dname};
-        /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_LD.R --bfile_pattern /project2/haky/Data/1000G/plink_ref_panel/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased --snplist_pattern data/processed_sumstats/testosterone/testosterone.chr{}.SNPsForLD --output_pattern data/LD/testosterone/testosterone.chr{}
-        
-
-[Fri Jan 19 12:41:45 2024]
-Job 5: working on phenotype=asthma
-Reason: Missing output files: data/LD/asthma
-
-
-        module load parallel;
-        dname=`dirname data/LD/asthma/asthma.chr{}`;
-        mkdir -p ${dname};
-        /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_LD.R --bfile_pattern /project2/haky/Data/1000G/plink_ref_panel/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased --snplist_pattern data/processed_sumstats/asthma/asthma.chr{}.SNPsForLD --output_pattern data/LD/asthma/asthma.chr{}
-        
-
-[Fri Jan 19 12:41:45 2024]
-rule count:
-    input: data/LD/prostate_cancer_risk
-    output: data/prostate_cancer_risk.count.txt
-    jobid: 7
-    reason: Missing output files: data/prostate_cancer_risk.count.txt; Input files updated by another job: data/LD/prostate_cancer_risk
-    wildcards: phenotype=prostate_cancer_risk
-    resources: mem_mb=<TBD>, disk_mb=<TBD>, tmpdir=<TBD>, partition=caslake, time=02:00:00, account=pi-haky, nodes=1, gpu=0, mem_cpu=4, cpu_task=8
-
-
-        ls data/LD/prostate_cancer_risk | wc -l > 'data/prostate_cancer_risk.count.txt'
-        
-
-[Fri Jan 19 12:41:45 2024]
-rule count:
-    input: data/LD/asthma_children
-    output: data/asthma_children.count.txt
-    jobid: 10
-    reason: Missing output files: data/asthma_children.count.txt; Input files updated by another job: data/LD/asthma_children
+[Wed Feb 14 19:23:46 2024]
+rule prepare_files_for_predictDB:
+    input: data/enpact_predictions/asthma_children
+    output: data/predictdb/asthma_children/asthma_children.enpact_scores.txt, data/predictdb/asthma_children/asthma_children.tf_tissue_annot.txt
+    jobid: 8
+    reason: Missing output files: data/predictdb/asthma_children/asthma_children.enpact_scores.txt, data/predictdb/asthma_children/asthma_children.tf_tissue_annot.txt; Input files updated by another job: data/enpact_predictions/asthma_children
     wildcards: phenotype=asthma_children
     resources: mem_mb=<TBD>, disk_mb=<TBD>, tmpdir=<TBD>, partition=caslake, time=02:00:00, account=pi-haky, nodes=1, gpu=0, mem_cpu=4, cpu_task=8
 
+/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/prepare_files_for_predictDB.R --individuals  --input_file_pattern data/enpact_predictions/asthma_children/{}.asthma_children.aggByCollect.2024-01-31.csv.gz --output_directory data/predictdb/asthma_children --filtered_GWAS_file data/collection/asthma_children/asthma_children.filteredGWAS.txt.gz --phenotype asthma_children
 
-        ls data/LD/asthma_children | wc -l > 'data/asthma_children.count.txt'
-        
-
-[Fri Jan 19 12:41:45 2024]
-rule count:
-    input: data/LD/asthma_adults
-    output: data/asthma_adults.count.txt
-    jobid: 13
-    reason: Missing output files: data/asthma_adults.count.txt; Input files updated by another job: data/LD/asthma_adults
-    wildcards: phenotype=asthma_adults
-    resources: mem_mb=<TBD>, disk_mb=<TBD>, tmpdir=<TBD>, partition=caslake, time=02:00:00, account=pi-haky, nodes=1, gpu=0, mem_cpu=4, cpu_task=8
-
-
-        ls data/LD/asthma_adults | wc -l > 'data/asthma_adults.count.txt'
-        
-
-[Fri Jan 19 12:41:45 2024]
-rule count:
-    input: data/LD/testosterone
-    output: data/testosterone.count.txt
-    jobid: 1
-    reason: Missing output files: data/testosterone.count.txt; Input files updated by another job: data/LD/testosterone
-    wildcards: phenotype=testosterone
-    resources: mem_mb=<TBD>, disk_mb=<TBD>, tmpdir=<TBD>, partition=caslake, time=02:00:00, account=pi-haky, nodes=1, gpu=0, mem_cpu=4, cpu_task=8
-
-
-        ls data/LD/testosterone | wc -l > 'data/testosterone.count.txt'
-        
-
-[Fri Jan 19 12:41:45 2024]
-rule count:
-    input: data/LD/asthma
-    output: data/asthma.count.txt
-    jobid: 4
-    reason: Missing output files: data/asthma.count.txt; Input files updated by another job: data/LD/asthma
-    wildcards: phenotype=asthma
-    resources: mem_mb=<TBD>, disk_mb=<TBD>, tmpdir=<TBD>, partition=caslake, time=02:00:00, account=pi-haky, nodes=1, gpu=0, mem_cpu=4, cpu_task=8
-
-
-        ls data/LD/asthma | wc -l > 'data/asthma.count.txt'
-        
-
-[Fri Jan 19 12:41:45 2024]
+[Wed Feb 14 19:23:46 2024]
 localrule all:
-    input: data/testosterone.count.txt, data/asthma.count.txt, data/prostate_cancer_risk.count.txt, data/asthma_children.count.txt, data/asthma_adults.count.txt
+    input: data/sumstats/asthma_children.liftover.logistic.assoc.tsv.gz, data/processed_sumstats/asthma_children, data/finemapping/asthma_children, data/collection/asthma_children/asthma_children.filteredGWAS.txt.gz, data/collection/asthma_children/asthma_children.EnformerLoci.txt, data/enformer_parameters/enformer_parameters_Asthma_GWAS_asthma_children.json, data/enformer_parameters/aggregation_config_Asthma_GWAS_asthma_children.json, data/checkpoints/asthma_children.checkpoint, data/aggregated_predictions/asthma_children, data/enpact_predictions/asthma_children, data/predictdb/asthma_children/asthma_children.enpact_scores.txt, data/predictdb/asthma_children/asthma_children.tf_tissue_annot.txt
     jobid: 0
-    reason: Input files updated by another job: data/testosterone.count.txt, data/asthma_children.count.txt, data/prostate_cancer_risk.count.txt, data/asthma.count.txt, data/asthma_adults.count.txt
+    reason: Input files updated by another job: data/enformer_parameters/enformer_parameters_Asthma_GWAS_asthma_children.json, data/collection/asthma_children/asthma_children.EnformerLoci.txt, data/collection/asthma_children/asthma_children.filteredGWAS.txt.gz, data/enpact_predictions/asthma_children, data/enformer_parameters/aggregation_config_Asthma_GWAS_asthma_children.json, data/finemapping/asthma_children, data/aggregated_predictions/asthma_children, data/checkpoints/asthma_children.checkpoint, data/predictdb/asthma_children/asthma_children.enpact_scores.txt, data/predictdb/asthma_children/asthma_children.tf_tissue_annot.txt
     resources: mem_mb=<TBD>, disk_mb=<TBD>, tmpdir=/scratch/midway3/temi, partition=caslake, time=02:00:00, account=pi-haky, nodes=1, gpu=0, mem_cpu=4, cpu_task=8
 
 Job stats:
-job             count    min threads    max threads
-------------  -------  -------------  -------------
-all                 1              1              1
-calculate_LD        5              1              1
-count               5              1              1
-total              11              1              1
+job                                count    min threads    max threads
+-------------------------------  -------  -------------  -------------
+aggregate_predictions                  1              1              1
+all                                    1              1              1
+calculate_enpact_scores                1              1              1
+collect_finemapping_results            1              1              1
+create_enformer_configuration          1              1              1
+predict_with_enformer                  1              1              1
+prepare_files_for_predictDB            1              1              1
+run_susie_on_summary_statistics        1              1              1
+total                                  8              1              1
 
 Reasons:
     (check individual jobs above for details)
+    code has changed since last execution:
+        aggregate_predictions
     input files updated by another job:
-        all, count
+        aggregate_predictions, all, calculate_enpact_scores, collect_finemapping_results, create_enformer_configuration, predict_with_enformer, prepare_files_for_predictDB
     missing output files:
-        calculate_LD, count
+        aggregate_predictions, calculate_enpact_scores, collect_finemapping_results, create_enformer_configuration, predict_with_enformer, prepare_files_for_predictDB, run_susie_on_summary_statistics
+    params have changed since last execution:
+        aggregate_predictions
+Some jobs were triggered by provenance information, see 'reason' section in the rule displays above.
+If you prefer that only modification time is used to determine whether a job shall be executed, use the command line option '--rerun-triggers mtime' (also see --help).
+If you are sure that a change for a certain output file (say, <outfile>) won't change the result (e.g. because you just changed the formatting of a script or environment definition), you can also wipe its metadata to skip such a trigger via 'snakemake --cleanup-metadata <outfile>'. 
+Rules with provenance triggered jobs: aggregate_predictions
+
 
 This was a dry-run (flag -n). The order of jobs does not reflect the order of execution.

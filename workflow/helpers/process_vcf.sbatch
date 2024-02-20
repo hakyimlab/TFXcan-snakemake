@@ -51,17 +51,30 @@ for pop in "${popcode[@]}"; do
     famExistingFiles=$(printf "%s\n" {1..22} X | xargs -I {} bash -c 'if [ ! -f '${pop_dir}/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.fam' ]; then echo {} ; fi')
     bedExistingFiles=$(printf "%s\n" {1..22} X | xargs -I {} bash -c 'if [ ! -f '${pop_dir}/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.bed' ]; then echo {} ; fi')
     bimExistingFiles=$(printf "%s\n" {1..22} X | xargs -I {} bash -c 'if [ ! -f '${pop_dir}/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.bim' ]; then echo {} ; fi')
+    trawExistingFiles=$(printf "%s\n" {1..22} X | xargs -I {} bash -c 'if [ ! -f '${pop_dir}/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.traw' ]; then echo {} ; fi')
 
-    if [[ -n ${famExistingFiles} && -n ${bedExistingFiles} && -n ${bimExistingFiles} ]]; then 
+    if [[ -n ${famExistingFiles} && -n ${bedExistingFiles} && -n ${bimExistingFiles} && -n ${trawExistingFiles} ]]; then 
         echo "INFO - Creating bfiles for ${pop} samples"
-        printf "%s\n" {1..22} X | parallel -j 23 "echo plink --make-bed --vcf ${vcfs_dir}/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.vcf.gz --maf 0.01 --geno 0.01 --hwe 1e-5 --set-missing-var-ids '@_#_\$1_\$2' --out ${pop_dir}/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased --keep ${metadata_dir}/${pop}.samples.txt --recode A-transpose --keep-allele-order" 
+        printf "%s\n" {1..22} X | parallel -j 23 "plink --make-bed --vcf ${vcfs_dir}/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.vcf.gz --maf 0.01 --geno 0.01 --hwe 1e-5 --set-missing-var-ids '@_#_\$1_\$2' --out ${pop_dir}/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased --keep ${metadata_dir}/${pop}.samples.txt --recode A-transpose --keep-allele-order" 
     else 
         echo "INFO - All necessary bfiles exist" #&& exit 
     fi
 done
 
 echo "INFO - Creating dosage files for all population-chromosome combinations"
-parallel -j 5 "${rscript} /project2/haky/temi/projects/TFXcan-snakemake/workflow/helpers/encode_alleles.R --bfile ${population_data_dir}/{1}/bfiles/ALL.chr{2}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased --output_prefix ${population_data_dir}/{1}/bfiles/ALL.chr{2}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased" ::: "${popcode[@]}" ::: "${chromosomes[@]}"
+parallel -j 10 "${rscript} /project2/haky/temi/projects/TFXcan-snakemake/workflow/helpers/encode_alleles.R --bfile ${population_data_dir}/{1}/bfiles/ALL.chr{2}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased --output_prefix ${population_data_dir}/{1}/bfiles/ALL.chr{2}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased" ::: "${popcode[@]}" ::: "${chromosomes[@]}"
+
+
+for pop in "${popcode[@]}"; do
+    echo "INFO - creating megafile for ${pop} samples"
+    pop_dir=${population_data_dir}/${pop}/bfiles
+    out_dir=${population_data_dir}/${pop}/annot_files
+    mkdir -p ${pop_dir} ${out_dir}
+
+    if [[ ! -f "${out_dir}/${pop}.geno.txt.gz" && ! -f "${out_dir}${pop}.snp_annot.txt.gz" ]]; then
+        ${rscript} /project2/haky/temi/projects/TFXcan-snakemake/workflow/helpers/prepare.R --pop ${pop} --snp_annot_pattern ${pop_dir}/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.snp_annot.txt.gz --geno_pattern ${pop_dir}/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.geno.txt.gz --output_folder ${out_dir}
+    fi
+done
 
 # printf "%s\n" {1..22} X Y | parallel -j 23 "ls -1 ./ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.fam" 
 

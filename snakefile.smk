@@ -24,10 +24,11 @@ PROCESSED_SUMSTATS = os.path.join(DATA_DIR, 'processed_sumstats')
 FINEMAPPING_DIR = os.path.join(DATA_DIR, 'finemapping')
 COLLECTION_DIR = os.path.join(DATA_DIR, 'collection')
 ENFORMER_PARAMETERS = os.path.join(DATA_DIR, 'enformer_parameters')
-ENFORMER_PREDICTIONS = os.path.join(config['scratch_dir'], f"{config['runname']}_{config['date']}", 'predictions_folder') if os.path.exists(config['scratch_dir']) else os.path.join(DATA_DIR, 'enformer_predictions')
+ENFORMER_PREDICTIONS = os.path.join(DATA_DIR, 'enformer_predictions') #os.path.join(config['scratch_dir'], f"{config['runname']}_{config['date']}", 'predictions_folder') if os.path.exists(config['scratch_dir']) else os.path.join(DATA_DIR, 'enformer_predictions')
 AGGREGATED_PREDICTIONS = os.path.join(DATA_DIR, 'aggregated_predictions')
 ENPACT_PREDICTIONS = os.path.join(DATA_DIR, 'enpact_predictions')
 CHECKPOINTS_DIR = os.path.join(DATA_DIR, 'checkpoints')
+PREDICTDB_DATA = os.path.join(DATA_DIR, 'predictdb')
 
 def read_metadata(mtdt_file):
     dd = pd.read_csv(mtdt_file)
@@ -46,6 +47,13 @@ run_list = read_metadata(config["metadata"])
 def collect_processed_summary_statistics(wildcards):
     #checkpoint_output = checkpoints.process_summary_statistics.get(**wildcards).output[0]
     chromosomes = glob_wildcards(os.path.join(PROCESSED_SUMSTATS, '{phenotype}', 'chr{chrom}.sumstats.txt.gz')).chrom #glob_wildcards(os.path.join(checkpoint_output, 'chr{chrom}.sumstats.txt.gz')).chrom
+    output = expand(os.path.join(PROCESSED_SUMSTATS, "{phenotype}", 'chr{chrom}.sumstats.txt.gz'), chrom=chromosomes, phenotype = run_list.keys())
+    # print(output)
+    return output
+
+def collect_filtered_summary_statistics(wildcards):
+    #checkpoint_output = checkpoints.process_summary_statistics.get(**wildcards).output[0]
+    chromosomes = glob_wildcards(os.path.join(FINEMAPPING_DIR, '{phenotype}', 'chr{chrom}.sumstats.txt.gz')).chrom #glob_wildcards(os.path.join(checkpoint_output, 'chr{chrom}.sumstats.txt.gz')).chrom
     output = expand(os.path.join(PROCESSED_SUMSTATS, "{phenotype}", 'chr{chrom}.sumstats.txt.gz'), chrom=chromosomes, phenotype = run_list.keys())
     # print(output)
     return output
@@ -76,6 +84,7 @@ def collect_aggregated_individuals():
 
 rule all:
     input:
+        expand(os.path.join(INPUT_SUMSTATS, '{phenotype}.liftover.logistic.assoc.tsv.gz'), phenotype = run_list.keys()),
         expand(os.path.join(PROCESSED_SUMSTATS, '{phenotype}'), phenotype = run_list.keys()),
         expand(os.path.join(FINEMAPPING_DIR, '{phenotype}'), phenotype = run_list.keys()),
         expand(os.path.join(COLLECTION_DIR, '{phenotype}', f'{{phenotype}}.filteredGWAS.txt.gz'), phenotype = run_list.keys()),
@@ -84,36 +93,41 @@ rule all:
         expand(os.path.join(ENFORMER_PARAMETERS, f'aggregation_config_{config["runname"]}_{{phenotype}}.json'), phenotype = run_list.keys()),
         expand(os.path.join(CHECKPOINTS_DIR, '{phenotype}.checkpoint'), phenotype = run_list.keys()),
         expand(os.path.join(AGGREGATED_PREDICTIONS, '{phenotype}'), phenotype = run_list.keys()),
-        expand(os.path.join(ENPACT_PREDICTIONS, '{phenotype}'), phenotype = run_list.keys())
+        expand(os.path.join(ENPACT_PREDICTIONS, '{phenotype}'), phenotype = run_list.keys()),
+        expand(os.path.join(PREDICTDB_DATA, '{phenotype}', '{phenotype}.enpact_scores.txt'), phenotype = run_list.keys()),
+        expand(os.path.join(PREDICTDB_DATA, '{phenotype}', '{phenotype}.tf_tissue_annot.txt'), phenotype = run_list.keys()),
+        expand(os.path.join('output', 'lEnpact', '{phenotype}/models/filtered_db/predict_db_{phenotype}_filtered.db'), phenotype = run_list.keys())
         
-checkpoint process_summary_statistics:
-    input: lambda wildcards: os.path.join(INPUT_SUMSTATS, '{phenotype}')
+rule process_summary_statistics:
+    input: os.path.join(INPUT_SUMSTATS, '{phenotype}.liftover.logistic.assoc.tsv.gz')
     output: directory(os.path.join(PROCESSED_SUMSTATS, '{phenotype}'))
     params:
         rscript = config['rscript'],
         jobname = '{phenotype}',
+        diag_file = os.path.join(DATA_DIR, 'diagnostics', f'{{phenotype}}.gwas_diagnostics.summary')
         #input_file = os.path.join(INPUT_SUMSTATS, run_list[phenotype]),
     message: "working on {wildcards}" 
     resources:
         mem_mb = 10000
     shell:
         """
-        {params.rscript} workflow/src/process_summary_statistics.R --summary_stats_file {input} --output_folder {output} --phenotype {wildcards.phenotype}
+        {params.rscript} workflow/src/process_summary_statistics.R --summary_stats_file {input} --output_folder {output} --phenotype {wildcards.phenotype} --diagnostics_file {params.diag_file}
         """
 
-checkpoint run_susie_on_summary_statistics: 
+rule run_susie_on_summary_statistics: 
     input: 
+        rules.process_summary_statistics.output,
         collect_processed_summary_statistics
     output:
         directory(os.path.join(FINEMAPPING_DIR, '{phenotype}'))
-        #out = lambda wildcards: os.path.join(FINEMAPPING_DIR, wildcards.phenotype, f'{wildcards.phenotype}.chr{{chrom}}.filteredGWAS.txt.gz')
+        #os.path.join(FINEMAPPING_DIR, '{phenotype}', 'chr{chrom}.filteredGWAS.txt.gz')
     params:
         rscript = config['rscript'],
         jobname = '{phenotype}',
         input_sumstats = lambda wildcards: os.path.join(PROCESSED_SUMSTATS, wildcards.phenotype, f'chr{{}}.sumstats.txt.gz'),
         ld_blocks = config['finemapping']['LD_blocks'],
-        #input_files = aggregate_for_susie,
-        chroms = collect_chromosomes
+        chroms = collect_chromosomes,
+        diag_file = os.path.join(DATA_DIR, 'diagnostics', f'{{phenotype}}.chr{{}}.susie_diagnostics.summary')
     message: "working on {wildcards}"
     resources:
         partition="beagle3",
@@ -121,14 +135,14 @@ checkpoint run_susie_on_summary_statistics:
     shell:
         """
         module load parallel;
-        printf "%s\\n" {params.chroms} | parallel -j 12 "{params.rscript} workflow/src/run_susie_on_summary_statistics.R --chromosome {{}} --sumstats {params.input_sumstats} --LDBlocks_info {params.ld_blocks} --output_folder {output} --phenotype {wildcards.phenotype} --pip_threshold 0.5"
+        printf "%s\\n" {params.chroms} | parallel -j 12 "{params.rscript} workflow/src/run_susie_on_summary_statistics.R --chromosome {{}} --sumstats {params.input_sumstats} --LDBlocks_info {params.ld_blocks} --output_folder {output} --phenotype {wildcards.phenotype} --pip_threshold 0.5 --diagnostics_file {params.diag_file}"
         """
 
 rule collect_finemapping_results:
-    input:
-        os.path.join(FINEMAPPING_DIR, '{phenotype}')
+    input: rules.run_susie_on_summary_statistics.output
+        #os.path.join(FINEMAPPING_DIR, '{phenotype}')
     output:
-        finemapped_sumstats = os.path.join(COLLECTION_DIR, '{phenotype}', f'{{phenotype}}.filteredGWAS.txt.gz'),
+        finemapped_sumstats = os.path.join(COLLECTION_DIR, '{phenotype}', '{phenotype}.filteredGWAS.txt.gz'),
         enformer_loci = os.path.join(COLLECTION_DIR, '{phenotype}', f'{{phenotype}}.EnformerLoci.txt')
     params:
         rscript = config['rscript'],
@@ -154,7 +168,7 @@ rule create_enformer_configuration:
         dset = config['runname'],
         model = config['enformer']['model'],
         fasta_file = config['genome']['fasta'],
-        pdir = os.path.join(DATA_DIR, '{phenotype}'),
+        pdir = DATA_DIR,
         ddate = config['date'],
         jobname = '{phenotype}',
         personalized_predictions = config['personalized_predictions'],
@@ -186,12 +200,12 @@ rule predict_with_enformer:
         python3 {params.enformer_predict_script} --parameters {input}
         """
 
-checkpoint aggregate_predictions:
+rule aggregate_predictions:
     input:
         rules.predict_with_enformer.output
     output:
-        touch(os.path.join(CHECKPOINTS_DIR, '{phenotype}.checkpoint'))
-        #directory(os.path.join(AGGREGATED_PREDICTIONS, '{phenotype}'))
+        touch(os.path.join(CHECKPOINTS_DIR, '{phenotype}.checkpoint')),
+        directory(os.path.join(AGGREGATED_PREDICTIONS, '{phenotype}'))
     message: 
         "working on {wildcards}"
     resources:
@@ -217,7 +231,7 @@ checkpoint aggregate_predictions:
 
 
 rule calculate_enpact_scores:
-    input: os.path.join(AGGREGATED_PREDICTIONS, '{phenotype}')
+    input: rules.aggregate_predictions.output #lambda wildcards: os.path.join(AGGREGATED_PREDICTIONS, wildcards.phenotype, f'{{}}_{config["enformer"]["aggtype"]}_{{phenotype}}.csv.gz') #os.path.join(AGGREGATED_PREDICTIONS, '{phenotype}')
     output: directory(os.path.join(ENPACT_PREDICTIONS, '{phenotype}'))
     params:
         rscript = config['rscript'],
@@ -239,6 +253,103 @@ rule calculate_enpact_scores:
         mkdir -p {output};
         printf "%s\\n" {params.individuals} | parallel -j 5 '{params.rscript} workflow/src/calculate_enpact_scores.R --input_file {params.input_file} --output_file {params.output_file} --enpact_models_directory {params.models_directory} --filters_date {params.models_filters_date} --filters_type {params.models_filters_type}'
         """
+
+rule prepare_files_for_predictDB:
+    input: os.path.join(ENPACT_PREDICTIONS, '{phenotype}')
+    output: 
+        enpact_scores = os.path.join(PREDICTDB_DATA, '{phenotype}', '{phenotype}.enpact_scores.txt'),
+        annot_file = os.path.join(PREDICTDB_DATA, '{phenotype}', '{phenotype}.tf_tissue_annot.txt')
+    params:
+        rscript = config['rscript'],
+        input_files = lambda wildcards, output: os.path.join(ENPACT_PREDICTIONS, wildcards.phenotype, f'{{}}.{wildcards.phenotype}.{config["enformer"]["aggtype"]}.{config["date"]}.csv.gz'),
+        individuals = lambda wildcards: ','.join(collect_aggregated_individuals()),
+        output_dir = os.path.join(PREDICTDB_DATA, '{phenotype}'),
+        jobname = '{phenotype}',
+        filtered_gwas = rules.collect_finemapping_results.output.finemapped_sumstats
+    resources:
+        partition="caslake"
+    shell: "{params.rscript} workflow/src/prepare_files_for_predictDB.R --individuals {params.individuals} --input_file_pattern {params.input_files} --output_directory {params.output_dir} --filtered_GWAS_file {params.filtered_gwas} --phenotype {params.jobname}"
+
+
+rule generate_lEnpact_models:
+    input:
+        enpact_scores = rules.prepare_files_for_predictDB.output.enpact_scores,
+        annot_file = rules.prepare_files_for_predictDB.output.annot_file
+    output:
+        lEnpact_model = os.path.join('output', 'lEnpact', '{phenotype}/models/filtered_db/predict_db_{phenotype}_filtered.db')
+    params:
+        jobname = '{phenotype}',
+        output_dir = os.path.abspath(os.path.join('output', 'lEnpact')),
+        annot_file = os.path.abspath(rules.prepare_files_for_predictDB.output.annot_file),
+        enpact_scores = os.path.abspath(rules.prepare_files_for_predictDB.output.enpact_scores)
+    resources:
+        partition="caslake"
+    shell: "workflow/helpers/generate_lEnpact_models.EUR.midway3.sbatch {wildcards.phenotype} {params.output_dir} {params.annot_file} {params.enpact_scores}"
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -10,35 +10,40 @@ option_list <- list(
     make_option("--n", help='summary statistics sample size', default = 1000000L),
     make_option("--L", help='summary statistics sample size', default = 10L),
     make_option("--LDBlocks_info", help='A list of files to combine'),
-    make_option("--pip_threshold", default=0.8, help='threshold to filter SNPs by PIP', type='numeric'),
+    make_option("--pip_threshold", default=0.5, help='threshold to filter SNPs by PIP', type='numeric'),
     make_option("--genotypes_dosages_pattern", default='/project2/haky/Data/1000G/population_data/EUR/bfiles/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.geno.txt.gz', help=''),
     make_option("--output_folder", help='threshold to filter SNPs by PIP'),
-    make_option("--phenotype", help='threshold to filter SNPs by PIP')
+    make_option("--phenotype", help='threshold to filter SNPs by PIP'),
+    make_option('--diagnostics_file', type='character', default=NULL, help='')
 )
 
 opt <- parse_args(OptionParser(option_list=option_list))  
 
-library(data.table)
-library(tidyverse)
-library(susieR)
-library(glue)
+library(data.table) |> suppressPackageStartupMessages()
+library(tidyverse) |> suppressPackageStartupMessages()
+library(susieR) |> suppressPackageStartupMessages()
+library(glue) |> suppressPackageStartupMessages()
+library(bigsnpr) |> suppressPackageStartupMessages()
 
 # opt <- list()
-# opt$chromosome <- '6'
-# opt$sumstats <- "/project2/haky/temi/projects/TFXcan-snakemake/data/processed_sumstats/asthma_children.liftover.logistic.assoc.tsv.gz"
+# opt$chromosome <- '12'
+# opt$sumstats <- "/project2/haky/temi/projects/TFXcan-snakemake/data/processed_sumstats/asthma_children/chr12.sumstats.txt.gz"
 # #"/project2/haky/temi/projects/TFPred/data/asthma/asthma_children.logistic.assoc.tsv.gz" #"/project2/haky/temi/projects/TFXcan-snakemake/data/sumstats/prostate_cancer_risk.gwas_sumstats.ALL.filtered.txt.gz"
 # opt$LDMatrix_folder <- "/project2/haky/Data/1000G/LD/LD_matrices/EUR"
 # #opt$LD_window <- 200000
 # opt$LDBlocks_info <- '/project2/haky/Data/LD_blocks/hg38/EUR/hg38_fourier_ls-all.bed'
 # opt$n <- 1000000L
 # opt$L <- 10L
-# opt$pip_threshold <- 0.8
+# opt$pip_threshold <- 0.5
 # opt$genotypes_dosages_pattern <- '/project2/haky/Data/1000G/population_data/EUR/bfiles/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.geno.txt.gz'
+# opt$diagnostics_file <- NULL
 
 # LDMat_chr <- file.path(opt$LDMatrix_folder, paste0('chr', opt$chromosome))
 sumstats <- data.table::fread(opt$sumstats) %>%
     dplyr::filter(chrom == opt$chromosome) %>%
-    dplyr::mutate(chrom=as.character(paste('chr', chrom, sep='')))
+    dplyr::rename(a0 = ref, a1=alt, chr=chrom) %>%
+    dplyr::mutate(chr = as.character(chr))
+    #dplyr::mutate(chrom=as.character(paste('chr', chrom, sep='')))
     #dplyr::filter(chr == opt$chromosome) %>%
     # dplyr::mutate(chr=as.character(gsub('chr', '', chr))) %>% #, SNP=paste(chr, pos, alt, ref, sep='_')) %>%
     # dplyr::rename(zscore=zstat, chrom=chr)
@@ -60,42 +65,138 @@ if(!dir.exists(opt$output_folder)){
     dir.create(opt$output_folder)
 }
 
+# use bigsnpr to correct the alleles
+gdt <- genotypes_chr %>%
+    dplyr::select(varID) %>%
+    tidyr::separate(varID, into=c('chr', 'pos', 'a0', 'a1'), remove=F) %>%
+    dplyr::mutate(pos = as.integer(pos))
 
-runSusiePerLDBlock <- function(ld_window, summary_stat){
+matched_stats <- bigsnpr::snp_match(sumstats, gdt) |> data.table::setDT()
+matched_stats <- matched_stats %>%
+    dplyr::select(chrom=chr, pos, a0, a1, rsid, beta, se, zscore, pval, adjP, gwas_significant, varID)
+
+data.table::fwrite(matched_stats, file=file.path(opt$output_folder, glue('{opt$phenotype}.chr{opt$chromosome}.bigsnpr.txt.gz')), compress='gzip', quote=F, row.names=F, sep = '\t')
+
+
+
+if(!is.null(opt$diagnostics_file)){
+    if(!file.exists(dirname(opt$diagnostics_file))){
+        if(!dir.exists(dirname(opt$diagnostics_file))){
+            dir.create(dirname(opt$diagnostics_file), recursive = TRUE)
+        }
+    }
+
+    diagfile <- file(opt$diagnostics_file, open = "a")
+    cat("#### Susie diagnostics", file = diagfile, sep = '\n')
+} else {
+    diagfile <- NULL
+}
+
+#sum(sumstats$SNP %in% genotypes_chr$varID)
+
+# ld_window <- split_ld_blocks[[33]]
+# summary_stat <- matched_stats
+
+
+
+
+getChosenLoci <- function(susie_fit, threshold){
+    # take the summary of fit and summarize
+
+    summary_dt <- base::summary(susie_fit)[['vars']] %>% 
+        dplyr::group_by(cs) %>%
+        dplyr::summarise(sum_pip = sum(variable_prob, na.rm=TRUE)) %>%
+        dplyr::filter(cs >= 1)
+
+    which_cs <- summary_dt %>%
+        dplyr::filter(sum_pip >= threshold) %>%
+        dplyr::pull(cs)
+
+    which_vars <- summary(susie_fit)[["cs"]] %>%
+        as.data.frame() %>%
+        dplyr::filter(cs %in% which_cs) %>%
+        dplyr::pull(variable) %>%
+        base::strsplit(., split=',') %>%
+        unlist() %>% as.numeric()
+
+    vars_dt <- susie_fit$pip[which_vars] %>%
+        as.data.frame() %>%
+        tibble::rownames_to_column('SNP') %>%
+        setNames(., c('SNP', 'PIP'))
+
+    vars_dt <- cbind(which_vars, vars_dt)
+
+    return(vars_dt)
+}
+
+runSusiePerLDBlock <- function(ld_window, summary_stat, conn=NULL){
     ldfile_basename <- paste(ld_window$chrom, ld_window$start, ld_window$stop, sep='_')
-    print(ldfile_basename)
-    vqueries <- sumstats %>%
+    vqueries <- summary_stat %>%
         dplyr::filter(dplyr::between(pos, ld_window$start, ld_window$stop))
 
-    X <- genotypes_chr %>%
-        dplyr::filter(varID %in% vqueries$SNP) %>%
-        tibble::column_to_rownames('varID') %>%
-        as.matrix() %>% 
-        t() %>% 
-        scale()
-    Rmat <- cor(X)
+    #print(vqueries[1:5, ])
 
-    zscores <- vqueries %>%
-        dplyr::filter(SNP %in% row.names(Rmat)) %>%
-        dplyr::pull(zscore)
-
-    result <- tryCatch(
-        withCallingHandlers({   
-                fitted_rss <- susieR::susie_rss(z=zscores, n = opt$n, R = Rmat, L=opt$L)
-                chosen_loci <- fitted_rss$pip[fitted_rss$pip >= opt$pip_threshold]
-                return(list(loci=chosen_loci, fit=fitted_rss))
-            },
-            warning = function(w){
-                message_txt <<- trimws(paste0("WARNING: ", w))
-                invokeRestart("muffleWarning")
-            }),
-        error=function(e){
-            print(glue('ERROR - Susie found errors'))
-            return(list(loci=NULL, fit=NULL))
+    if(!"YES" %in% vqueries$gwas_significant){
+        msg <- glue('INFO - No GWAS significant variants in the LD block {ldfile_basename}')
+        print(msg)
+        if(!is.null(conn)){
+            cat(msg, file = conn, sep = '\n')
         }
-    )
-    return(result)
+        return(list(loci=NULL, fit=NULL))
+    } else {
+        msg <- glue('INFO - GWAS significant variant(s) found in the LD block {ldfile_basename}')
+        print(msg)
+        if(!is.null(conn)){
+            cat(msg, file = conn, sep = '\n')
+        }
+
+        X <- genotypes_chr %>%
+            dplyr::filter(varID %in% vqueries$varID) %>%
+            tibble::column_to_rownames('varID') %>%
+            as.matrix() %>% 
+            t() %>% 
+            scale()
+        Rmat <- cor(X)
+
+        zscores <- vqueries %>%
+            dplyr::filter(varID %in% row.names(Rmat)) %>%
+            dplyr::pull(zscore)
+
+        result <- tryCatch(
+            withCallingHandlers({   
+                    fitted_rss <- susieR::susie_rss(z=zscores, n = opt$n, R = Rmat, L=opt$L)
+                    #chosen_loci <- fitted_rss$pip[fitted_rss$pip >= opt$pip_threshold]
+
+                    chosen_loci <- getChosenLoci(fitted_rss, threshold = opt$pip_threshold)
+                    if(!is.null(chosen_loci)){
+                        chosen_loci$ldBlock <- ldfile_basename
+                    }
+                    
+                    #print(head(chosen_loci))
+                    return(list(loci=chosen_loci, fit=fitted_rss))
+                },
+                warning = function(w){
+                    message_txt <<- trimws(paste0("WARNING: ", w))
+                    invokeRestart("muffleWarning")
+                }),
+            error=function(e){
+                print(glue('ERROR - Susie found errors'))
+                return(list(loci=NULL, fit=NULL))
+            }
+        )
+        return(result)
+    }
 }
+
+
+# ?bigsnpr::snp_match  # strand information is crucial in bioinformatic analysis
+# matched.gwas <- as_tibble(bigsnpr::snp_match(sumstats = gwas[["1452"]], 
+#                           info_snp = bigSNP[["1452"]]$map) %>% 
+#                           dplyr::rename(og_index = `_NUM_ID_.ss`) %>% 
+#                           dplyr::rename(bigSNP_index = `_NUM_ID_`))
+
+
+
 
 split_ld_blocks <- LD_block %>%
         base::split(., f=.$split)
@@ -103,38 +204,65 @@ split_ld_blocks <- LD_block %>%
 susieRun <- list()
 for(i in 1:length(split_ld_blocks)){
     blockName <- paste(split_ld_blocks[[i]]$chrom, split_ld_blocks[[i]]$start, split_ld_blocks[[i]]$stop, sep='_')
-    susieRun[[blockName]] <- runSusiePerLDBlock(split_ld_blocks[[i]], sumstats)
+    susieRun[[blockName]] <- runSusiePerLDBlock(split_ld_blocks[[i]], matched_stats, conn=diagfile)
 }
 
-# filter the convergence
-convergence <- sapply(susieRun, function(x) x$fit$converged) |> as.data.frame() %>%
-    tibble::rownames_to_column('ldBlock') %>%
-    dplyr::rename(convergence=2)
-# filter lCausalSnps 
-filteredSNPs <- lapply(susieRun, function(x){
-    dt <- as.data.frame(x$loci)
-    colnames(dt) <- 'pip'
-    if(nrow(dt) == 0){
-        return(NULL)
-    }
-    return(dt %>%
-        tibble::rownames_to_column('SNP'))
-}) 
-filteredSNPs <- Filter(Negate(is.null), filteredSNPs) 
+# close the connection if necessary
+if(!is.null(opt$diagnostics_file)){
+    close(diagfile)
+}
 
-isNullList <- function(x){all(!lengths(x))}
 
-if(!isNullList(filteredSNPs)){
-    bNames <- names(filteredSNPs)
-    filteredSNPs <- seq_along(filteredSNPs) %>%
-        lapply(., function(i){
-            filteredSNPs[[i]]$block <- bNames[i]
-            return(filteredSNPs[[i]])
-        }) %>%
-        do.call('rbind', .)
+# t1 <- list(a=list(a=1, b=2), c=list(a=NULL, b=2), d=list(a=NULL, b=2))
+# t2 <- list(a=list(a=1, b=NULL), c=list(a=NULL, b=NULL), d=list(a=NULL, b=NULL))
+# all(rapply(t2, length) == 0)
 
-    filteredGWAS <- sumstats %>%
-    dplyr::filter(SNP %in% filteredSNPs$SNP)
+# check that not everything is NULL
+isNullList <- all(rapply(susieRun, length) == 0)
+
+if(isNullList == FALSE){
+    # filter lCausalSnps 
+    filteredSNPs <- lapply(susieRun, function(x){
+        if(is.null(x$loci)){
+            return(NULL)
+        }
+        dt <- as.data.frame(x$loci)
+        if(nrow(dt) == 0){
+            return(NULL)
+        }
+        return(dt)
+    }) 
+    filteredSNPs <- Filter(Negate(is.null), filteredSNPs) %>%
+        do.call(rbind, .)
+    row.names(filteredSNPs) <- NULL
+
+    #isNullList <- function(x){all(!lengths(x))}
+    # filter the convergence
+    convergence <- sapply(susieRun, function(x){
+        if(is.null(x$fit)){
+            return(NULL)
+        }
+        return(x$fit$converged)
+    }) %>% Filter(Negate(is.null), .) %>%
+        as.data.frame() %>% t() %>% as.data.frame() %>%
+        tibble::rownames_to_column('ldBlock') %>%
+        dplyr::rename(convergence=2)
+
+    # bNames <- names(filteredSNPs)
+    # filteredSNPs <- seq_along(filteredSNPs) %>%
+    #     lapply(., function(i){
+    #         filteredSNPs[[i]]$block <- bNames[i]
+    #         return(filteredSNPs[[i]])
+    #     }) %>%
+    #     do.call('rbind', .) %>%
+    #     as.data.frame()
+
+    # print(head(filteredSNPs))
+
+
+    filteredGWAS <- matched_stats %>%
+        dplyr::filter(varID %in% filteredSNPs$SNP)
+
     if(!nrow(filteredGWAS) == 0){
         data.table::fwrite(filteredGWAS, file=file.path(opt$output_folder, glue('{opt$phenotype}.chr{opt$chromosome}.filteredGWAS.txt.gz')), compress='gzip', quote=F, row.names=F, sep = '\t')
 
@@ -146,7 +274,6 @@ if(!isNullList(filteredSNPs)){
             )) %>%
             dplyr::pull(locus) %>%
             base::data.frame(.)
-        print(head(ft))
         data.table::fwrite(as.data.frame(ft), file=file.path(opt$output_folder, glue('{opt$phenotype}.chr{opt$chromosome}.EnformerLoci.txt')), quote=F, row.names=F, sep = '\t', col.names=F)
     }
 
@@ -160,17 +287,43 @@ if(!isNullList(filteredSNPs)){
 
 
 
+# runSusiePerLDBlock(split_ld_blocks[[33]], sumstats, conn=diagfile)
+# susieRun[["chr12_55272053_57155077"]]$loci
+
+# gg <- susieRun[["chr12_55272053_57155077"]]$fit
+
+# getChosenLoci(fitted_rss, 0.5)
 
 
 
+# # take the summary of fit and summarize
+# summary_dt <- base::summary(gg)[['vars']] %>% 
+#     dplyr::group_by(cs) %>%
+#     dplyr::summarise(sum_pip = sum(variable_prob)) %>%
+#     dplyr::filter(cs >= 1)
 
+# which_cs <- summary_dt %>%
+#     dplyr::filter(sum_pip >= opt$pip_threshold) %>%
+#     dplyr::pull(cs)
 
+# which_vars <- summary(gg)[["cs"]] %>%
+#     as.data.frame() %>%
+#     dplyr::filter(cs %in% which_cs) %>%
+#     dplyr::pull(variable) %>%
+#     base::strsplit(., split=',') %>%
+#     setNames(., which_cs) %>%
+#     purrr::map_df(., ~ as.data.frame(.x), .id="id") %>%
+#     setNames(., c('cs', 'var_id')) %>%
+#     dplyr::mutate(var_id = as.numeric(var_id))
 
+# vars_dt <- gg$pip[which_vars$var_id] %>%
+#     as.data.frame() %>%
+#     tibble::rownames_to_column('SNP') %>%
+#     setNames(., c('SNP', 'PIP'))
 
+# vars_dt <- cbind(which_vars, vars_dt)
 
-
-
-
+# susie_plot(gg, y="PIP")
 
 # tryCatch(
 #       withCallingHandlers(

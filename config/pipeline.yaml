@@ -34,6 +34,6 @@ enformer:
   personalized_directives: "config/personalized_base.yaml"
   model: "/project2/haky/Data/enformer/raw"
   predict: "/beagle3/haky/users/shared_pipelines/enformer_pipeline_aggregate/scripts/enformer_predict.py"
-  aggregate: "/beagle3/haky/users/shared_pipelines/enformer_pipeline_aggregate/scripts/aggregate/aggregate.py"
+  aggregate: "workflow/src/aggregate.py"
   aggtype: "aggByCollect"
 ...
