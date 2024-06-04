@@ -78,7 +78,6 @@ matched_stats <- matched_stats %>%
 data.table::fwrite(matched_stats, file=file.path(opt$output_folder, glue('{opt$phenotype}.chr{opt$chromosome}.bigsnpr.txt.gz')), compress='gzip', quote=F, row.names=F, sep = '\t')
 
 
-
 if(!is.null(opt$diagnostics_file)){
     if(!file.exists(dirname(opt$diagnostics_file))){
         if(!dir.exists(dirname(opt$diagnostics_file))){
@@ -94,39 +93,46 @@ if(!is.null(opt$diagnostics_file)){
 
 #sum(sumstats$SNP %in% genotypes_chr$varID)
 
-# ld_window <- split_ld_blocks[[33]]
+# ld_window <- split_ld_blocks[[64]]
 # summary_stat <- matched_stats
+# susie_fit <- fitted_rss
+# threshold <- opt$pip_threshold
 
-
-
-
-getChosenLoci <- function(susie_fit, threshold){
+getChosenLoci <- function(susie_fit, threshold, ldblock=NULL){
     # take the summary of fit and summarize
 
     summary_dt <- base::summary(susie_fit)[['vars']] %>% 
         dplyr::group_by(cs) %>%
         dplyr::summarise(sum_pip = sum(variable_prob, na.rm=TRUE)) %>%
-        dplyr::filter(cs >= 1)
+        dplyr::filter(cs >= 0.95)
 
-    which_cs <- summary_dt %>%
-        dplyr::filter(sum_pip >= threshold) %>%
-        dplyr::pull(cs)
+    which_cs <- summary_dt$cs
 
-    which_vars <- summary(susie_fit)[["cs"]] %>%
-        as.data.frame() %>%
-        dplyr::filter(cs %in% which_cs) %>%
+    which_vars <- base::summary(susie_fit)[['vars']] %>%
+        dplyr::group_by(cs) %>%
+        dplyr::filter(variable_prob > threshold) %>%
         dplyr::pull(variable) %>%
-        base::strsplit(., split=',') %>%
-        unlist() %>% as.numeric()
+        as.numeric()
 
-    vars_dt <- susie_fit$pip[which_vars] %>%
-        as.data.frame() %>%
-        tibble::rownames_to_column('SNP') %>%
-        setNames(., c('SNP', 'PIP'))
+    if(length(which_vars > 0)){
+        # ensure the credible sets
+        cs_info <- base::summary(susie_fit)[['vars']] %>%
+            as.data.frame() %>%
+            dplyr::filter(variable %in% which_vars)
 
-    vars_dt <- cbind(which_vars, vars_dt)
+        vars_info <- susie_fit$pip[which_vars] %>%
+            as.data.frame() %>%
+            tibble::rownames_to_column('SNP') %>%
+            setNames(., c('SNP', 'PIP'))
 
-    return(vars_dt)
+        dt <- cbind(cs_info, vars_info)
+        dt$ldBlock <- ldblock
+        return(dt)
+
+    } else {
+        return(NULL)
+    }
+    
 }
 
 runSusiePerLDBlock <- function(ld_window, summary_stat, conn=NULL){
@@ -167,9 +173,13 @@ runSusiePerLDBlock <- function(ld_window, summary_stat, conn=NULL){
                     fitted_rss <- susieR::susie_rss(z=zscores, n = opt$n, R = Rmat, L=opt$L)
                     #chosen_loci <- fitted_rss$pip[fitted_rss$pip >= opt$pip_threshold]
 
-                    chosen_loci <- getChosenLoci(fitted_rss, threshold = opt$pip_threshold)
-                    if(!is.null(chosen_loci)){
-                        chosen_loci$ldBlock <- ldfile_basename
+                    chosen_loci <- getChosenLoci(fitted_rss, threshold = opt$pip_threshold, ldblock=ldfile_basename)
+                    if(is.null(chosen_loci)){
+                        msg <- glue('INFO - No Susie significant variant(s) found in the LD block {ldfile_basename}')
+                        print(msg)
+                        if(!is.null(conn)){
+                            cat(msg, file = conn, sep = '\n')
+                        }
                     }
                     
                     #print(head(chosen_loci))
@@ -196,8 +206,6 @@ runSusiePerLDBlock <- function(ld_window, summary_stat, conn=NULL){
 #                           dplyr::rename(bigSNP_index = `_NUM_ID_`))
 
 
-
-
 split_ld_blocks <- LD_block %>%
         base::split(., f=.$split)
 
@@ -206,6 +214,10 @@ for(i in 1:length(split_ld_blocks)){
     blockName <- paste(split_ld_blocks[[i]]$chrom, split_ld_blocks[[i]]$start, split_ld_blocks[[i]]$stop, sep='_')
     susieRun[[blockName]] <- runSusiePerLDBlock(split_ld_blocks[[i]], matched_stats, conn=diagfile)
 }
+
+# ld_window <- split_ld_blocks[[33]]
+# summary_stat <- matched_stats
+# runSusiePerLDBlock(lwindow, matched_stats, conn=diagfile)
 
 # close the connection if necessary
 if(!is.null(opt$diagnostics_file)){
@@ -236,6 +248,16 @@ if(isNullList == FALSE){
         do.call(rbind, .)
     row.names(filteredSNPs) <- NULL
 
+    tryCatch({
+        if(!is.null(filteredSNPs)){
+            data.table::fwrite(filteredSNPs, file=file.path(opt$output_folder, glue('{opt$phenotype}.chr{opt$chromosome}.finemapped.txt.gz')), compress='gzip', quote=F, row.names=F, sep = '\t')
+        }
+    }, error=function(e){
+        print(glue('ERROR - Cannot save the results from chr{opt$chromosome}'))
+    })
+    
+    
+
     #isNullList <- function(x){all(!lengths(x))}
     # filter the convergence
     convergence <- sapply(susieRun, function(x){
@@ -247,44 +269,65 @@ if(isNullList == FALSE){
         as.data.frame() %>% t() %>% as.data.frame() %>%
         tibble::rownames_to_column('ldBlock') %>%
         dplyr::rename(convergence=2)
-
-    # bNames <- names(filteredSNPs)
-    # filteredSNPs <- seq_along(filteredSNPs) %>%
-    #     lapply(., function(i){
-    #         filteredSNPs[[i]]$block <- bNames[i]
-    #         return(filteredSNPs[[i]])
-    #     }) %>%
-    #     do.call('rbind', .) %>%
-    #     as.data.frame()
-
-    # print(head(filteredSNPs))
-
-
-    filteredGWAS <- matched_stats %>%
-        dplyr::filter(varID %in% filteredSNPs$SNP)
-
-    if(!nrow(filteredGWAS) == 0){
-        data.table::fwrite(filteredGWAS, file=file.path(opt$output_folder, glue('{opt$phenotype}.chr{opt$chromosome}.filteredGWAS.txt.gz')), compress='gzip', quote=F, row.names=F, sep = '\t')
-
-        ft <- filteredGWAS %>%
-            dplyr::mutate(locus = paste(chrom, pos, pos + 1, sep='_')) %>%
-            dplyr::mutate(locus = dplyr::case_when(
-                !grepl('chr', locus, fixed=TRUE) ~ paste('chr', locus, sep=''),
-                .default = as.character(locus)
-            )) %>%
-            dplyr::pull(locus) %>%
-            base::data.frame(.)
-        data.table::fwrite(as.data.frame(ft), file=file.path(opt$output_folder, glue('{opt$phenotype}.chr{opt$chromosome}.EnformerLoci.txt')), quote=F, row.names=F, sep = '\t', col.names=F)
-    }
-
-    # write out everything
-    saveRDS(susieRun, file = file.path(opt$output_folder, glue('{opt$phenotype}.chr{opt$chromosome}.susie.RDS')))
-    data.table::fwrite(filteredSNPs, file=file.path(opt$output_folder, glue('{opt$phenotype}.chr{opt$chromosome}.finemapped.txt.gz')), compress='gzip', quote=F, row.names=F, sep = '\t')
     data.table::fwrite(convergence, file=file.path(opt$output_folder, glue('{opt$phenotype}.chr{opt$chromosome}.convergence.txt.gz')), compress='gzip', quote=F, row.names=F, sep = '\t')
 
+    if(!is.null(filteredSNPs)){
+        filteredGWAS <- matched_stats %>%
+            dplyr::filter(varID %in% filteredSNPs$SNP)
+        
+        if(!nrow(filteredGWAS) == 0){
+            data.table::fwrite(filteredGWAS, file=file.path(opt$output_folder, glue('{opt$phenotype}.chr{opt$chromosome}.filteredGWAS.txt.gz')), compress='gzip', quote=F, row.names=F, sep = '\t')
+
+            ft <- filteredGWAS %>%
+                dplyr::mutate(locus = paste(chrom, pos, pos + 1, sep='_')) %>%
+                dplyr::mutate(locus = dplyr::case_when(
+                    !grepl('chr', locus, fixed=TRUE) ~ paste('chr', locus, sep=''),
+                    .default = as.character(locus)
+                )) %>%
+                dplyr::pull(locus) %>%
+                base::data.frame(.)
+            data.table::fwrite(as.data.frame(ft), file=file.path(opt$output_folder, glue('{opt$phenotype}.chr{opt$chromosome}.EnformerLoci.txt')), quote=F, row.names=F, sep = '\t', col.names=F)
+        }
+    }
+    # write out everything
+    saveRDS(susieRun, file = file.path(opt$output_folder, glue('{opt$phenotype}.chr{opt$chromosome}.susie.RDS')))
 }
 
 
+
+
+
+
+
+
+# getChosenLoci <- function(susie_fit, threshold){
+#     # take the summary of fit and summarize
+
+#     summary_dt <- base::summary(susie_fit)[['vars']] %>% 
+#         dplyr::group_by(cs) %>%
+#         dplyr::summarise(sum_pip = sum(variable_prob, na.rm=TRUE)) %>%
+#         dplyr::filter(cs >= 1)
+
+#     which_cs <- summary_dt %>%
+#         dplyr::filter(sum_pip >= threshold) %>%
+#         dplyr::pull(cs)
+
+#     which_vars <- summary(susie_fit)[["cs"]] %>%
+#         as.data.frame() %>%
+#         dplyr::filter(cs %in% which_cs) %>%
+#         dplyr::pull(variable) %>%
+#         base::strsplit(., split=',') %>%
+#         unlist() %>% as.numeric()
+
+#     vars_dt <- susie_fit$pip[which_vars] %>%
+#         as.data.frame() %>%
+#         tibble::rownames_to_column('SNP') %>%
+#         setNames(., c('SNP', 'PIP'))
+
+#     vars_dt <- cbind(which_vars, vars_dt)
+
+#     return(vars_dt)
+# }
 
 
 # runSusiePerLDBlock(split_ld_blocks[[33]], sumstats, conn=diagfile)

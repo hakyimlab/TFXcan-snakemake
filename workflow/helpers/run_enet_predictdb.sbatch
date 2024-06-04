@@ -1,13 +1,13 @@
 #!/bin/bash
 
-#SBATCH --job-name=lEnpact_training
+#SBATCH --job-name=lEnpact_training_unnested
 #SBATCH --partition=caslake
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
 #SBATCH --time=36:00:00
 #SBATCH --mem-per-cpu=1G
-#SBATCH --error=/project2/haky/temi/projects/TFXcan-snakemake/output/logs/lEnpact_training.err
-#SBATCH --output=/project2/haky/temi/projects/TFXcan-snakemake/output/logs/lEnpact_training.log
+#SBATCH --error=/project2/haky/temi/projects/l-TFPred/logs/lEnpact_training_unnested.err
+#SBATCH --output=/project2/haky/temi/projects/l-TFPred/logs/lEnpact_training_unnested.out
 #SBATCH --account=pi-haky
 
 source ~/.bashrc
@@ -22,10 +22,10 @@ Rscript -e 'install.packages("/project2/haky/temi/projects/TFXcan-snakemake/work
 
 export JAVA_HOME=/project2/haky/festus/miniconda3/envs/predictdb_nf/
 
-phenotype=${1}
-s_path=${2} # /project2/haky/temi/projects/TFXcan-snakemake/output/lEnpact #/project2/haky/temi/projects/l-TFPred
-loci_annotation=${3}
-enpact_scores=${4}
+phenotype="asthma_children" 
+s_path="/project2/haky/temi/projects/l-TFPred/models" 
+loci_annotation="/project2/haky/temi/projects/TFXcan-snakemake/data/predictdb/asthma_children/asthma_children.tf_tissue_annot.txt"
+enpact_scores="/project2/haky/temi/projects/TFXcan-snakemake/data/predictdb/asthma_children/asthma_children.enpact_scores.txt"
 geno_dir=/project2/haky/Data/1000G/population_data/EUR/annot_files
 export PATH=$PATH:/project2/haky/festus/github/peer/build/peertool/bin
 
@@ -44,8 +44,7 @@ nextflow run /project2/haky/festus/github/PredictDb-nextflow/main.nf \
     --outdir ${s_path}/${phenotype}/models/ \
     --keepIntermediate \
     -resume \
-    -profile midway3 \
-    --nested_cv
+    -profile midway3
 
     
 

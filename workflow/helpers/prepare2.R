@@ -37,11 +37,6 @@ geno_file <- purrr::map(valid_chr, function(each_chr){
 data.table::fwrite(geno_file, file=glue("{opt$output_folder}/{opt$pop}.geno.txt"), sep='\t', quote=F, row.names=F)
 data.table::fwrite(geno_file, file=glue("{opt$output_folder}/{opt$pop}.geno.txt.gz"), sep='\t', quote=F, row.names=F, compress='gzip')
 
-
-print("INFO - writing out samples file")
-data.frame(colnames(geno_file)[-1], colnames(geno_file)[-1]) %>%
-    data.table::fwrite(file=glue("{opt$output_folder}/{opt$pop}.samples.txt"), sep='\t', quote=F, row.names=F, col.names=F)
-
 forDB_geno_file <- geno_file %>% tidyr::separate_wider_delim(cols = 'varID', delim = '_', names = c('chrom', 'pos', 'ref', 'alt'), cols_remove = FALSE) %>% 
     dplyr::mutate(maf = 0.01) %>%
     dplyr::relocate(chrom, varID, pos, ref, alt, maf)

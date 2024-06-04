@@ -283,7 +283,8 @@ rule generate_lEnpact_models:
         annot_file = os.path.abspath(rules.prepare_files_for_predictDB.output.annot_file),
         enpact_scores = os.path.abspath(rules.prepare_files_for_predictDB.output.enpact_scores)
     resources:
-        partition="caslake"
+        partition="caslake",
+        time="36:00:00"
     shell: "workflow/helpers/generate_lEnpact_models.EUR.midway3.sbatch {wildcards.phenotype} {params.output_dir} {params.annot_file} {params.enpact_scores}"
     
 
