@@ -17,9 +17,11 @@ snakemake -s snakefile.smk --configfile config/pipeline_pcr.yaml --profile profi
 
 pp = '/project/haky/users/temi/projects/TFXcan-snakemake/data/BC_GWAS/enpact_predictions'
 
+pp = '/scratch/midway3/temi/enpact_predictions'
+
 snakemake.io.glob_wildcards(os.path.join(pp, '{phenotype}', '{idi}.*.csv.gz')).idi
 
-snakemake.io.glob_wildcards(os.path.join(pp, '{phenotype}', '{idi}.{phenop}.aggByCollect.2024-06-06.csv.gz'))
+snakemake.io.glob_wildcards(os.path.join(pp, '{phenotype}', '{idi}.{phenop}.aggByCollect.2024-06-04.csv.gz'))
 
 snakemake -s snakefile.smk --configfile config/pipeline_bc2.yaml --profile profiles/simple/ -np
 

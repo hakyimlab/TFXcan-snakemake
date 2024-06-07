@@ -11,13 +11,13 @@ library(grid)
 ```
 
 ```{r}
-ss <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/data/BC_GWAS/collection/breast_cancer/breast_cancer.filteredGWAS.txt.gz') %>%
+ss <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/data/archives/collection/prostate_cancer_risk/prostate_cancer_risk.filteredGWAS.txt.gz') %>%
     dplyr::mutate(loci = paste('chr', chrom, sep='') %>% paste(., pos, sep = ':'))
 ss
 ```
 
 ```{r}
-dt <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/output/summary/breast_cancer/breast_cancer.enpactScores.spredixcan.csv')
+dt <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/output/summary/prostate_cancer_risk/prostate_cancer_risk.enpactScores.spredixcan.csv')
 ```
 
 ```{r}
@@ -39,8 +39,6 @@ mdt <- sdt %>%
 
 mdt
 ```
-
-
 
 ```{r}
 bwr.colors <- colorRampPalette(c("blue", "white", "red"))
@@ -96,7 +94,17 @@ pdt
 ```
 ```{r}
 bw.colors <- colorRampPalette(c("white", "blue"))
-lattice::levelplot(pdt, col.regions=bw.colors, xlab = '', ylab = 'Breast cancer GWAS locus', scales=list(x=list(rot=90)))
+
+vline <- nrow(pdt) - 0.5
+
+lattice::levelplot(pdt, 
+    col.regions=bw.colors, 
+    xlab = '', ylab = 'Prostate cancer risk GWAS locus', 
+    scales=list(x=list(rot=90), tck = c(1,0)),
+    panel = function(...){
+            panel.levelplot(...)
+            panel.abline(v = vline, lwd = 1)
+    })
 trellis.focus("legend", side="right", clipp.off=TRUE, highlight=FALSE)
 grid.text(expression("-log"[10]*"P"), 0.2, 1.05, hjust=0.5, vjust=1)
 ```
@@ -165,4 +173,20 @@ sum(mt$pval < 5e-8) ; sum(mt$adjP < 0.05)
 jt <- mt %>%
     dplyr::filter(adjP <= 5e-8) %>%
     dplyr::filter(!chrom %in% c('X', 'Y'))
+```
+
+
+
+```{r}
+dt <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/data/PCR_GWAS_2024-06-04/enpactdb/prostate_cancer_risk.enpact_scores.txt.gz')
+```
+
+
+```{r}
+cc <- complete.cases(dt)
+```
+
+
+```{r}
+dt[1:5, 1:5]
 ```

@@ -7,6 +7,9 @@ This pipeline tests TF binding-GWAS trait associations.
 
 ## Usage:
 
+1. conda activate /beagle3/haky/users/shared_software/TFXcan-pipeline-tools
+2. snakemake -s snakefile.smk --configfile config/pipeline.yaml --profile profiles/simple/
+
 GWAS summary stats with the following headers: 
     - chrom: 1,2,3, e.t.c
     - pos: 134
@@ -14,4 +17,12 @@ GWAS summary stats with the following headers:
     - rsid ( not compulsory )
     - pval
     - zscore
+
+
+Output:
+    The final output is a summary ***.TFXcan.csv.gz file of the association results
+
+
+Input:
+    1. A yaml config or parameters file. Details are here: 
 

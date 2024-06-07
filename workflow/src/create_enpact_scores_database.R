@@ -90,4 +90,4 @@ rnames <- expand.grid(mnames, lnames, KEEP.OUT.ATTRS = TRUE, stringsAsFactors = 
 rownames(farray) <- rnames
 colnames(farray) <- dnames[[2]]
 fdt <- as.data.frame(farray) %>% tibble::rownames_to_column('NAME')
-data.table::fwrite(dt, file = opt$output_file, compress = "gzip", sep = '\t', quote = F, col.names = T, row.names = F)
+data.table::fwrite(fdt, file = opt$output_file, compress = "gzip", sep = '\t', quote = F, col.names = T, row.names = F)

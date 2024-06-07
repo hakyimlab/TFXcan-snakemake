@@ -35,7 +35,7 @@ if(!is.null(opt$include_models)){
     include_models <- NULL
 }
 
-enpact_scores_dt <- data.table:fread(opt$enpact_scores_file)
+enpact_scores_dt <- data.table::fread(opt$enpact_scores_file)
 
 # read in the annotation file too
 annot_dt_1 <- data.table::fread(opt$filtered_GWAS_file) %>%
