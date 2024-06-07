@@ -1,0 +1,55 @@
+---
+
+---
+
+
+```{r}
+library(data.table)
+library(tidyverse)
+library(susieR)
+```
+
+
+```{r}
+ldblocks <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/metadata/hg38_fourier_ls-all.bed')
+ldblocks
+```
+
+```{r}
+filteredRes <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/data/PCR_GWAS_2024-06-04/collection/prostate_cancer_risk.filteredGWAS.txt.gz')
+filteredRes
+```
+
+```{r}
+lb <- ldblocks %>%
+    dplyr::filter(V1 == paste0('chr', 11), V2 < 69271730 & V3 > 69271730)
+lb
+```
+
+```{r}
+susieDir <- '/project/haky/users/temi/projects/TFXcan-snakemake/data/PCR_GWAS_2024-06-04/finemapping/prostate_cancer_risk'
+
+susieRun <- readRDS(file.path(susieDir, 'prostate_cancer_risk.chr11.susie.RDS'))
+```
+
+```{r}
+susieFit <- susieRun$`chr11_68238358_69701362`$fit
+```
+
+
+```{r}
+susie_plot(susieFit, 'PIP')
+```
+
+
+
+```{r}
+dt <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/data/sumstats/prostate_cancer_risk.liftover.logistic.assoc.tsv.gz')
+```
+
+
+```{r}
+dt2 <- dt %>% dplyr::mutate(zscore = beta/se)
+dt2 %>%
+    data.table::fwrite('/project/haky/users/temi/projects/TFXcan-snakemake/data/sumstats/pc_risk.liftover.logistic.assoc.tsv.gz', col.names = T, row.names = F, sep = '\t', compress = 'gzip')
+```

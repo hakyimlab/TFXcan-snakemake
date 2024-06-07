@@ -33,3 +33,7 @@ snakemake -s snakefile.smk --configfile config/pipeline_bc.yaml --profile profil
 snakemake -s snakefile.smk --configfile config/pipeline_bc.yaml --profile profiles/simple/ --allowed-rules create_enformer_configuration -np > txt.out
 
 snakemake -s snakefile.smk --configfile config/pipeline_bc.yaml --profile profiles/simple/ -np
+
+
+
+snakemake -s snakefile.smk --configfile config/pipeline_pcrisk.yaml --profile profiles/simple/ -np

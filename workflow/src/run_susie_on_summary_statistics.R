@@ -5,16 +5,16 @@
 suppressPackageStartupMessages(library("optparse"))
 
 option_list <- list(
-    make_option("--chromosome", help='A list of files to combine'),
-    make_option("--sumstats", help='reference panel correlation matrix'),
+    make_option("--chromosome", help='Chromsome number e.g. 1, 2, 3, ..., 22'),
+    make_option("--sumstats", help='A GWAS summary statistics file for the chromsome; should be a tsv file with columns: chrom, pos, ref, alt, pval, beta, se, zscore'),
     make_option("--n", help='summary statistics sample size', default = 1000000L),
-    make_option("--L", help='summary statistics sample size', default = 10L),
-    make_option("--LDBlocks_info", help='A list of files to combine'),
-    make_option("--pip_threshold", default=0.5, help='threshold to filter SNPs by PIP', type='numeric'),
-    make_option("--genotypes_dosages_pattern", default='/project2/haky/Data/1000G/population_data/EUR/bfiles/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.geno.txt.gz', help=''),
-    make_option("--output_folder", help='threshold to filter SNPs by PIP'),
-    make_option("--phenotype", help='threshold to filter SNPs by PIP'),
-    make_option('--diagnostics_file', type='character', default=NULL, help='')
+    make_option("--L", help='summary statistics L parameter used by SuSie', default = 10L),
+    make_option("--LDBlocks_info", help='A file for the LD blocks of where to run SuSie'),
+    make_option("--pip_threshold", default=0.5, help='threshold to filter SNPs by PIP; default is 0.5', type='numeric'),
+    make_option("--genotypes_dosages_pattern", default='/project2/haky/Data/1000G/population_data/EUR/bfiles/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.geno.txt.gz', help='a pattern to find genotype files for the chromosome'),
+    make_option("--output_folder", help='The folder to put SuSie results in'),
+    make_option("--phenotype", help='A GWAS phenotype'),
+    make_option('--diagnostics_file', type='character', default=NULL, help='A file to write diagnostics to; default is NULL i.e no diagnostics file will be written')
 )
 
 opt <- parse_args(OptionParser(option_list=option_list))  

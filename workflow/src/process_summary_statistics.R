@@ -6,14 +6,14 @@
 suppressPackageStartupMessages(library("optparse"))
 
 option_list <- list(
-    make_option("--summary_stats_file", help='A transcription factor e.g. AR'),
+    make_option("--summary_stats_file", help='A GWAS summary statistics file; should be a tsv file with columns: chrom, pos, ref, alt, pval, beta, se, zscore'),
     make_option("--output_folder", help='the output folder'),
     make_option("--phenotype", help = 'a GWAS phenotype'),
-    make_option("--pvalue_threshold", default=5e-8, type='numeric', help = 'a GWAS phenotype'),
-    make_option('--diagnostics_file', type='character', default=NULL, help='')
+    make_option("--pvalue_threshold", default=5e-8, type='numeric', help = 'the pvalue threshold for significance; default is 5e-8'),
+    make_option('--diagnostics_file', type='character', default=NULL, help='A file to write diagnostics to; default is NULL i.e no diagnostics file will be written')
 )
 
-source('/project/haky/users/temi/projects/TFXcan-snakemake/workflow/src/modules.R')
+#source('/project/haky/users/temi/projects/TFXcan-snakemake/workflow/src/modules.R')
 
 opt <- parse_args(OptionParser(option_list=option_list))
 

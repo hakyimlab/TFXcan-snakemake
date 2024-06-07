@@ -1,13 +1,13 @@
 cluster:
-  mkdir -p logs/{rule} &&
+  mkdir -p logs/{params.runmeta}/{rule} &&
   sbatch
     --partition={resources.partition}
     --nodes={resources.nodes}
     --time={resources.time}
     --account={resources.account}
     --job-name=smk-{rule}-{params.jobname}
-    --output=logs/{rule}/{params.jobname}.out
-    --error=logs/{rule}/{params.jobname}.err
+    --output=logs/{params.runmeta}/{rule}/{params.jobname}.out
+    --error=logs/{params.runmeta}/{rule}/{params.jobname}.err
     --gres=gpu:{resources.gpu}
     --mem-per-cpu={resources.mem_cpu}G
     --cpus-per-task={resources.cpu_task}

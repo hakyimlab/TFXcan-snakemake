@@ -6,11 +6,11 @@
 suppressPackageStartupMessages(library("optparse"))
 
 option_list <- list(
-    make_option("--enpact_scores_file", help='a comma separated list of individuals'),
-    make_option("--formatted_escores_file"),
-    make_option("--formatted_annot_file"),
+    make_option("--enpact_scores_file", help='input: A file containing the Enpact scores for the models'),
+    make_option("--formatted_escores_file", help='output: The formatted Enpact scores file'),
+    make_option("--formatted_annot_file", help='output: The formatted annotation file'),
     make_option("--include_models", default = NULL),
-    make_option("--filtered_GWAS_file")
+    make_option("--filtered_GWAS_file", help='input: The filtered GWAS file')
 )
 
 opt <- parse_args(OptionParser(option_list=option_list))
@@ -58,7 +58,10 @@ annot_dt <- annot_dt %>%
 enpact_scores_dt <- enpact_scores_dt %>%
     dplyr::mutate(NAME = gsub(':', '_', NAME))
 
-data.table::fwrite(annot_dt, file = opt$formatted_annot_file, quote=F, row.names = T, col.names = T, sep = '\t')
+annot_dt <- annot_dt %>% dplyr::mutate(gene_id = gsub('-', '', gene_id), gene_name = gsub('-', '', gene_name))
+enpact_scores_dt <- enpact_scores_dt %>% dplyr::mutate(NAME = gsub('-', '', NAME))
+
+data.table::fwrite(annot_dt, file = opt$formatted_annot_file, quote=F, row.names = F, col.names = T, sep = '\t')
 data.table::fwrite(enpact_scores_dt, file = opt$formatted_escores_file, quote=F, row.names = F, col.names = T, sep = '\t')
 
 

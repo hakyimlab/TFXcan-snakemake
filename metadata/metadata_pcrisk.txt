@@ -1,0 +1,2 @@
+phenotype,sumstat
+pc_risk,pc_risk.liftover.logistic.assoc.tsv.gz

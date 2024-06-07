@@ -24,11 +24,11 @@ print(opt)
 # opt <- list()
 # opt$runname <- 'Asthma_GWAS' 
 # opt$phenotype <- 'asthma_children' 
-# opt$base_directives <- '/project2/haky/temi/projects/TFXcan-snakemake/config/enformer_base.yaml' 
-
+# opt$base_directives <- '/project/haky/users/temi/projects/TFXcan-snakemake/config/enformer_base.yaml' 
+# opt$project_directory <- '/project/haky/users/temi/projects/TFXcan-snakemake/data'
 # # --project_directory data --predictors_file data/collection/asthma_children/asthma_children.EnformerLoci.txt --model /project2/haky/Data/enformer/raw --fasta_file /project2/haky/Data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta --parameters_file data/enformer_parameters/enformer_parameters_Asthma_GWAS_asthma_children.json --date 2024-01-31
 
-# opt$personalized_parameters_file <- '/project2/haky/temi/projects/TFXcan-snakemake/config/personalized_base.yaml'
+# opt$personalized_parameters_file <- '/project/haky/users/temi/projects/TFXcan-snakemake/config/personalized_base.yaml'
 
 
 
@@ -58,10 +58,20 @@ if(!is.null(opt$personalized_parameters_file)){
     vcf_path <- file.path(personalized_parameters[['vcf_files']][['folder']], personalized_parameters[['vcf_files']][['files_pattern']])
 
     chrom_filter <- c(1:22)
-    chr_vcfs <- sapply(chrom_filter, function(cc){gsub('\\{\\}', cc, vcf_path)}) 
-    chr_vcfs <- Filter(file.exists, chr_vcfs) |> as.list()
-    nn <- paste0('chr', names(chr_vcfs))
-    names(chr_vcfs) <- nn
+    valid_chroms <- c()
+    chr_vcfs <- sapply(chrom_filter, function(cc){
+        pp <- gsub('\\{\\}', cc, vcf_path)
+        if(file.exists(pp)){
+            valid_chroms <<- append(valid_chroms, cc)
+            return(pp)
+        }
+    }) 
+
+    names(chr_vcfs) <- paste0('chr', valid_chroms)
+    chr_vcfs <- as.list(chr_vcfs)
+    #chr_vcfs <- Filter(file.exists, chr_vcfs) |> as.list()
+    # nn <- paste0('chr', names(chr_vcfs))
+    # names(chr_vcfs) <- nn
 
     enformer_parameters_json[['vcf_files']][['folder']] <- personalized_parameters[['vcf_files']][['folder']]
     enformer_parameters_json[['vcf_files']][['files']] <- chr_vcfs

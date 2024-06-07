@@ -403,3 +403,22 @@ susie_plot(srun$chr11_68238358_69701362$fit, 'PIP')
 ```{r}
 srun$chr11_70855_1192365$fit
 ```
+
+
+```{r}
+dt <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/data/PCR_GWAS_2024-06-04/predictdb/prostate_cancer_risk.enpact_scores.txt')
+
+mt <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/data/PCR_GWAS_2024-06-04/predictdb/prostate_cancer_risk.tf_tissue_annot.txt')
+```
+
+```{r}
+mt %>%
+    dplyr::mutate(gene_id = gsub('-', '', gene_id), gene_name = gsub('-', '', gene_name)) %>%
+    data.table::fwrite('/project/haky/users/temi/projects/TFXcan-snakemake/data/PCR_GWAS_2024-06-04/predictdb/prostate_cancer_risk.FT.tf_tissue_annot.txt', col.names = T, row.names = T, sep = '\t', quote = F)
+```
+
+
+```{r}
+dt %>% dplyr::mutate(NAME = gsub('-', '', NAME)) %>%
+    data.table::fwrite('/project/haky/users/temi/projects/TFXcan-snakemake/data/PCR_GWAS_2024-06-04/predictdb/prostate_cancer_risk.FT.enpact_scores.txt', col.names = T, row.names = F, sep = '\t', quote = F)
+```
