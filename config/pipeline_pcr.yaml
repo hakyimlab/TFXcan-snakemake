@@ -1,0 +1,40 @@
+
+---
+pipeline_dir: '/project/haky/users/temi/projects/TFXcan-snakemake'
+runname: 'PCR_GWAS' # change this variable name 
+date: "2024-06-04"
+metadata: "/project/haky/users/temi/projects/TFXcan-snakemake/metadata/metadata_gwas.txt"
+scratch_dir: "/scratch/midway3/temi"
+delete_enformer_outputs: False # should you delete enformer predictions after aggregating them? Saves disk space
+personalized_predictions: True # should you run personalized predictions?
+
+enpact_models:
+  # directory: '/project/haky/users/temi/data/enpact_models'
+  # metadata: "metadata/models.enpact.txt"
+  directory: '/project/haky/users/temi/data/enpact_models/models185'
+  metadata: "metadata/models.enpact.185.txt"
+
+genome:
+  fasta: "/project/haky/data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta"
+
+rscript: "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript"
+
+finemapping:
+  # genotypes: "/project2/haky/Data/1000G/formatted_geno/all_chrs.geno.txt.gz"
+  # snp_annot: '/project2/haky/Data/1000G/formatted_geno/all_chrs.snp_annot.txt.gz'
+  # samples: "/project2/haky/Data/1000G/formatted_geno/samples.text_dosages.txt"
+  LD_blocks: "/project/haky/users/temi/projects/TFXcan-snakemake/metadata/hg38_fourier_ls-all.bed"
+  genotypes_dosages_pattern: '/project/haky/data/1000G/population_data/EUR/bfiles/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.geno.txt.gz'
+
+# plink:
+#   folder: "/project2/haky/Data/1000G/plink_ref_panel"
+#   basename: "ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased"
+
+enformer: 
+  base_directives: "config/enformer_base.yaml"
+  personalized_directives: "config/personalized_base.yaml"
+  model: "/project/haky/data/enformer/raw"
+  predict: "/beagle3/haky/users/shared_pipelines/enformer_pipeline_aggregate/scripts/enformer_predict.py"
+  aggregate: "workflow/src/aggregate.py"
+  aggtype: "aggByCollect"
+...

@@ -25,17 +25,21 @@ library(susieR) |> suppressPackageStartupMessages()
 library(glue) |> suppressPackageStartupMessages()
 library(bigsnpr) |> suppressPackageStartupMessages()
 
+if(!dir.exists(opt$output_folder)){
+    dir.create(opt$output_folder)
+}
+
 # opt <- list()
-# opt$chromosome <- '12'
-# opt$sumstats <- "/project2/haky/temi/projects/TFXcan-snakemake/data/processed_sumstats/asthma_children/chr12.sumstats.txt.gz"
+# opt$chromosome <- '3'
+# opt$sumstats <- "/project/haky/users/temi/projects/TFXcan-snakemake/data/processed_sumstats/prostate_cancer_risk/chr3.sumstats.txt.gz"
 # #"/project2/haky/temi/projects/TFPred/data/asthma/asthma_children.logistic.assoc.tsv.gz" #"/project2/haky/temi/projects/TFXcan-snakemake/data/sumstats/prostate_cancer_risk.gwas_sumstats.ALL.filtered.txt.gz"
-# opt$LDMatrix_folder <- "/project2/haky/Data/1000G/LD/LD_matrices/EUR"
+# opt$LDMatrix_folder <- "/project/haky/data/1000G/LD/LD_matrices/EUR"
 # #opt$LD_window <- 200000
-# opt$LDBlocks_info <- '/project2/haky/Data/LD_blocks/hg38/EUR/hg38_fourier_ls-all.bed'
+# opt$LDBlocks_info <- '/project/haky/users/temi/projects/TFXcan-snakemake/metadata/hg38_fourier_ls-all.bed'
 # opt$n <- 1000000L
 # opt$L <- 10L
 # opt$pip_threshold <- 0.5
-# opt$genotypes_dosages_pattern <- '/project2/haky/Data/1000G/population_data/EUR/bfiles/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.geno.txt.gz'
+# opt$genotypes_dosages_pattern <- '/project/haky/data/1000G/population_data/EUR/bfiles/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.geno.txt.gz'
 # opt$diagnostics_file <- NULL
 
 # LDMat_chr <- file.path(opt$LDMatrix_folder, paste0('chr', opt$chromosome))
@@ -61,9 +65,7 @@ if(!file.exists(genotypes_file)){
         data.table::setDT()
 }
 
-if(!dir.exists(opt$output_folder)){
-    dir.create(opt$output_folder)
-}
+
 
 # use bigsnpr to correct the alleles
 gdt <- genotypes_chr %>%
@@ -74,6 +76,9 @@ gdt <- genotypes_chr %>%
 matched_stats <- bigsnpr::snp_match(sumstats, gdt) |> data.table::setDT()
 matched_stats <- matched_stats %>%
     dplyr::select(chrom=chr, pos, a0, a1, rsid, beta, se, zscore, pval, adjP, gwas_significant, varID)
+
+# matched_stats <- matched_stats %>%
+#     dplyr::select(chrom=chr, pos, a0, a1, beta, rsid, zscore, varID)
 
 data.table::fwrite(matched_stats, file=file.path(opt$output_folder, glue('{opt$phenotype}.chr{opt$chromosome}.bigsnpr.txt.gz')), compress='gzip', quote=F, row.names=F, sep = '\t')
 
@@ -143,11 +148,11 @@ runSusiePerLDBlock <- function(ld_window, summary_stat, conn=NULL){
     #print(vqueries[1:5, ])
 
     if(!"YES" %in% vqueries$gwas_significant){
-        msg <- glue('INFO - No GWAS significant variants in the LD block {ldfile_basename}')
-        print(msg)
-        if(!is.null(conn)){
-            cat(msg, file = conn, sep = '\n')
-        }
+        #msg <- glue('INFO - No GWAS significant variants in the LD block {ldfile_basename}')
+        # print(msg)
+        # if(!is.null(conn)){
+        #     cat(msg, file = conn, sep = '\n')
+        # }
         return(list(loci=NULL, fit=NULL))
     } else {
         msg <- glue('INFO - GWAS significant variant(s) found in the LD block {ldfile_basename}')
@@ -164,9 +169,10 @@ runSusiePerLDBlock <- function(ld_window, summary_stat, conn=NULL){
             scale()
         Rmat <- cor(X)
 
-        zscores <- vqueries %>%
+        xt <- vqueries %>%
             dplyr::filter(varID %in% row.names(Rmat)) %>%
-            dplyr::pull(zscore)
+            dplyr::arrange(match(varID, row.names(Rmat)))
+        zscores <- xt %>% dplyr::pull(zscore)
 
         result <- tryCatch(
             withCallingHandlers({   
@@ -205,9 +211,12 @@ runSusiePerLDBlock <- function(ld_window, summary_stat, conn=NULL){
 #                           dplyr::rename(og_index = `_NUM_ID_.ss`) %>% 
 #                           dplyr::rename(bigSNP_index = `_NUM_ID_`))
 
+# chr8_125398675_127646866
 
 split_ld_blocks <- LD_block %>%
         base::split(., f=.$split)
+
+# mstats <- sumstats %>% dplyr::rename(varID = SNP)
 
 susieRun <- list()
 for(i in 1:length(split_ld_blocks)){
@@ -215,9 +224,22 @@ for(i in 1:length(split_ld_blocks)){
     susieRun[[blockName]] <- runSusiePerLDBlock(split_ld_blocks[[i]], matched_stats, conn=diagfile)
 }
 
-# ld_window <- split_ld_blocks[[33]]
+# saveRDS(susieRun, file = file.path(glue('/project/haky/users/temi/projects/TFXcan-snakemake/misc/chr{opt$chromosome}.susie.RDS')))
+
+# # chr8_23039544_24817205
+# # chr8_1213245_2095102
+# # chr3_85533081_87360582
+
+# ld_window <- split_ld_blocks[[56]]
 # summary_stat <- matched_stats
-# runSusiePerLDBlock(lwindow, matched_stats, conn=diagfile)
+# rt <- runSusiePerLDBlock(ld_window, mstats, conn=diagfile)
+
+# susie_plot(susieRun$chr8_125398675_127646866$fit, 'PIP')
+
+# png('/project/haky/users/temi/projects/TFXcan-snakemake/plt.png')
+# susie_plot(rt$fit, 'PIP')
+# plot(1:50)
+# dev.off()
 
 # close the connection if necessary
 if(!is.null(opt$diagnostics_file)){

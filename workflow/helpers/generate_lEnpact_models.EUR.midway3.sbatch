@@ -1,33 +1,33 @@
 #!/bin/bash
 
 #SBATCH --job-name=lEnpact_training
-#SBATCH --partition=caslake
+#SBATCH --partition=beagle3
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
 #SBATCH --time=36:00:00
 #SBATCH --mem-per-cpu=1G
-#SBATCH --error=/project2/haky/temi/projects/TFXcan-snakemake/output/logs/lEnpact_training.err
-#SBATCH --output=/project2/haky/temi/projects/TFXcan-snakemake/output/logs/lEnpact_training.log
+#SBATCH --error=/project/haky/users/temi/projects/TFXcan-snakemake/output/logs/lEnpact_training.err
+#SBATCH --output=/project/haky/users/temi/projects/TFXcan-snakemake/output/logs/lEnpact_training.log
 #SBATCH --account=pi-haky
 
 source ~/.bashrc
-conda activate /project2/haky/festus/miniconda3/envs/predictdb_nf
+conda activate /project/haky/users/temi/projects/TFXcan-snakemake/software/predictdb_nf
 module load python
 module load R
-Rscript -e 'install.packages("/project2/haky/temi/projects/TFXcan-snakemake/workflow/software/optparse_1.7.4.tar.gz", lib="/home/temi/R/x86_64-pc-linux-gnu-library/4.2", repos = NULL, type = "source")'
+# Rscript -e 'install.packages("/project2/haky/temi/projects/TFXcan-snakemake/workflow/software/optparse_1.7.4.tar.gz", lib="/home/temi/R/x86_64-pc-linux-gnu-library/4.2", repos = NULL, type = "source")'
 
 #install.packages(pkgname.tar.gz, repos = NULL, type =‘‘source’’)
 #R CMD INSTALL /project2/haky/temi/projects/TFXcan-snakemake/workflow/helpers/optparse_1.7.4.tar.gz
 #export JAVA_HOME=/usr/lib/jvm/jre-1.8.0-openjdk-1.8.0.352.b08-2.el8_6.x86_64
 
-export JAVA_HOME=/project2/haky/festus/miniconda3/envs/predictdb_nf/
+export JAVA_HOME=/project/haky/users/temi/projects/TFXcan-snakemake/software/predictdb_nf/
 
 phenotype=${1}
 s_path=${2} # /project2/haky/temi/projects/TFXcan-snakemake/output/lEnpact #/project2/haky/temi/projects/l-TFPred
 loci_annotation=${3}
 enpact_scores=${4}
-geno_dir=/project2/haky/Data/1000G/population_data/EUR/annot_files
-export PATH=$PATH:/project2/haky/festus/github/peer/build/peertool/bin
+geno_dir=/project/haky/data/1000G/population_data/EUR/annot_files
+#export PATH=$PATH:/project2/haky/festus/github/peer/build/peertool/bin
 
 echo "Running ${phenotype}"
 
@@ -35,7 +35,7 @@ echo "Running ${phenotype}"
 mkdir -p ${s_path}/${phenotype} && cd ${s_path}/${phenotype}
 
 # run nextflow
-nextflow run /project2/haky/festus/github/PredictDb-nextflow/main.nf \
+nextflow run /project/haky/users/temi/projects/TFXcan-snakemake/workflow/PredictDb-nextflow/main.nf \
     --gene_annotation ${loci_annotation} \
     --snp_annotation ${geno_dir}/EUR.snp_annot.txt \
     --genotype ${geno_dir}/EUR.geno.txt \
@@ -44,7 +44,7 @@ nextflow run /project2/haky/festus/github/PredictDb-nextflow/main.nf \
     --outdir ${s_path}/${phenotype}/models/ \
     --keepIntermediate \
     -resume \
-    -profile midway3 \
+    -profile beagle3 \
     --nested_cv
 
     

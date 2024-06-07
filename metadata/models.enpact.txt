@@ -1,0 +1,7 @@
+name	model
+AR_Prostate	aggByCollect_AR_Prostate.logistic.rds
+CTCF_Prostate	aggByCollect_CTCF_Prostate.logistic.rds
+FOXA1_Prostate	aggByCollect_FOXA1_Prostate.logistic.rds
+GATA2_Prostate	aggByCollect_GATA2_Prostate.logistic.rds
+HOXB13_Prostate	aggByCollect_HOXB13_Prostate.logistic.rds
+PR_Prostate	aggByCollect_PR_Prostate.logistic.rds

@@ -283,3 +283,123 @@ dt %>%
     dplyr::group_by(`Superpopulslation code`) %>% 
     group_walk(~ data.table::fwrite(as.data.frame(cbind(.x$`Sample name`, .x$`Sample name`)), glue('{outdir}/{.y$`Superpopulation code`}.samples.txt'), quote=F, col.names=F, row.names=F, sep='\t'))
 ```
+
+
+
+```{r}
+dt <- data.table::fread('/project/haky/users/temi/projects/data/GWAS/29892016-GCST006085-EFO_0001663.h.tsv.gz')
+```
+
+```{r}
+dim(dt)
+```
+
+```{r}
+head(dt)
+```
+
+```{r}
+sv <- dt %>%
+    dplyr::select(chrom = hm_chrom, pos = hm_pos, ref = hm_other_allele, alt = hm_effect_allele, beta = hm_beta, pval = p_value, variant_id = hm_variant_id, rsid = hm_rsid, se = standard_error, zscore = beta/standard_error) %>%
+    dplyr::filter(!is.na(chrom) | !is.na(zscore))
+
+sv <- sv[complete.cases(sv), ]
+```
+
+```{r}
+dim(sv)
+```
+
+```{r}
+sv %>%
+    data.table::fwrite('/project/haky/users/temi/projects/TFXcan-snakemake/data/sumstats/prostate_cancer_risk.liftover.logistic.assoc.tsv.gz', sep = '\t', quote = F, col.names = T, row.names = F)
+```
+
+
+
+
+```{r}
+dt %>%
+    dplyr::select(chrom, variant_id, rsid, pos, zscore, ref= A2, alt=A1) %>%
+    data.table::fwrite('/project/haky/users/temi/projects/TFXcan-snakemake/data/sumstats/prostate_cancer_risk.liftover.logistic.assoc.tsv.gz', sep = '\t', quote = F, col.names = T, row.names = F)
+```
+
+```{r}
+dt <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/data/sumstats/prostate_cancer_risk.liftover.logistic.assoc.tsv.gz')
+```
+
+```{r}
+# how many GWAS loci
+mt <- dt %>%
+    dplyr::mutate(adjP = p.adjust(pval, 'bonferroni'))
+mt
+```
+
+```{r}
+sum(mt$adjP < 5e-8)
+```
+
+```{r}
+jt <- dt %>%
+    dplyr::filter(!chrom %in% c('X', 'Y')) %>%
+    dplyr::rename(CHR = chrom) %>%
+    dplyr::mutate(CHR = as.numeric(CHR)) %>%
+    dplyr::filter(CHR %in% c(1:22))
+```
+
+```{r}
+pdf('/project/haky/users/temi/projects/TFXcan-snakemake/pcr.manhattan.pdf')
+qqman::manhattan(jt, p = 'pval', bp = 'pos', snp = 'rsid')
+dev.off()
+```
+
+
+```{r}
+LD_block <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/metadata/hg38_fourier_ls-all.bed') %>%
+    dplyr::rename(chrom=V1, start=V2, stop=V3) %>%
+    dplyr::mutate(split=1:nrow(.))
+```
+
+
+```{r}
+library(data.table) |> suppressPackageStartupMessages()
+library(tidyverse) |> suppressPackageStartupMessages()
+library(susieR) |> suppressPackageStartupMessages()
+library(glue) |> suppressPackageStartupMessages()
+```
+
+
+```{r}
+sres <- readRDS('/project/haky/users/temi/projects/TFXcan-snakemake/data/finemapping/prostate_cancer_risk/prostate_cancer_risk.chr8.susie.RDS')
+```
+
+
+```{r}
+susie_plot(sres$chr8_127147191_127147192$fitted_rss, y="PIP")
+```
+
+
+```{r}
+srun <- readRDS(glue('/project/haky/users/temi/projects/TFXcan-snakemake/misc/chr11.susie.RDS'))
+```
+
+
+```{r}
+susie_plot(srun$chr11_68238358_69701362$fit, 'PIP')
+```
+
+
+```{r}
+susie_plot(srun$chr11_101460390_104088908$fit, 'PIP')
+```
+
+
+```{r}
+# chr11_68238358_69701362
+susie_plot(srun$chr11_68238358_69701362$fit, 'PIP')
+```
+
+
+```{r}
+srun$chr11_70855_1192365$fit
+```

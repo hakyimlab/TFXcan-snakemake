@@ -29,7 +29,7 @@ if(!dir.exists(dirname(opt$filtered_sumstats))){
 }
 
 
-chrom_filter <- c(1:22, 'X', 'Y')
+chrom_filter <- c(1:22)
 
 
 finemapped_pattern <- file.path(opt$finemapping_dir, glue::glue('{opt$phenotype}.chr{chrom_filter}.filteredGWAS.txt.gz'))

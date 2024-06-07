@@ -4,13 +4,13 @@ enformer:
     sub_dir: True
     output_dir: "enformer_predictions"
     reverse_complement: false
-    sequence_source: 'reference'
+    sequence_source: 'personalized'
     exclude_regions: true
     predictions_log_dir: "predictions_log"
     tracks_to_save: -1
     bins_to_save: -1
     n_regions: 40000
-    batch_regions: 500
+    batch_regions: 1000
     use_parsl: True
     write_log:
       logdir: "job_logs"
@@ -21,8 +21,8 @@ enformer:
         cache: false
     aggregate_by_width: 1
     parsl_parameters:
-      num_of_full_nodes: 2
-      walltime: "12:00:00"
+      num_of_full_nodes: 1
+      walltime: "24:00:00"
       init_blocks: 1
       min_num_blocks: 0
       max_num_blocks: 2

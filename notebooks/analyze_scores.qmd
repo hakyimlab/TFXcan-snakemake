@@ -5,17 +5,126 @@
 
 ```{r}
 library(data.table)
-library(susieR)
 library(tidyverse)
-```
-
-
-```{r}
-dt <- readRDS('/project2/haky/temi/projects/TFXcan-snakemake/data/finemapping/asthma_children/asthma_children.chr10.susie.RDS')
+library(lattice)
+library(grid)
 ```
 
 ```{r}
-names(dt)
+ss <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/data/BC_GWAS/collection/breast_cancer/breast_cancer.filteredGWAS.txt.gz') %>%
+    dplyr::mutate(loci = paste('chr', chrom, sep='') %>% paste(., pos, sep = ':'))
+ss
+```
+
+```{r}
+dt <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/output/summary/breast_cancer/breast_cancer.enpactScores.spredixcan.csv')
+```
+
+```{r}
+sdt <- dt %>%
+    tidyr::separate_wider_delim(gene_name, names = c('tf', 'tissue', 'chrom', 'start', 'end'), delim = '_') %>%
+    dplyr::mutate(across(c(start, end), as.numeric))
+
+sdt
+```
+
+```{r}
+mdt <- sdt %>%
+    dplyr::mutate(locus = paste(chrom, start, sep = ':'), tf = paste(tf, tissue, sep = '_')) %>%
+    dplyr::select(locus, tf, zscore) %>%
+    tidyr::pivot_wider(values_from = zscore, names_from = tf) %>% 
+    tibble::column_to_rownames('locus') %>%
+    as.matrix() %>%
+    t()
+
+mdt
+```
+
+
+
+```{r}
+bwr.colors <- colorRampPalette(c("blue", "white", "red"))
+```
+
+```{r}
+lattice::levelplot(mdt, col.regions=bwr.colors, xlab = '', ylab = 'Prostate cancer risk GWAS locus')
+trellis.focus("legend", side="right", clipp.off=TRUE, highlight=FALSE)
+grid.text(expression(zscore), 0.2, 1.05, hjust=0.5, vjust=1)
+```
+
+```{r}
+pdt <- sdt %>%
+    dplyr::mutate(locus = paste(chrom, start, sep = ':'), tf = paste(tf, tissue, sep = '_')) %>%
+    dplyr::select(locus, tf, pvalue)
+pdt
+```
+
+```{r}
+aj <- ss %>%
+    dplyr::rename(locus = loci, pvalue = pval) %>%
+    dplyr::filter(locus %in% unique(pdt$locus), nchar(a0) == 1) %>%
+    dplyr::mutate(tf = 'GWAS') %>%
+    dplyr::select(locus, tf, pvalue)
+aj
+```
+
+```{r}
+pdt <- pdt %>% dplyr::filter(locus %in% aj$locus) %>%
+    dplyr::arrange(tf)
+pdt
+```
+
+```{r}
+# sl <- sort(sapply(ss$ref, nchar), decreasing = T)
+```
+
+```{r}
+sj <- dplyr::bind_rows(pdt, aj)
+sj
+```
+
+```{r}
+pdt <- sj %>%
+    dplyr::mutate(log10P = -log10(pvalue)) %>%
+    dplyr::select(locus, tf, log10P) %>%
+    tidyr::pivot_wider(id_cols = 'locus', values_from = log10P, names_from = tf) %>% 
+    tibble::column_to_rownames('locus') %>%
+    as.matrix() %>%
+    t()
+
+pdt
+```
+```{r}
+bw.colors <- colorRampPalette(c("white", "blue"))
+lattice::levelplot(pdt, col.regions=bw.colors, xlab = '', ylab = 'Breast cancer GWAS locus', scales=list(x=list(rot=90)))
+trellis.focus("legend", side="right", clipp.off=TRUE, highlight=FALSE)
+grid.text(expression("-log"[10]*"P"), 0.2, 1.05, hjust=0.5, vjust=1)
+```
+
+- filter for only breast
+
+```{r}
+bcdt <- rbind(pdt[grepl('Breast', rownames(pdt)), ], GWAS = pdt['GWAS', ])
+
+
+bw.colors <- colorRampPalette(c("white", "blue"))
+lattice::levelplot(bcdt, col.regions=bw.colors, xlab = '', ylab = 'Breast cancer GWAS locus', scales=list(x=list(rot=90)))
+trellis.focus("legend", side="right", clipp.off=TRUE, highlight=FALSE)
+grid.text(expression("-log"[10]*"P"), 0.2, 1.05, hjust=0.5, vjust=1)
+```
+
+```{r}
+par(mfcol=c(1,2))
+
+lattice::levelplot(mdt, col.regions=bwr.colors, xlab = '', ylab = 'Prostate cancer risk GWAS locus')
+trellis.focus("legend", side="right", clipp.off=TRUE, highlight=FALSE)
+grid.text(expression(zscore), 0.2, 1.05, hjust=0.5, vjust=1)
+
+bw.colors <- colorRampPalette(c("white", "blue"))
+lattice::levelplot(pdt, col.regions=bw.colors, xlab = '', ylab = 'Prostate cancer risk GWAS locus')
+trellis.focus("legend", side="right", clipp.off=TRUE, highlight=FALSE)
+grid.text(expression("-log"[10]*"P"), 0.2, 1.05, hjust=0.5, vjust=1)
+
 ```
 
 ```{r}
@@ -28,4 +137,32 @@ summary(one$fit)
 lapply(dt, function(each_entry){
     summary(each_entry$fit)
 }) %>% Filter(Negate(is.null), .)
+```
+
+
+- how many GWAS loci are within LD blocks
+
+```{r}
+ldblocks <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/metadata/hg38_fourier_ls-all.bed')
+```
+
+```{r}
+dt <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/data/sumstats/prostate_cancer_risk.liftover.logistic.assoc.tsv.gz')
+```
+
+```{r}
+# how many GWAS loci
+mt <- dt %>%
+    dplyr::mutate(adjP = p.adjust(pval, 'bonferroni'))
+mt
+```
+
+```{r}
+sum(mt$pval < 5e-8) ; sum(mt$adjP < 0.05)
+```
+
+```{r}
+jt <- mt %>%
+    dplyr::filter(adjP <= 5e-8) %>%
+    dplyr::filter(!chrom %in% c('X', 'Y'))
 ```

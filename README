@@ -1,0 +1,17 @@
+
+
+
+## TFXcan: 
+
+This pipeline tests TF binding-GWAS loci associations.
+
+## Usage:
+
+GWAS summary stats with the following headers: 
+    - chrom: 1,2,3, e.t.c
+    - pos: 134
+    - variant_id: 1_345_A_G
+    - rsid ( not compulsory )
+    - pval
+    - zscore
+

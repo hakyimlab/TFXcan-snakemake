@@ -1,0 +1,207 @@
+---
+
+---
+
+
+```{r}
+library(data.table)
+library(tidyverse)
+library(rtracklayer)
+library(GenomicRanges)
+```
+
+```{r}
+chainfile <- rtracklayer::import.chain('/project/haky/data/liftover/chainfiles/ucsc/hg19ToHg38.over.chain')
+```
+
+```{r}
+# bc <- data.table::fread("/project/haky/users/temi/projects/data/sumstats/icogs_onco_gwas_meta_overall_breast_cancer_summary_level_statistics.txt")
+```
+
+```{bash}
+awk '{print $9, $10, $2, $3, $1, $5, $6, $7}' /project/haky/users/temi/projects/data/sumstats/icogs_onco_gwas_meta_overall_breast_cancer_summary_level_statistics.txt > breast_cancer.sumstats.hg19.txt;
+gzip -c breast_cancer.sumstats.hg19.txt > breast_cancer.sumstats.hg19.txt.gz
+```
+
+```{bash}
+40 41 42 43 44 45 46
+```
+
+```{bash}
+awk '{print $9, $10, $2, $3, $1, $5, $6, $7, $40, $41, $42, $43, $44, $45, $46}' /project/haky/users/temi/projects/data/sumstats/icogs_onco_gwas_meta_overall_breast_cancer_summary_level_statistics.txt | head
+```
+
+```{bash}
+
+# $2, $3, $5, $6, $7
+awk '{print $9, $10, $1, $40, $41, $42, $43, $44, $45, $46}' /project/haky/users/temi/projects/data/sumstats/icogs_onco_gwas_meta_overall_breast_cancer_summary_level_statistics.txt > breast_cancer.sumstats.hg19.txt;
+gzip -c breast_cancer.sumstats.hg19.txt > breast_cancer.sumstats.hg19.txt.gz
+```
+
+
+```{r}
+bc <- data.table::fread("/project/haky/users/temi/projects/data/sumstats/breast_cancer.sumstats.hg19.txt.gz")
+```
+
+
+```{r}
+# bc2 <- bc %>%
+#     stats::setNames(nm = c('chrom', 'pos', 'alt', 'ref', 'variant_id', 'beta', 'se', 'pval')) %>%
+#     dplyr::mutate(zscore = beta/se, chr = paste('chr', chrom, sep = '')) %>%
+#     dplyr::filter(chrom %in% 1:22, nchar(ref) == 1, nchar(alt) == 1)
+
+
+bc2 <- bc %>%
+    stats::setNames(nm = c('chrom', 'pos', 'variant_id', 'alt', 'ref', 'beta', 'var', 'se', 'chi', 'pval')) %>%
+    dplyr::mutate(zscore = sqrt(chi), chr = paste('chr', chrom, sep = '')) %>%
+    dplyr::select(-c(chi, var)) %>%
+    dplyr::filter(chrom %in% 1:22, nchar(ref) == 1, nchar(alt) == 1)
+```
+
+```{r}
+data.table::fwrite(bc2, "/project/haky/users/temi/projects/data/sumstats/breast_cancer.sumstats.hg19.renamed.txt.gz", sep = '\t', compress = 'gzip', row.names = F, col.names = T)
+```
+
+```{r}
+bc2_granges <- with(bc2[1:20, ], GenomicRanges::GRanges(seqnames = chr, IRanges(pos, pos + 1), strand = '*', chrom, pos, alt, ref, variant_id, beta, se, pval, zscore))
+bc2_granges
+```
+
+
+```{r}
+bc2_liftover <- rtracklayer::liftOver(bc2_granges, chainfile)
+bc2_liftover
+```
+
+
+```{r}
+lf <- as.data.frame(bc2_liftover) %>%
+    dplyr::select(-c(group, group_name, width, strand, pos, seqnames)) %>%
+    dplyr::select(chrom, start, end, alt, ref, variant_id, beta, se, pval, zscore)
+
+lf
+```
+
+
+```{r}
+grObject <- GRanges(seqnames=c("chr1"), ranges=IRanges(start=226061851, end=226071523))
+results <- as.data.frame(liftOver(grObject, chainfile))
+```
+
+
+```{bash}
+sbatch /project/haky/users/temi/projects/TFXcan-snakemake/workflow/helpers/liftover.sbatch /project/haky/users/temi/projects/data/sumstats/breast_cancer.sumstats.hg19.renamed.txt.gz /project/haky/data/liftover/chainfiles/ucsc/hg19ToHg38.over.chain /project/haky/users/temi/projects/data/sumstats/breast_cancer.sumstats.hg38.renamed.txt.gz
+```
+
+
+```{r}
+bc3 <- data.table::fread("/project/haky/users/temi/projects/data/sumstats/breast_cancer.sumstats.hg38.renamed.txt.gz") 
+```
+
+
+```{r}
+bc2 %>% dplyr::filter(chrom == 9 & between(pos, 16912915, 16912925))
+```
+
+```{r}
+bc2 %>% dplyr::filter(chrom == 9 & between(pos, 16914710, 16914720))
+```
+
+
+
+```{r}
+bc3 %>% dplyr::filter(chrom == 9 & between(pos, 16912915, 16912925))
+```
+
+```{r}
+bc3 %>% dplyr::filter(chrom == 9 & between(pos, 16914710, 16914720))
+```
+
+
+```{r}
+bc3 %>% dplyr::filter(chrom == 9) %>% head()
+```
+
+
+```{bash}
+zgrep -E chr9_16912921_A_G chr9.sumstats.txt.gz 
+```
+
+
+```{bash}
+zgrep 17_41961940_ chr17.sumstats.txt.gz 
+```
+
+
+```{r}
+mt <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/metadata/models.enpact.185.txt') %>%
+    dplyr::distinct()
+```
+
+
+```{r}
+mt %>% data.table::fwrite('/project/haky/users/temi/projects/TFXcan-snakemake/metadata/models.enpact.185.txt', row.names = F, col.names = T, sep = '\t', quote = F)
+```
+
+
+```{r}
+jt <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/data/BC_GWAS/enpact_predictions/breast_cancer/NA20832.breast_cancer.aggByCollect.2024-06-06.csv.gz')
+```
+
+
+### create fictional filtered GWAs file
+```{r}
+# bc3 %>% dplyr::filter(
+#     chrom == 9 & pos == 16912921
+#     chrom == 9 & pos == 16914718,
+#     chrom == 17 & pos == 41961970,
+#     chrom == 17 & pos == 43582425
+#     )
+
+ft <- dplyr::bind_rows(
+    bc3 %>% dplyr::filter(chrom == 9 & pos == 16912921),
+bc3 %>% dplyr::filter(chrom == 9 & pos == 16914718),
+bc3 %>% dplyr::filter(chrom == 17 & pos == 41961940),
+bc3 %>% dplyr::filter(chrom == 17 & pos == 43582425),
+)
+
+ft
+```
+
+```{r}
+ft %>%
+    dplyr::rename(a0 = ref, a1 = alt) %>%
+    dplyr::mutate(rsid = paste(chrom, pos, a0, a1, sep = ':'), adjP = pval, gwas_significant = ifelse(pval < 5e-8, 'YES', "NO"), varID = paste(chrom, pos, a0, a1, sep = '_')) %>%
+    dplyr::select(-variant_id) %>%
+    data.table::fwrite('/project/haky/users/temi/projects/TFXcan-snakemake/data/BC_GWAS/collection/breast_cancer/breast_cancer.filteredGWAS.txt.gz', sep = '\t', quote = F, row.names = F, col.names = T, compress = 'gzip')
+```
+
+
+```{r}
+bc3 %>% dplyr::filter(
+    chrom == 9 & pos == 16914718
+    )
+```
+
+
+
+```{r}
+library(susieR)
+```
+
+
+```{r}
+srun <- readRDS('/project/haky/users/temi/projects/TFXcan-snakemake/data/BC_GWAS/finemapping/breast_cancer/breast_cancer.chr4.susie.RDS')
+
+sfit <- srun$`chr4_37253425_38905401`$fit
+```
+
+
+```{r}
+susie_plot(sfit, 'PIP')
+```
+
+
+```{r}
+summary(sfit)
+```
