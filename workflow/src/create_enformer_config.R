@@ -19,6 +19,7 @@ option_list <- list(
 )
 
 opt <- parse_args(OptionParser(option_list=option_list))
+print(opt)
 
 # opt <- list()
 # opt$runname <- 'Asthma_GWAS' 
@@ -56,7 +57,7 @@ if(!is.null(opt$personalized_parameters_file)){
     personalized_parameters <- yaml::yaml.load_file(opt$personalized_parameters_file)
     vcf_path <- file.path(personalized_parameters[['vcf_files']][['folder']], personalized_parameters[['vcf_files']][['files_pattern']])
 
-    chrom_filter <- c(1:22, 'X', 'Y', 'MT')
+    chrom_filter <- c(1:22)
     chr_vcfs <- sapply(chrom_filter, function(cc){gsub('\\{\\}', cc, vcf_path)}) 
     chr_vcfs <- Filter(file.exists, chr_vcfs) |> as.list()
     nn <- paste0('chr', names(chr_vcfs))

@@ -13,6 +13,7 @@ option_list <- list(
 )
 
 opt <- parse_args(OptionParser(option_list=option_list))
+print(opt)
 
 library(data.table)
 library(tidyverse)
@@ -50,7 +51,6 @@ loci <- purrr::map(.x=dt_files, .f=rownames) %>%
     base::Reduce(intersect, .) |> unique()
 models <- purrr::map(.x=dt_files, .f=colnames) %>%
     base::Reduce(intersect, .) |> unique()
-#individuals <- base::strsplit(opt$individuals, split = ',')[[1]]
 
 print(models)
 

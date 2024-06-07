@@ -12,6 +12,7 @@ option_list <- list(
 )
 
 opt <- parse_args(OptionParser(option_list=option_list))  
+print(opt)
 
 library(data.table)
 library(tidyverse)
@@ -28,9 +29,7 @@ if(!dir.exists(dirname(opt$filtered_sumstats))){
     dir.create(dirname(opt$filtered_sumstats), recursive = T)
 }
 
-
 chrom_filter <- c(1:22)
-
 
 finemapped_pattern <- file.path(opt$finemapping_dir, glue::glue('{opt$phenotype}.chr{chrom_filter}.filteredGWAS.txt.gz'))
 

@@ -19,6 +19,8 @@ option_list <- list(
 
 opt <- parse_args(OptionParser(option_list=option_list))  
 
+print(opt)
+
 library(data.table) |> suppressPackageStartupMessages()
 library(tidyverse) |> suppressPackageStartupMessages()
 library(susieR) |> suppressPackageStartupMessages()

@@ -48,18 +48,7 @@ if(!'rsid' %in% colnames(dt)){
         dplyr::mutate(rsid = paste(chrom, pos, ref, alt, sep=':'))
 }
 
-dt <- dt %>%
-    dplyr::group_by(chrom)
-
-# dt <- data.table::fread(opt$summary_stats_file) %>%
-#     dplyr::mutate(chrom = dplyr::case_when(
-#         grepl('chr', chrom, fixed=TRUE) ~ gsub('chr', '', chrom),
-#         .default = as.character(chrom)
-#     )) %>%
-#     dplyr::filter(chrom %in% chrom_filter) %>%
-#     dplyr::mutate(SNP = paste(chrom, pos, ref, alt, sep='_')) %>%
-#     dplyr::mutate(gwas_significant="YES") %>%
-#     dplyr::group_by(chrom) 
+# split and save 
 
 split_dt <- dt %>%
     base::split(f=.$chrom)
@@ -69,51 +58,3 @@ lapply(seq_along(split_dt), function(i){
     data.table::fwrite(split_dt[[i]], file=glue('{opt$output_folder}/chr{nn[i]}.sumstats.txt.gz'), 
         quote=F, col.names=T, row.names=F, sep='\t', compress='gzip')
 })
-
-
-# if(!is.null(opt$diagnostics_file)){
-#     if(!dir.exists(dirname(opt$diagnostics_file))){
-#         dir.create(dirname(opt$diagnostics_file), recursive = TRUE)
-#     }
-
-#     print(glue('INFO - writing diagnostics for {opt$phenotype}'))
-
-#     ah <- dt %>%
-#         dplyr::group_by(chrom, gwas_significant) %>%
-#         dplyr::summarise(n=n(), .groups = "drop") %>%
-#         tidyr::complete(chrom, gwas_significant, fill = list(n=0)) %>%
-#         tidyr::pivot_wider(id_cols = chrom, names_from=gwas_significant, values_from = n)
-
-#     fil <- file(opt$diagnostics_file, open = "a")
-#     cat("#### GWAS diagnostics", file = fil, sep = '\n')
-#     cat(glue("## Number of GWAS significant loci at {opt$pvalue_threshold}"), file = fil, sep = '\n\n', append=T)
-#     cat(paste0(colnames(ah), collapse = '\t'), file = fil, append = T, sep = '\n')
-#     cat(apply(ah, 1, paste0, collapse='\t'), file = fil, append = T, sep = '\n')
-#     close(fil)
-
-#     out <- dt %>%
-#         dplyr::select(chrom, pos, rsid, pval) %>%
-#         setNames(c("chrom", "locus", 'id', 'pvalue')) %>%
-#         prepare_manhattan_dt()
-
-#     png(glue("{dirname(opt$diagnostics_file)}/{opt$phenotype}.gwas_manhattan.png"))
-#     plot_manhattan_dt(out, signif= opt$pvalue_threshold, plot_id = FALSE)
-#     dev.off()
-
-#     png(glue("{dirname(opt$diagnostics_file)}/{opt$phenotype}.gwas_qqunif.png"))
-#     qqunif(dt$pval)
-#     dev.off()
-
-# }
-    
-# dt %>%
-#     dplyr::pull(SNP) %>% 
-#     as.data.frame() %>%
-#     data.table::fwrite(., file=glue('{opt$output_file_basename}.SNPsForLD'), quote=F, col.names=F, row.names=F)
-
-# sumstats <- data.table::fread(dt) %>%
-#     dplyr::mutate(chrom=as.character(gsub('chr', '', chrom))) %>%
-#     dplyr::filter(chrom == opt$chromosome)
-
-# # QC filter
-# data.table::fwrite(as.data.frame(sumstats$SNP), file=glue('{opt$snp_list}'), quote=F, row.names=F, col.names=F)

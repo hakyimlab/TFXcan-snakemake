@@ -1,4 +1,4 @@
-# Description: Given a TF and tissue (or context) , this pipeline trains logistic elastic net models of that TF binding activity in that tissue
+# Description: This snakemake file runs the full TFXcan pipeline
 # Author: Temi
 # Date: Wed Mar 29 2023
 # Usage: --> see README
@@ -41,6 +41,7 @@ def read_metadata(mtdt_file):
 
 run_list = read_metadata(config["metadata"])
 
+# checkpoint functions
 def collect_processed_summary_statistics(wildcards):
     chromosomes = glob_wildcards(os.path.join(PROCESSED_SUMSTATS, '{phenotype}', 'chr{chrom}.sumstats.txt.gz')).chrom
     output = expand(os.path.join(PROCESSED_SUMSTATS, "{phenotype}", 'chr{chrom}.sumstats.txt.gz'), chrom=chromosomes, phenotype = run_list.keys())
@@ -204,7 +205,6 @@ rule aggregate_predictions:
         jobname = '{phenotype}',
         aggregation_script = config['enformer']['aggregate'],
         aggtype = config['enformer']['aggtype'],
-        #output_folder = AGGREGATED_PREDICTIONS,
         hpc = "beagle3",
         parsl_executor = "local",
         delete_enformer_outputs = config["delete_enformer_outputs"],

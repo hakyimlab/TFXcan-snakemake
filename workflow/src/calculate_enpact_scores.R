@@ -15,6 +15,7 @@ option_list <- list(
 )
 
 opt <- parse_args(OptionParser(option_list=option_list))
+print(opt)
 
 library(data.table)
 library(tidyverse)
@@ -78,29 +79,3 @@ predictions %>%
     tibble::rownames_to_column('locus') %>%
     data.table::fwrite(., file=opt$output_file, compress='gzip', quote=F, sep=',', col.names = TRUE, row.names = FALSE)
 print(glue('INFO - {opt$output_file} has been saved.'))
-
-
-
-# models_list <- list.files(opt$enpact_models_directory, pattern = ifelse(
-#         typeof(opt$filters_date) == 'character', opt$filters_date, NULL
-#         ), 
-#     full.names = TRUE) %>%
-#         list.files(., pattern = ifelse(
-#         typeof(opt$filters_type) == 'character', opt$filters_type, NULL
-#         ),
-#     full.names = TRUE)
-
-# models_names <- base::strsplit(models_list, split = '/') %>%
-#     sapply(., function(each_name){
-#         each_name[length(each_name)]
-#     }) %>%
-#     base::strsplit(., split = '_|\\.') %>%
-#     sapply(., function(each_name){
-#         paste(each_name[2], each_name[3], sep='_')
-#     })
-
-# if(length(models_list) != length(models_names)){
-#     stop("Something is wrong")
-# } else {
-#     names(models_list) <- models_names
-# }
