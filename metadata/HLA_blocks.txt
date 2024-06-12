@@ -1,0 +1,2 @@
+chrom    start    end
+chr6    29602228    33410226

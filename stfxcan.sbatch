@@ -6,6 +6,16 @@
 # Date: Mon Aug 7 2023
 # Variables: gwas_file, phenotype
 
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=12
+#SBATCH --mem-per-cpu=12G
+#SBATCH --job-name=summary_TFXcan
+#SBATCH --account=pi-haky
+#SBATCH --output=/project/haky/users/temi/projects/TFXcan-snakemake/output/logs/summary_TFXcan.out
+#SBATCH --error=/project/haky/users/temi/projects/TFXcan-snakemake/output/logs/summary_TFXcan.err
+#SBATCH --time=06:00:00
+#SBATCH --partition=bigmem
 
 date
 
@@ -48,18 +58,3 @@ python3 ${exec_file} \
     --output_file ${outputfile} \
     --verbosity 9 \
     --throw
-
-
-
-    #     --gwas_folder ${base_dir}/data/GWAS \
-    # --gwas_file_pattern ".*_Schumacher.gwas_ss.txt.gz" \
-
-
-    # awk '{gsub(/:/, "_"); print}' Covariances.varID.txt > Covariances.varID.txt
-
-    # sed -i -e 's/:/_/g' Covariances.varID.txt
-
-    #sed -e 's/:/_/g' Covariances.txt > Covariances.varID.txt
-
-    # gzip -d predict_db_EUR_AR_Prostate_logistic_filtered.txt.gz
-    # sed -e 's/:/_/g' predict_db_EUR_AR_Prostate_logistic_filtered.txt > Covariances.varID.txt

@@ -53,3 +53,377 @@ dt2 <- dt %>% dplyr::mutate(zscore = beta/se)
 dt2 %>%
     data.table::fwrite('/project/haky/users/temi/projects/TFXcan-snakemake/data/sumstats/pc_risk.liftover.logistic.assoc.tsv.gz', col.names = T, row.names = F, sep = '\t', compress = 'gzip')
 ```
+
+
+## Diagnosing susie result and why I am not getting many significant snps
+
+```{r}
+library(susieR)
+```
+
+```{r}
+ldblocks %>%
+    dplyr::filter(V1 == 'chr21', V2 < 43297707, V3 > 43297707)
+```
+
+
+```{r}
+susieDir <- '/project/haky/users/temi/projects/TFXcan-snakemake/data/PCRISK_GWAS_2024-06-07/finemapping/pc_risk'
+
+susieRun <- readRDS(file.path(susieDir, 'pc_risk.chr21.susie.RDS'))
+```
+
+```{r}
+susieFit <- susieRun$`chr21_43086158_44757190`$fit
+```
+
+```{r}
+susie_plot(susieFit, 'PIP')
+```
+
+```{r}
+susie_plot(susieFit, 'PIP', xlim = c(60, 150))# jsut making sure I have 7
+```
+
+```{r}
+dt_chosen <- getChosenLoci(susieFit, 0.5, 'chr21_43086158_44757190')
+dt_chosen
+```
+
+```{r}
+filteredRes <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/data/PCRISK_GWAS_2024-06-07/collection/pc_risk.filteredGWAS.txt.gz') %>% dplyr::filter(chrom == 21 & varID %in% dt_chosen$SNP)
+filteredRes
+```
+
+```{r}
+dplyr::inner_join(dt_chosen, filteredRes, by = c('SNP' = 'varID')) %>% dplyr::select(-adjP)
+```
+
+So, about 6 of these are not GWAS significant by susie nominates them
+
+
+```{r}
+susie_fit <- susieFit
+threshold <- 0.5
+ldblock <- 'chr21_43086158_44757190'
+```
+```{r}
+getChosenLoci <- function(susie_fit, threshold, ldblock=NULL){
+    # take the summary of fit and summarize
+
+    which_vars <- base::summary(susie_fit)[['vars']] %>%
+        dplyr::group_by(cs) %>%
+        dplyr::filter(variable_prob > threshold) %>%
+        dplyr::pull(variable) %>%
+        as.numeric()
+
+    if(length(which_vars > 0)){
+        # ensure the credible sets
+        cs_info <- base::summary(susie_fit)[['vars']] %>%
+            as.data.frame() %>%
+            dplyr::filter(variable %in% which_vars)
+
+        vars_info <- susie_fit$pip[which_vars] %>%
+            as.data.frame() %>%
+            tibble::rownames_to_column('SNP') %>%
+            setNames(., c('SNP', 'PIP'))
+
+        dt <- cbind(cs_info, vars_info)
+        dt$ldBlock <- ldblock
+        return(dt)
+
+    } else {
+        return(NULL)
+    }
+}
+```
+
+## Now I need to process these properly
+
+
+```{r}
+gwas_ss <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/data/PCRISK_GWAS_2024-06-07/finemapping/pc_risk/pc_risk.chr21.bigsnpr.txt.gz') %>% dplyr::select(-adjP)
+```
+
+
+```{r}
+onekg_geno <- data.table::fread('/project/haky/data/1000G/population_data/EUR/bfiles/ALL.chr21.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.geno.txt.gz')
+```
+
+
+```{r}
+vqueries <- gwas_ss %>%
+        dplyr::filter(dplyr::between(pos, 43086158, 44757190))
+```
+
+There is only one significant snps here
+```{r}
+vqueries$gwas_significant |> table()
+```
+
+
+```{r}
+X <- onekg_geno %>%
+    dplyr::filter(varID %in% vqueries$varID) %>%
+    tibble::column_to_rownames('varID') %>%
+    as.matrix() %>% 
+    t() %>% 
+    scale()
+```
+
+All variants are accounted for
+```{r}
+dim(X)
+```
+
+
+```{r}
+Rmat <- cor(X) ; Rmat[1:5, 1:5]
+```
+
+
+```{r}
+# arrange the vqueries based on Rmat so that the zscores are matches
+xt <- vqueries %>%
+    dplyr::filter(varID %in% row.names(Rmat)) %>%
+    dplyr::arrange(match(varID, row.names(Rmat)))
+
+```
+
+```{r}
+dim(xt); xt[1:5, ]
+```
+
+```{r}
+zscores <- xt %>% dplyr::pull(zscore)
+```
+
+```{r}
+susieFit_primary <- susie_rss(zscores, Rmat, n=1e6, L = 1)
+```
+```{r}
+ft <- susie_plot(susieFit_primary, 'PIP')
+gt <- getChosenLoci(susieFit_primary, 0.5, 'chr21_43086158_44757190')
+gt
+```
+
+```{r}
+gwas_ss %>% dplyr::filter(varID %in% gt$SNP)
+```
+
+```{r}
+susieFit_primary <- susie_rss(zscores, Rmat, n=1e6, L = 10)
+```
+```{r}
+ft <- susie_plot(susieFit_primary, 'PIP')
+gt <- getChosenLoci(susieFit_primary, 0.5, 'chr21_43086158_44757190')
+gt
+```
+
+```{r}
+gwas_ss %>% dplyr::filter(varID %in% gt$SNP)
+```
+```{r}
+susieFit_primary <- susie_rss(zscores, Rmat, n=1e6, L = 5)
+```
+```{r}
+ft <- susie_plot(susieFit_primary, 'PIP', main = 'L = 5')
+gt <- getChosenLoci(susieFit_primary, 0.5, 'chr21_43086158_44757190')
+gt
+```
+
+```{r}
+gwas_ss %>% dplyr::filter(varID %in% gt$SNP)
+```
+```{r}
+susie_plot(susieFit_primary, 'PIP', xlim = c(70,120))
+```
+
+LD is high among these snps
+```{r}
+Rmat[gt$SNP, gt$SNP]
+```
+
+
+```{r}
+lambda = estimate_s_rss(zscores, Rmat, n=1000000L)
+lambda
+```
+
+This higher lambda is not a good sign to start with; i.e. the LD panel and GWAS cohort are inconsistent
+
+```{r}
+condz_in = kriging_rss(zscores, Rmat, n=1000000L)
+condz_in$plot
+```
+
+
+# filter on GEUVADIS individuals
+
+```{r}
+samples_dt <- data.table::fread('/beagle3/haky/users/temi/projects/samples_information.txt')
+samples_dt %>%
+    dplyr::filter(`Superpopulation code` == 'EUR') %>% View()
+```
+
+
+```{r}
+samples_dt %>%
+    dplyr::filter(`Superpopulation code` == 'EUR') %>% View()
+```
+
+
+```{r}
+samples_dt %>%
+    dplyr::filter(`Superpopulation code` == 'EUR') %>%
+    dplyr::filter(grepl('Geuvadis', `Data collections`, fixed = T)) # |\\bgeuvadis\\b
+```
+
+
+```{r}
+geuvadis_dt <- data.table::fread('/beagle3/haky/users/temi/projects/geuvadis_individuals.txt', header = F)
+geuvadis_dt
+```
+
+```{r}
+cm_ind <- intersect(geuvadis_dt$V1, row.names(X))
+```
+
+```{r}
+dX <- X[cm_ind, ]
+dRmat <- cor(dX) ; dRmat[1:5, 1:5]
+```
+
+
+```{r}
+# arrange the vqueries based on Rmat so that the zscores are matches
+dxt <- vqueries %>%
+    dplyr::filter(varID %in% row.names(dRmat)) %>%
+    dplyr::arrange(match(varID, row.names(dRmat)))
+```
+
+```{r}
+dim(dxt); dxt[1:5, ]
+```
+
+```{r}
+zscores <- dxt %>% dplyr::pull(zscore)
+```
+
+```{r}
+lambda = estimate_s_rss(zscores, dRmat, n=1000000L)
+lambda
+```
+
+This higher lambda is not a good sign to start with; i.e. the LD panel and GWAS cohort are inconsistent
+
+```{r}
+condz_in = kriging_rss(zscores, dRmat, n=1000000L)
+condz_in$plot
+```
+
+### What percentage of GWAS loci are returned by my susieR implementation?
+```{r}
+gwas_ss <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/data/sumstats/pc_risk.liftover.logistic.assoc.tsv.gz')
+```
+
+```{r}
+pvalue_threshold = 5e-8
+chrom_filter <- c(1:22)
+gwas_ss <- gwas_ss %>%
+    dplyr::mutate(chrom = dplyr::case_when(
+        grepl('chr', chrom, fixed=TRUE) ~ gsub('chr', '', chrom),
+        .default = as.character(chrom)
+    )) %>%
+    dplyr::filter(chrom %in% chrom_filter) %>%
+    dplyr::mutate(SNP = paste(chrom, pos, ref, alt, sep='_')) %>%
+    dplyr::filter(nchar(ref) == 1 & nchar(alt) == 1) %>% # still need to properly resolve this
+    dplyr::mutate(gwas_significant=ifelse(pval <= pvalue_threshold, 'YES', 'NO')) 
+    
+if(!'rsid' %in% colnames(gwas_ss)){
+    gwas_ss <- gwas_ss %>%
+        dplyr::mutate(rsid = paste(chrom, pos, ref, alt, sep=':'))
+}
+```
+```{r}
+head(gwas_ss)
+```
+
+```{r}
+gwas_signif <- table(gwas_ss$gwas_significant)
+```
+
+```{r}
+chosen_ss <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/data/PCRISK_GWAS_2024-06-07/collection/pc_risk.filteredGWAS.txt.gz') 
+chosen_ss
+```
+
+```{r}
+finemapped <- table(chosen_ss$gwas_significant)
+finemapped
+```
+
+```{r}
+ht <- rbind(gwas_signif, finemapped)
+rownames(ht) <- c('GWAS SNP', 'finemapped variants')
+ht
+```
+
+```{r}
+rbind(gwas_signif, finemapped)[, 2] %>% prop.table() |> t() %>% barplot(col=c('red', 'white'), 
+        border="white", 
+        space=0.04, 
+        font.axis=2, 
+        xlab="group")
+```
+
+```{r}
+(93/16042)*100
+```
+
+So, if I run finemap (and assume at least 10 causal variants), I still only get 0.57% of the GWAS loci.
+I think I should still finemap, but assume1 or 2 causal variants. I can use a heuristic such as, the number of causal variants
+
+### A refined way to choose
+
+- Choose an LD block
+- If there is a GWAS snp, run susie
+- If there is a GWAS snp in susie results, choose that one; if there are more than one, choose both e.t.c.
+- If there is no GWAS snp in susie results, use your classical pipeline
+
+
+```{r}
+susieFit_primary <- susie_rss(zscores, Rmat, n=1e6, L = 10)
+```
+
+```{r}
+xt <- vqueries %>%
+    dplyr::filter(varID %in% row.names(Rmat)) %>%
+    dplyr::arrange(match(varID, row.names(Rmat)))
+```
+```{r}
+ft <- susie_plot(susieFit_primary, 'PIP')
+gt <- getChosenLoci(susieFit_primary, 0.5, 'chr21_43086158_44757190')
+gt
+```
+
+```{r}
+gwas_ss %>% dplyr::filter(varID %in% gt$SNP)
+```
+```{r}
+susieFit_primary <- susie_rss(zscores, Rmat, n=1e6, L = 5)
+```
+```{r}
+ft <- susie_plot(susieFit_primary, 'PIP', main = 'L = 5')
+gt <- getChosenLoci(susieFit_primary, 0.5, 'chr21_43086158_44757190')
+gt
+```
+
+```{r}
+yt <- dplyr::filter(gwas_ss, SNP %in% gt$SNP)
+if("YES" %in% yt$gwas_significant){
+    yt[yt$gwas_significant == 'YES', ]
+} else {
+    yt
+}
+```

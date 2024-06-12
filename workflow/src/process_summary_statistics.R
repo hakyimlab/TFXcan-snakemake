@@ -33,7 +33,14 @@ print(opt)
 chrom_filter <- c(1:22)
 if(!dir.exists(opt$output_folder)){dir.create(opt$output_folder)}
 
-dt <- data.table::fread(opt$summary_stats_file) %>%
+dt <- data.table::fread(opt$summary_stats_file) 
+
+# important checks
+if(!all(c('chrom', 'pos', 'ref', 'alt', 'pval', 'beta', 'se') %in% colnames(dt))){
+    stop('ERROR - The summary statistics file must have columns: chrom, pos, ref, alt, pval, beta, se')
+}
+
+dt <- dt %>%
     dplyr::mutate(chrom = dplyr::case_when(
         grepl('chr', chrom, fixed=TRUE) ~ gsub('chr', '', chrom),
         .default = as.character(chrom)
@@ -46,6 +53,11 @@ dt <- data.table::fread(opt$summary_stats_file) %>%
 if(!'rsid' %in% colnames(dt)){
     dt <- dt %>%
         dplyr::mutate(rsid = paste(chrom, pos, ref, alt, sep=':'))
+}
+
+if(!'zscore' %in% colnames(dt)){
+    dt <- dt %>%
+        dplyr::mutate(zscore = beta/se)
 }
 
 # split and save 

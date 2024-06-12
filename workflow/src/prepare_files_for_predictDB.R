@@ -10,7 +10,8 @@ option_list <- list(
     make_option("--formatted_escores_file", help='output: The formatted Enpact scores file'),
     make_option("--formatted_annot_file", help='output: The formatted annotation file'),
     make_option("--include_models", default = NULL),
-    make_option("--filtered_GWAS_file", help='input: The filtered GWAS file')
+    make_option("--filtered_GWAS_file", help='input: The filtered GWAS file'),
+    make_option("--blacklist", default = NULL, help='input: Remove loci within these blacklist regions')
 )
 
 opt <- parse_args(OptionParser(option_list=option_list))
@@ -21,9 +22,9 @@ library(glue)
 
 # opt <- list()
 # opt$include_models <- NULL
-# opt$filtered_GWAS_file <- '/project/haky/users/temi/projects/TFXcan-snakemake/data/BC_GWAS/collection/breast_cancer/breast_cancer.filteredGWAS.txt.gz'
-
-# dt <- data.table::fread('/project2/haky/temi/projects/TFXcan-snakemake/data/predictdb/asthma_children/asthma_children.enpact_scores.txt')
+# opt$blacklist <- '/project/haky/users/temi/projects/TFXcan-snakemake/metadata/HLA_blocks.txt'
+# opt$filtered_GWAS_file <- '/project/haky/users/temi/projects/TFXcan-snakemake/data/PCRISK_GWAS_2024-06-07/collection/pc_risk.filteredGWAS.txt.gz'
+# opt$enpact_scores_file <- '/project/haky/users/temi/projects/TFXcan-snakemake/data/PCRISK_GWAS_2024-06-07/enpactdb/pc_risk.enpact_scores.txt.gz'
 # dt$NAME[startsWith(dt$NAME, 'HSF1_Mammary-Gland')] |> print()
 
 
@@ -35,11 +36,23 @@ if(!is.null(opt$include_models)){
     include_models <- NULL
 }
 
+
 enpact_scores_dt <- data.table::fread(opt$enpact_scores_file)
 
-# read in the annotation file too
-annot_dt_1 <- data.table::fread(opt$filtered_GWAS_file) %>%
-    dplyr::mutate(chr = gsub('chr', '', chrom), start = pos, end = pos + 1, gene_type='protein_coding')
+if(!is.null(opt$blacklist)){
+    blacklist <- data.table::fread(opt$blacklist, header = T) %>%
+        dplyr::select(chrom, start, end)
+
+    # read in the annotation file too and filter out the blacklist regions
+    annot_dt_1 <- data.table::fread(opt$filtered_GWAS_file) %>%
+        dplyr::mutate(chr = gsub('chr', '', chrom), start = pos, end = pos + 1, gene_type='protein_coding') %>%
+        dplyr::filter(!dplyr::between(pos, blacklist$start, blacklist$end))
+} else {
+    blacklist <- NULL
+    # read in the annotation file too
+    annot_dt_1 <- data.table::fread(opt$filtered_GWAS_file) %>%
+        dplyr::mutate(chr = gsub('chr', '', chrom), start = pos, end = pos + 1, gene_type='protein_coding')
+}
 
 annot_dt_2 <- enpact_scores_dt %>%
     dplyr::select(NAME) %>%
@@ -51,7 +64,6 @@ annot_dt_2 <- enpact_scores_dt %>%
 annot_dt <- dplyr::inner_join(annot_dt_1, annot_dt_2, by = c('chr' = 'chr', 'start' = 'start', 'end' = 'end')) %>%
     dplyr::select(chr, start, end, gene_id=NAME, gene_name=NAME, gene_type)
 
-
 annot_dt <- annot_dt %>%
     dplyr::mutate(gene_name = gsub(':', '_',gene_name), gene_id = gene_name) 
 
@@ -60,6 +72,9 @@ enpact_scores_dt <- enpact_scores_dt %>%
 
 annot_dt <- annot_dt %>% dplyr::mutate(gene_id = gsub('-', '', gene_id), gene_name = gsub('-', '', gene_name))
 enpact_scores_dt <- enpact_scores_dt %>% dplyr::mutate(NAME = gsub('-', '', NAME))
+
+enpact_scores_dt <- enpact_scores_dt %>%
+    dplyr::filter(NAME %in% annot_dt$gene_id)
 
 data.table::fwrite(annot_dt, file = opt$formatted_annot_file, quote=F, row.names = F, col.names = T, sep = '\t')
 data.table::fwrite(enpact_scores_dt, file = opt$formatted_escores_file, quote=F, row.names = F, col.names = T, sep = '\t')

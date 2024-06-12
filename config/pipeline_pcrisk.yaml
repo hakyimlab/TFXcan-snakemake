@@ -26,6 +26,16 @@ finemapping:
   LD_blocks: "/project/haky/users/temi/projects/TFXcan-snakemake/metadata/hg38_fourier_ls-all.bed"
   genotypes_dosages_pattern: '/project/haky/data/1000G/population_data/EUR/bfiles/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.geno.txt.gz'
 
+predictdb:
+  blacklist_regions: /project/haky/users/temi/projects/TFXcan-snakemake/metadata/HLA_blocks.txt
+  conda_environment: /project/haky/users/temi/software/conda_envs/predictdb_env
+  nextflow_main_executable: /project/haky/users/temi/projects/TFXcan-snakemake/workflow/PredictDb-nextflow/main.nf
+
+summaryTFXcan:
+  conda_environment: /beagle3/haky/users/temi/software/conda_envs/imlabtools
+  summaryXcan_executable: /beagle3/haky/users/temi/software/MetaXcan/software/SPrediXcan.py # this is the SPrediXcan.py script
+
+
 # plink:
 #   folder: "/project2/haky/Data/1000G/plink_ref_panel"
 #   basename: "ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased"

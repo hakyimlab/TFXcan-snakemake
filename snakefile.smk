@@ -183,7 +183,7 @@ rule predict_with_enformer:
     resources:
         partition="beagle3",
         time = "12:00:00",
-        gpu=2,
+        gpu=4,
         mem_cpu=8,
         cpu_task=8
     params:
@@ -280,10 +280,11 @@ rule prepare_files_for_predictDB:
         runmeta = runmeta,
         jobname = '{phenotype}',
         output_dir = os.path.join(PREDICTDB_DATA, '{phenotype}'),
-        filtered_gwas = rules.collect_finemapping_results.output.finemapped_sumstats
+        filtered_gwas = rules.collect_finemapping_results.output.finemapped_sumstats,
+        blacklist = config['predictdb']['blacklist_regions']
     resources:
         partition="caslake"
-    shell: "{params.rscript} workflow/src/prepare_files_for_predictDB.R --enpact_scores_file {input} --formatted_escores_file {output.enpact_scores} --formatted_annot_file {output.annot_file} --filtered_GWAS_file {params.filtered_gwas}"
+    shell: "{params.rscript} workflow/src/prepare_files_for_predictDB.R --enpact_scores_file {input} --formatted_escores_file {output.enpact_scores} --formatted_annot_file {output.annot_file} --filtered_GWAS_file {params.filtered_gwas} --blacklist {params.blacklist}"
 
 rule generate_lEnpact_models:
     input:
@@ -299,11 +300,12 @@ rule generate_lEnpact_models:
         annot_file = os.path.abspath(rules.prepare_files_for_predictDB.output.annot_file),
         enpact_scores = os.path.abspath(rules.prepare_files_for_predictDB.output.enpact_scores)
     resources:
-        partition="beagle3",
+        partition="caslake",
         time="36:00:00"
     shell: "workflow/helpers/generate_lEnpact_models.EUR.midway3.sbatch {wildcards.phenotype} {params.output_dir} {params.annot_file} {params.enpact_scores}"
 
-
+            # gzip -d -k {input.covariances};
+            # sed -e 's/:/_/g' {output.f1} > {output.f2}
 rule format_covariances:
     input:
         covariances = rules.generate_lEnpact_models.output.covariances_model
@@ -313,21 +315,23 @@ rule format_covariances:
     params:
         jobname = '{phenotype}',
         runmeta = runmeta,
-        c1 = os.path.abspath(os.path.join('output', 'lEnpact', '{phenotype}/models/database/predict_db_{phenotype}.txt.gz')),
-        f1 = os.path.abspath(os.path.join('output', 'lEnpact', '{phenotype}/models/database/predict_db_{phenotype}.txt')),
-        f2 = os.path.abspath(os.path.join('output', 'lEnpact', '{phenotype}/models/database/Covariances.varID.txt'))
+        # c1 = os.path.abspath(os.path.join('output', 'lEnpact', '{phenotype}/models/database/predict_db_{phenotype}.txt.gz')),
+        # f1 = os.path.abspath(os.path.join('output', 'lEnpact', '{phenotype}/models/database/predict_db_{phenotype}.txt')),
+        # f2 = os.path.abspath(os.path.join('output', 'lEnpact', '{phenotype}/models/database/Covariances.varID.txt'))
     resources:
-        partition="beagle3",
-        time="36:00:00"
+        partition="caslake",
+        time="01:00:00"
     shell:
         """
-            gzip -d {params.c1};
-            sed -e 's/:/_/g' {params.f1} > {params.f2}
+            touch {input.covariances};
+            touch {output.f1};
+            touch {output.f2};
         """
 
 rule summary_TFXcan:
     input:
-        rules.generate_lEnpact_models.output.lEnpact_model
+        model=rules.generate_lEnpact_models.output.lEnpact_model,
+        cov=rules.format_covariances.output.f2
     output:
         summary_tfxcan = os.path.join('output', 'summary', '{phenotype}/{phenotype}.enpactScores.spredixcan.csv')
     params:
@@ -339,6 +343,6 @@ rule summary_TFXcan:
         inp = os.path.abspath(rules.generate_lEnpact_models.output.lEnpact_model),
         outp = os.path.abspath(os.path.join('output', 'summary', '{phenotype}/{phenotype}.enpactScores.spredixcan.csv'))
     resources:
-        partition="beagle3",
-        time="36:00:00"
-    shell: "workflow/src/summary_TFXcan.sbatch {wildcards.phenotype} {params.inp} {params.outp} {params.gwas_folder} {params.gwas_pattern} {params.covariances}"
+        partition="bigmem",
+        time="04:00:00"
+    shell: "workflow/src/summary_TFXcan.sbatch {wildcards.phenotype} {input.model} {output.summary_tfxcan} {params.gwas_folder} {params.gwas_pattern} {input.cov}" #"workflow/src/summary_TFXcan.sbatch {wildcards.phenotype} {params.inp} {params.outp} {params.gwas_folder} {params.gwas_pattern} {params.covariances}"

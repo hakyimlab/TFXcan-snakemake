@@ -18,8 +18,8 @@ default-resources:
   - account="pi-haky"
   - nodes=1
   - gpu=0
-  - mem_cpu=4
-  - cpu_task=8
+  - mem_cpu=8
+  - cpu_task=12
 
 restart-times: 0
 max-jobs-per-second: 10
