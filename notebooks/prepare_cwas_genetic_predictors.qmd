@@ -1,0 +1,577 @@
+---
+title: "Exploring Baca's CWAS models + creating DBs"
+author: "Temi"
+description: "..."
+date: 'Tues Aug 8 2023'
+html:
+    self-contained: true
+    code-background: true
+fig-format: svg
+---
+
+# Introduction
+
+Here, I explore Baca's CWAS models, and create necessary DBs suitable in a Predixcan framework
+
+- I create for both hg19 and hg38
+
+```{r}
+library(data.table)
+library(glue)
+library(dplyr)
+library(RSQLite)
+library(rtracklayer)
+library(GenomicRanges)
+```
+
+```{r}
+Sys.setenv(GITHUB_PAT = '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')
+# for manhattan plots
+devtools::source_gist('https://gist.github.com/TemiPete/250d9922b9516691f83bb1fd999a3ccc')
+devtools::source_gist('https://gist.github.com/hakyim/38431b74c6c0bf90c12f')
+devtools::source_gist('https://gist.github.com/hakyim/5d2251ea1a86009499e4ffdf47fe2735')
+devtools::source_gist('https://gist.github.com/TemiPete/e7214eb308c4116e2f10ee96401be0c2')
+devtools::source_gist('https://gist.github.com/TemiPete/b309a46e25ecec93127fb6756e68fb14')
+```
+
+```{r}
+tdate <- '2023-08-17' # modified
+tdate <- '2024-04-17'
+
+base_dir <- '/project2/haky/temi/projects/TFXcan/baca_cwas'
+data_dir <- '/project2/haky/Data/baca_cwas/cwas_weights'
+#project_dir <- '/lus/grand/projects/TFXcan/imlab/users/temi/projects/TFXcan/baca_cwas'
+output_dir <- glue('{base_dir}/data')
+files_dir <- glue('{base_dir}/files')
+if(!(dir.exists(files_dir))){
+    dir.create(files_dir, recursive = T)
+}
+transcription_factor <- 'AR'
+
+bedmappings <- glue('{base_dir}/mappings/baca_cwas_loci_hg38.bed')
+snpmappings <- glue('{base_dir}/mappings/hg38_snps.bed')
+
+loci_mappings <- data.table::fread('/project2/haky/temi/projects/TFXcan/baca_cwas/mappings/cwas_loci_mappings.txt')
+```
+
+```{r}
+hg38_snp_files <- data.table::fread(snpmappings, col.names=c('chr', 'hg38_start', 'hg38_end', 'snp_id', 'hg38_locus'))
+hg38_snp_files$chr <- as.numeric(gsub(pattern='chr', replacement='', x=hg38_snp_files$chr))
+hg38_snp_files[1:5, ]
+```
+
+```{r}
+tt <- dplyr::left_join(hg38_cwas_db, hg38_snp_files, by=c('locus' = 'hg38_locus', 'snp_id'='snp_id', 'chr' = 'chr'))
+tt$position <- tt$hg38_start
+tt$hg38_start <- tt$hg38_end <- NULL
+tt[1:5, ] ; dim(tt)
+```
+
+```{r}
+mappings <- data.table::fread('/project2/haky/temi/projects/TFXcan/baca_cwas/mappings/baca_cwas_loci_hg38.bed', col.names=c('chr', 'hg38_start', 'hg38_end', 'hg19_id'))
+
+mappings <- mappings %>%
+    tidyr::unite('hg38_id', chr:hg38_end, sep = '_', remove = T) %>%
+    dplyr::mutate(hg19_id = gsub(':|-', '_', hg19_id))
+
+data.table::fwrite(mappings, file = '/project2/haky/temi/projects/TFXcan/baca_cwas/mappings/cwas_loci_mappings.txt', sep = '\t', col.names = T, row.names = F, quote = F)
+```
+
+
+```{r}
+ar_zip <- glue('{data_dir}/AR.zip')
+print(file.exists(ar_zip))
+```
+
+First unzip the file
+```{r}
+
+if(!dir.exists(glue('{output_dir}/{transcription_factor}'))){
+    file_names <- unzip(ar_zip, list=T)$Name
+    files_to_read <- grep(pattern='^\\bAR\\b.*\\bRDat\\b$', x=file_names, value=T)
+    files_to_read[1:5]
+
+    # unzip the file
+    zip::unzip(ar_zip, files=files_to_read, exdir=output_dir)
+    
+
+} 
+
+ar_files <- list.files(glue('{output_dir}/{transcription_factor}'))
+ar_files_locus <- sapply(strsplit(x=ar_files, split='\\.'), getElement, 1)
+ar_files_locus[1:5]
+
+```
+
+```{r}
+rdt <- new.env(parent = emptyenv())
+load(file.path(output_dir, transcription_factor, ar_files[1]), envir=rdt)
+```
+
+```{r}
+
+```
+
+-- read weights 
+
+Next, read the files `.wgt` files
+```{r}
+# /project2/haky/temi/projects/TFXcan/baca_cwas
+out <- purrr::map(.x=seq_along(ar_files_locus), .f=function(i){
+    locus <- ar_files_locus[i]
+    #print(file.exists(glue('{output_dir}/{transcription_factor}/{locus}.wgt.RDat')))
+    rdt <- new.env(parent = emptyenv())
+    load(glue('{output_dir}/{transcription_factor}/{locus}.wgt.RDat'), envir=rdt)
+    wgts <- as.data.frame(rdt$wgt.matrix) %>% 
+        tibble::rownames_to_column('snp_id') %>% 
+        dplyr::mutate(locus=locus)
+    
+    snp_info <- rdt$snps %>% 
+        as.data.frame() %>% 
+        dplyr::select(all_of(c('V1', 'V3', 'V2', 'V4', 'V5'))) 
+
+    colnames(snp_info) <- c('chr', 'snp_id', 'position', 'a1', 'a2')
+
+    dt <- base::merge(wgts, snp_info, by='snp_id') %>% 
+        dplyr::relocate(all_of(c('locus', 'chr', 'position', 'a1', 'a2')), .after=snp_id)
+    return(dt)
+}, .progress=T)
+
+cwas_db <- do.call('rbind', out)
+
+dim(cwas_db) ; cwas_db[1:5, ]
+```
+
+```{r}
+cwas_db <- data.table::fread(glue('{files_dir}/{transcription_factor}_baca_cwas_weights_{tdate}.txt.gz'))
+```
+
+-- map the snps to hg38 coordinates
+```{r}
+chainObject <- rtracklayer::import.chain('/project2/haky/Data/liftover/ensembl_chainfiles/GRCh37_to_GRCh38.chain')
+```
+
+```{r}
+grObject <- GenomicRanges::GRanges(seqnames = cwas_db$chr, ranges = IRanges(start = cwas_db$position, end = cwas_db$position))
+results <- as.data.frame(liftOver(grObject, chainObject))
+```
+
+```{r}
+
+```
+
+-- read extras
+### Read in the cv performance
+
+```{r}
+out <- purrr::map(.x=seq_along(ar_files_locus), .f=function(i){
+    locus <- ar_files_locus[i]
+    #print(file.exists(glue('{output_dir}/{transcription_factor}/{locus}.wgt.RDat')))
+    rdt <- new.env(parent = emptyenv())
+    load(glue('{output_dir}/{transcription_factor}/{locus}.wgt.RDat'), envir=rdt)
+
+    cv_perf <- rbind(rdt$cv.performance['pval', ], rdt$cv.performance['rsq', ]) %>%
+        as.data.frame() %>%
+        dplyr::mutate(measure = c('pval', 'rsq'), locus) %>%
+        dplyr::relocate(locus, measure) %>%
+        dplyr::mutate(locus = locus, transcription_factor = transcription_factor, n_snps_in_window = rdt$N.tot, n.snps.in.model = rdt$N.as)
+
+    return(cv_perf)
+}, .progress=T)
+
+cvperf_dt <- do.call('rbind', out)
+dim(cvperf_dt) ; cvperf_dt[1:5, ]
+```
+
+-- split into models and save 
+
+```{r}
+dt <- cvperf_dt %>% 
+    tidyr::pivot_longer(cols = !c(locus, measure, transcription_factor, n_snps_in_window, n.snps.in.model), values_to = 'score', names_to=c('model')) %>% 
+    tidyr::pivot_wider(id_cols = c(locus, model, transcription_factor, n_snps_in_window, n.snps.in.model), names_from = 'measure', values_from = 'score') %>%
+    dplyr::mutate(locus = gsub(':|-', '_', locus)) %>%
+    dplyr::full_join(loci_mappings, by = c('locus' = 'hg19_id')) %>%
+    dplyr::rename(hg19_id = locus, pred.perf.R2 = rsq, pred.perf.pval = pval)
+
+dt %>% dplyr::group_by(model) %>%
+    group_walk(~ data.table::fwrite(.x, file=glue('{files_dir}/{transcription_factor}_baca_cwas_{tdate}.{.y$model}.cv_performance.txt.gz'), col.names=T, row.names=F, quote=F, compress='gzip',sep = '\t'), .keep = TRUE)
+```
+
+
+```{r}
+cwas_db <- cwas_db %>%
+    dplyr::mutate(varID = gsub(":|-", '_', locus))
+extra_dt <- extra_dt %>%
+    dplyr::mutate(varID = gsub(":|-", '_', locus))
+```
+
+```{r}
+
+data.table::fwrite(extra_dt, file=glue('{files_dir}/{transcription_factor}_baca_cwas_extras_{tdate}.hg19.txt.gz'), row.names=F, quote=F, compress='gzip', sep='\t')
+```
+
+#### Create db (in hg19)
+Baca has 6 models/weights
+
+```{r}
+baca_models <- c('lasso', 'lasso.as', 'lasso.plasma', 'top1.as', 'top1.qtl', 'top1')
+db_folder <- glue('{base_dir}/db_folder')
+if(!dir.exists(db_folder)){dir.create(db_folder)}
+
+db_folder_chr <- glue('{base_dir}/db_folder_chr')
+if(!dir.exists(db_folder_chr)){dir.create(db_folder_chr)}
+```
+
+```{r}
+baca_extra <- data.table::fread(glue('{files_dir}/{transcription_factor}_baca_cwas_extras_{tdate}.hg19.txt.gz'))
+baca_extra <- baca_extra %>% 
+    dplyr::mutate(gene = gsub(":|-", '_', locus)) %>%
+    dplyr::select(-c(varID)) %>%
+    dplyr::rename(genename=transcription_factor)
+baca_extra$pred.perf.qval <- NA
+baca_extra[1:5, ]
+```
+
+Predict_db format
+
+```{r}
+
+weights_dt <- data.table::fread(glue('{files_dir}/{transcription_factor}_baca_cwas_weights_{tdate}.hg19.txt.gz'))
+
+baca_weights_list <- purrr::map(.x=baca_models, function(each_m){
+    model_weights <- weights_dt %>% 
+        dplyr::mutate(varID = paste0(chr, '_', position, '_', a1, '_', a2, sep=''),
+            chr_varID = paste0('chr', chr, '_', position, '_', a1, '_', a2, sep=''),
+            gene = gsub(":|-", '_', locus)) %>%
+        dplyr::select(gene, rsid=snp_id, varID, chr_varID, ref_allele=a1, eff_allele=a2, weight=as.symbol(each_m)) %>% as.data.frame()
+
+    # read in the extra
+    extras_dt <- data.table::fread(glue('{files_dir}/{transcription_factor}_baca_cwas_{tdate}.{each_m}.cv_performance.txt.gz'))
+
+    # prepare for both hg19 and hg38
+
+    ## hg19 
+    each_db <- DBI::dbConnect(RSQLite::SQLite(), glue('{db_folder}/baca_cwas_{each_m}.hg19.db'))
+    dbWriteTable(each_db, "extra", extras_dt %>% dplyr::rename(gene = hg19_id), overwrite=T)
+    dbWriteTable(each_db, "weights", model_weights, overwrite=T)
+    dbDisconnect(each_db)
+
+    ## hg38
+    edt <- extras_dt %>%
+        dplyr::select(hg19_id, hg38_id)
+    model_wgts <- dplyr::full_join(model_weights, edt, by = c('gene' = 'hg19_id')) %>%
+        dplyr::select(-any_of(c(gene, hg19_id))) %>%
+        dplyr::rename(gene = hg38_id)
+
+
+    each_db <- DBI::dbConnect(RSQLite::SQLite(), glue('{db_folder}/baca_cwas_{each_m}.hg19.db'))
+    dbWriteTable(each_db, "extra", baca_extra, overwrite=T)
+    dbWriteTable(each_db, "weights", model_weights, overwrite=T)
+    dbDisconnect(each_db)
+
+    # model_weights <- baca_weights %>% 
+    #     dplyr::select(gene=locus, rsid=snp_id, varID=chr_varIDs, chr_varIDs=chr_varIDs, ref_allele=a1, eff_allele=a2, weight=as.symbol(each_m)) %>% as.data.frame()
+
+    # each_db <- DBI::dbConnect(RSQLite::SQLite(), glue('{db_folder_chr}/baca_cwas_{each_m}.db'))
+    # dbWriteTable(each_db, "extra", baca_extra, overwrite=T)
+    # dbWriteTable(each_db, "weights", model_weights, overwrite=T)
+    # dbDisconnect(each_db)
+
+    return(0)
+})
+
+# names(baca_weights_list) <- baca_models
+```
+
+### Read in the cv performance
+
+```{r}
+out <- purrr::map(.x=seq_along(ar_files_locus), .f=function(i){
+    locus <- ar_files_locus[i]
+    #print(file.exists(glue('{output_dir}/{transcription_factor}/{locus}.wgt.RDat')))
+    rdt <- new.env(parent = emptyenv())
+    load(glue('{output_dir}/{transcription_factor}/{locus}.wgt.RDat'), envir=rdt)
+
+    cv_perf <- rbind(rdt$cv.performance['pval', ], rdt$cv.performance['rsq', ]) %>%
+        as.data.frame() %>%
+        dplyr::mutate(measure = c('pval', 'rsq'), snp_id = locus) %>%
+        dplyr::relocate(snp_id, measure)
+
+    return(cv_perf)
+}, .progress=T)
+
+cvperf_dt <- do.call('rbind', out)
+cvperf_dt <- cvperf_dt %>% dplyr::rename(locus = snp_id)
+
+dim(cvperf_dt) ; cvperf_dt[1:5, ]
+```
+
+```{r}
+dt <- dplyr::left_join(cvperf_dt, hg38_bed_files, by=c('locus' = 'hg19_id')) %>%
+    dplyr::mutate(locus = hg38_id) %>%
+    dplyr::rename(chrom = chr) %>%
+    dplyr::relocate(chrom, locus, measure) %>%
+    dplyr::select(-hg38_id) %>%
+    dplyr::filter(!is.na(locus))
+```
+
+```{r}
+sum(is.na(dt$locus))
+```
+
+```{r}
+dt %>% 
+    tidyr::pivot_longer(cols = !c(chrom, locus, measure), values_to = 'score', names_to=c('model')) %>% 
+    tidyr::pivot_wider(id_cols =c(locus, model),  names_from = 'measure', values_from = 'score') %>%
+    dplyr::group_by(model) %>%
+    group_walk(~ data.table::fwrite(.x, file=glue('{files_dir}/{transcription_factor}_baca_cwas_hg38_{tdate}.{.y$model}.cv_performance.txt.gz'), col.names=T, row.names=F, quote=F, compress='gzip',sep = '\t'), .keep = TRUE)
+```
+
+```{r}
+dtgrp[[1]] %>% dplyr::group_by(locus, model, measure) %>%
+  dplyr::summarise(n = dplyr::n(), .groups = "drop") %>%
+  dplyr::filter(n > 1L) 
+```
+
+```{r}
+dt <- dplyr::left_join(cvperf_dt, hg38_bed_files, by=c('locus' = 'hg19_id')) %>% 
+    dplyr::mutate(locus = hg38_id) %>%
+    dplyr::rename(chrom = chr) %>%
+    dplyr::relocate(chrom, locus, measure) %>%
+    dplyr::select(-hg38_id)
+data.table::fwrite(dt, file=glue('{files_dir}/{transcription_factor}_baca_cwas_hg38_{tdate}.cv_performance.txt.gz'), col.names=T, row.names=F, quote=F, compress='gzip',sep = '\t')
+```
+
+```{r}
+dt <- data.table::fread(glue('{files_dir}/{transcription_factor}_baca_cwas_hg38_{tdate}.cv_performance.txt.gz'))
+```
+
+```{r}
+pval_mat <- dt %>%
+    dplyr::filter(measure == 'pval') %>%
+    dplyr::select(-c(chrom, locus, measure)) %>%
+    as.matrix() 
+
+rsq_mat <- dt %>%
+    dplyr::filter(measure == 'rsq') %>%
+    dplyr::select(-c(chrom, locus, measure)) %>%
+    as.matrix() 
+```
+
+```{r}
+# Function to add histograms
+panel.hist <- function(x, ...) {
+    # usr <- par("usr")
+    # on.exit(par(usr))
+    # par(usr = c(usr[1:2], 0, 1.5))
+    par(new = TRUE)
+    his <- hist(x, plot = T, main = '')
+    # breaks <- his$breaks
+    # nB <- length(breaks)
+    # y <- his$counts
+    # y <- y/max(y)
+    # rect(breaks[-nB], 0, breaks[-1], y, col = rgb(0, 1, 1, alpha = 0.5), ...)
+    # lines(density(x), col = 2, lwd = 2) # Uncomment to add density lines
+}
+
+# panel.qqplot <- function(x, ...) {
+#     usr <- par("usr")
+#     on.exit(par(usr))
+#     par(usr = c(usr[1:2], 0, 1.5))
+#     qq_generic(data_points = x, distribution = 'uniform')
+#     # lines(density(x), col = 2, lwd = 2) # Uncomment to add density lines
+# }
+
+
+panel.cor <- function(x,y, ...){
+    par(new = TRUE)
+    plot(x, y)
+    abline(a=0, b=1, col='red')
+    # legend('bottomright', legend=c('y', 'x'), col=c("black", "blue"), pch=c(1,3), bg = adjustcolor('grey', 0.2))
+}
+
+panel.qqplot <- function(x,y, ...){
+    par(new = TRUE)
+    qqunif.compare(x, y)
+    legend('bottomright', legend=c('y', 'x'), col=c("black", "blue"), pch=c(1,3), bg = adjustcolor('grey', 0.2))
+}
+```
+
+
+
+```{r}
+qqunif(pval_mat[, 'lasso'], col = 'orange', pch = '.', cex = 3, bty = 'n', show=F)
+qqpoints(pval_mat[, 'lasso.as'], col = 'brown', pch = '.', cex = 3)
+qqpoints(pval_mat[, 'top1'], col = 'red', pch = '.', cex = 3)
+qqpoints(pval_mat[, 'lasso.plasma'], col = 'blue', pch = '.', cex = 3)
+qqpoints(pval_mat[, 'top1.as'], col = 'green', pch = '.', cex = 3)
+qqpoints(pval_mat[, 'top1.qtl'], col = 'black', pch = '.', cex = 3)
+legend(x=0, y =20, legend = c('lasso', 'lasso.as', 'top1', 'lasso.plasma', 'top1.as', 'top1.qtl'), pch = '.', pt.cex=3, col=c('orange', 'brown', 'red', 'blue', 'green', 'black'), bty='n')
+
+```
+
+```{r}
+# pdf(glue('{files_dir}/plt.pdf'), width=21, height=21)
+# pairs(pval_mat, lower.panel = panel.qqplot, diag.panel = panel.hist, upper.panel = NULL, gap=3)
+# dev.off()
+
+pdf(glue('{files_dir}/rsq_plt.pdf'), width=21, height=21)
+pairs(rsq_mat, lower.panel = panel.cor, diag.panel = panel.hist, upper.panel = NULL, gap=3)
+dev.off()
+
+```
+
+```{r}
+qqplot(pval_mat[1:100, 1], pval_mat[1:100, 2])
+```
+
+if you have a lifted over bed file, you can continue
+Read in new bed files and match 
+```{r}
+hg38_bed_files <- data.table::fread(bedmappings, col.names=c('chr', 'hg38_start', 'hg38_end', 'hg19_id'))
+hg38_bed_files <- hg38_bed_files %>% 
+    dplyr::mutate(hg38_id=paste(paste(chr, hg38_start, sep=':'), hg38_end, sep='-')) %>%
+    dplyr::select(chr, hg19_id, hg38_id)
+hg38_bed_files$chr <- as.numeric(gsub(pattern='chr', replacement='', x=hg38_bed_files$chr))
+hg38_bed_files[1:5, ]
+```
+
+```{r}
+hg38_cwas_db <- dplyr::left_join(cwas_db, hg38_bed_files, by=c('locus' = 'hg19_id', 'chr'='chr'))
+hg38_cwas_db$locus <- hg38_cwas_db$hg38_id
+hg38_cwas_db$hg38_id <- NULL
+hg38_cwas_db[1:5, ] ; dim(hg38_cwas_db)
+```
+
+Match the `extras` too
+
+```{r}
+hg38_cwas_extra <- dplyr::left_join(extra_dt, hg38_bed_files, by=c('locus' = 'hg19_id'))
+hg38_cwas_extra$locus <- hg38_cwas_extra$hg38_id
+hg38_cwas_extra$hg38_id <- NULL
+hg38_cwas_extra[1:5, ] ; dim(hg38_cwas_extra)
+```
+
+Merge with the hg38 snps
+```{r}
+hg38_snp_files <- data.table::fread(snpmappings, col.names=c('chr', 'hg38_start', 'hg38_end', 'snp_id', 'hg38_locus'))
+hg38_snp_files$chr <- as.numeric(gsub(pattern='chr', replacement='', x=hg38_snp_files$chr))
+hg38_snp_files[1:5, ]
+```
+
+```{r}
+tt <- dplyr::left_join(hg38_cwas_db, hg38_snp_files, by=c('locus' = 'hg38_locus', 'snp_id'='snp_id', 'chr' = 'chr'))
+tt$position <- tt$hg38_start
+tt$hg38_start <- tt$hg38_end <- NULL
+tt[1:5, ] ; dim(tt)
+```
+
+```{r}
+# write out the snps to a file
+data.table::fwrite(tt, file=glue('{files_dir}/{transcription_factor}_baca_cwas_weights_hg38_{tdate}.txt.gz'), col.names=T, row.names=F, quote=F, compress='gzip',sep = '\t')
+
+data.table::fwrite(hg38_cwas_extra, file=glue('{files_dir}/{transcription_factor}_baca_cwas_extra_hg38_{tdate}.txt.gz'), col.names=T, row.names=F, quote=F, compress='gzip',sep = '\t')
+```
+
+
+## Create databases
+
+- for the weights as is
+Here I will write out two folders: one with `1...` and `chr1...`
+```{r}
+library(RSQLite)
+library(dbplyr)
+library(DBI)
+```
+
+```{r}
+db_folder <- glue('{base_dir}/db_folder')
+if(!dir.exists(db_folder)){dir.create(db_folder)}
+
+db_folder_chr <- glue('{base_dir}/db_folder_chr')
+if(!dir.exists(db_folder_chr)){dir.create(db_folder_chr)}
+```
+
+
+```{r}
+# write out the snps to a file
+baca_weights <- data.table::fread(glue('{files_dir}/{transcription_factor}_baca_cwas_weights_hg38_{tdate}.txt.gz'))
+baca_weights$varIDs <- with(baca_weights, paste0(chr, '_', position, '_', a1, '_', a2, sep=''))
+baca_weights$chr_varIDs <- with(baca_weights, paste0('chr', chr, '_', position, '_', a1, '_', a2, sep=''))
+baca_weights[1:5, ]
+```
+
+Baca has 6 models/weights
+
+```{r}
+baca_models <- c('lasso', 'lasso.as', 'lasso.plasma', 'top1.as', 'top1.qtl', 'top1')
+```
+
+```{r}
+baca_extra <- data.table::fread(glue('{files_dir}/{transcription_factor}_baca_cwas_extra_hg38_{tdate}.txt.gz'))
+baca_extra <- baca_extra %>% dplyr::rename(gene=locus, genename=transcription_factor)
+baca_extra$pred.perf.qval <- NA
+baca_extra[1:5, ]
+```
+
+Predict_db format
+
+```{r}
+baca_weights_list <- purrr::map(.x=baca_models, function(each_m){
+    model_weights <- baca_weights %>% 
+        dplyr::select(gene=locus, rsid=snp_id, varID=varIDs, chr_varID=chr_varIDs, ref_allele=a1, eff_allele=a2, weight=as.symbol(each_m)) %>% as.data.frame()
+
+    each_db <- DBI::dbConnect(RSQLite::SQLite(), glue('{db_folder}/baca_cwas_{each_m}.db'))
+    dbWriteTable(each_db, "extra", baca_extra, overwrite=T)
+    dbWriteTable(each_db, "weights", model_weights, overwrite=T)
+    dbDisconnect(each_db)
+
+    # model_weights <- baca_weights %>% 
+    #     dplyr::select(gene=locus, rsid=snp_id, varID=chr_varIDs, chr_varIDs=chr_varIDs, ref_allele=a1, eff_allele=a2, weight=as.symbol(each_m)) %>% as.data.frame()
+
+    # each_db <- DBI::dbConnect(RSQLite::SQLite(), glue('{db_folder_chr}/baca_cwas_{each_m}.db'))
+    # dbWriteTable(each_db, "extra", baca_extra, overwrite=T)
+    # dbWriteTable(each_db, "weights", model_weights, overwrite=T)
+    # dbDisconnect(each_db)
+
+    return(0)
+})
+
+# names(baca_weights_list) <- baca_models
+```
+
+
+
+
+Now you can look at one of them...
+```{r}
+lasso_db <- DBI::dbConnect(RSQLite::SQLite(), glue('{db_folder}/baca_cwas_lasso.db'))
+extra_dt <- tbl(lasso_db, 'extra') %>% as.data.frame()
+weights_dt <- tbl(lasso_db, 'weights') %>% as.data.frame()
+
+dbDisconnect(lasso_db)
+```
+
+```{r}
+extra_dt |> head() ; weights_dt |> head()
+```
+
+
+
+```{r}
+lasso_db <- DBI::dbConnect(RSQLite::SQLite(), glue('{db_folder_chr}/baca_cwas_lasso.db'))
+extra_dt <- tbl(lasso_db, 'extra') %>% as.data.frame()
+weights_dt <- tbl(lasso_db, 'weights') %>% as.data.frame()
+
+dbDisconnect(lasso_db)
+```
+
+```{r}
+extra_dt |> head() ; weights_dt |> head()
+```
+
+
+
+```{r}
+zcat in.vcf.gz | vcftools_0.1.9/bin/vcf-annotate --fill-type | grep -oP "TYPE=\w+" | sort | uniq -c
+```
