@@ -12,3 +12,4 @@ snakefile.predictDB.smk
 software/
 workflow/PredictDb-nextflow/**
 workflow/src/archives/**
+archives/**

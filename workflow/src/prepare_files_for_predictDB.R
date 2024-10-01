@@ -38,19 +38,21 @@ if(!is.null(opt$include_models)){
 
 
 enpact_scores_dt <- data.table::fread(opt$enpact_scores_file)
+gwas_filtered <- data.table::fread(opt$filtered_GWAS_file) %>%
+    dplyr::rename(chrom = chr)
 
 if(!is.null(opt$blacklist)){
     blacklist <- data.table::fread(opt$blacklist, header = T) %>%
         dplyr::select(chrom, start, end)
 
     # read in the annotation file too and filter out the blacklist regions
-    annot_dt_1 <- data.table::fread(opt$filtered_GWAS_file) %>%
+    annot_dt_1 <- gwas_filtered %>%
         dplyr::mutate(chr = gsub('chr', '', chrom), start = pos, end = pos + 1, gene_type='protein_coding') %>%
         dplyr::filter(!dplyr::between(pos, blacklist$start, blacklist$end))
 } else {
     blacklist <- NULL
     # read in the annotation file too
-    annot_dt_1 <- data.table::fread(opt$filtered_GWAS_file) %>%
+    annot_dt_1 <- gwas_filtered %>%
         dplyr::mutate(chr = gsub('chr', '', chrom), start = pos, end = pos + 1, gene_type='protein_coding')
 }
 

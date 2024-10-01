@@ -1,2 +1,2 @@
 phenotype,sumstat
-pc_risk,pc_risk.liftover.logistic.assoc.tsv.gz
+prostate_cancer_risk,prostate_cancer_risk.liftover.logistic.assoc.tsv.gz

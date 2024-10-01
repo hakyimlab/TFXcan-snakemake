@@ -1,8 +1,9 @@
 ---
 title: "Exploring Baca's CWAS models + creating DBs"
 author: "Temi"
-description: "..."
+description: "This notebook prepares the CWAS AR models for Predixcan i.e. in sqlite format"
 date: 'Tues Aug 8 2023'
+modified: today
 html:
     self-contained: true
     code-background: true
@@ -25,7 +26,6 @@ library(GenomicRanges)
 ```
 
 ```{r}
-Sys.setenv(GITHUB_PAT = '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')
 # for manhattan plots
 devtools::source_gist('https://gist.github.com/TemiPete/250d9922b9516691f83bb1fd999a3ccc')
 devtools::source_gist('https://gist.github.com/hakyim/38431b74c6c0bf90c12f')
@@ -38,6 +38,7 @@ devtools::source_gist('https://gist.github.com/TemiPete/b309a46e25ecec93127fb675
 tdate <- '2023-08-17' # modified
 tdate <- '2024-04-17'
 
+# creating necessary directories
 base_dir <- '/project2/haky/temi/projects/TFXcan/baca_cwas'
 data_dir <- '/project2/haky/Data/baca_cwas/cwas_weights'
 #project_dir <- '/lus/grand/projects/TFXcan/imlab/users/temi/projects/TFXcan/baca_cwas'
@@ -77,13 +78,13 @@ mappings <- mappings %>%
 data.table::fwrite(mappings, file = '/project2/haky/temi/projects/TFXcan/baca_cwas/mappings/cwas_loci_mappings.txt', sep = '\t', col.names = T, row.names = F, quote = F)
 ```
 
-
+- the CWAS weights are in `.zip` files
 ```{r}
 ar_zip <- glue('{data_dir}/AR.zip')
 print(file.exists(ar_zip))
 ```
 
-First unzip the file
+- First unzip the file
 ```{r}
 
 if(!dir.exists(glue('{output_dir}/{transcription_factor}'))){
@@ -106,10 +107,6 @@ ar_files_locus[1:5]
 ```{r}
 rdt <- new.env(parent = emptyenv())
 load(file.path(output_dir, transcription_factor, ar_files[1]), envir=rdt)
-```
-
-```{r}
-
 ```
 
 -- read weights 
@@ -154,10 +151,6 @@ chainObject <- rtracklayer::import.chain('/project2/haky/Data/liftover/ensembl_c
 ```{r}
 grObject <- GenomicRanges::GRanges(seqnames = cwas_db$chr, ranges = IRanges(start = cwas_db$position, end = cwas_db$position))
 results <- as.data.frame(liftOver(grObject, chainObject))
-```
-
-```{r}
-
 ```
 
 -- read extras

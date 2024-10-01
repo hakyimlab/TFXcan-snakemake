@@ -93,7 +93,7 @@ if use_parsl == True:
     #bpath = os.path.join(base_path, 'modeling_pipeline')
     print(f'INFO - Using parsl.')
 
-    if args.hpc == 'beagle3':
+    if args.hpc == 'beagle3' or args.hpc == 'caslake':
         parsl_params = {'working_dir':base_path, 'job_name':'aggregate_predictions', 'queue':"preemptable", 'walltime':"08:00:00", 'num_of_full_nodes': 2, 'min_num_blocks':0, 'max_num_blocks':4}
         #parsl.load(parslConfiguration.localParslConfig_htpool(parsl_params))
         #parsl.load(parslConfiguration.localParslConfig_htpool(parsl_params))

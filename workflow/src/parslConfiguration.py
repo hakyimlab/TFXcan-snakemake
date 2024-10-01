@@ -262,7 +262,6 @@ def beagle3_htParslConfig(params):
     )
     return config
 
-
 def beagle3_localParslConfig(params):
 
     import parsl

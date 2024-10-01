@@ -1,0 +1,29 @@
+
+
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+st_file <- data.table::fread('/beagle3/haky/users/temi/projects/TFPred-snakemake/data/ENPACT_734_2024-07-26/statistics/ENPACT_734_2024-07-26.compiled_stats.txt')
+st_file %>%
+    dplyr::filter(context == 'Prostate') %>%
+    dplyr::select(model, path) %>%
+    dplyr::distinct() %>%
+    dplyr::filter(!is.na(path)) %>%
+    data.table::fwrite(., '/project/haky/users/temi/projects/TFXcan-snakemake/metadata/models.prostate.txt', sep = '\t', quote = FALSE, row.names = FALSE)
+```
+
+```{r}
+st_file <- data.table::fread('/beagle3/haky/users/temi/projects/TFPred-snakemake/data/ENPACT_734_2024-07-26/statistics/ENPACT_734_2024-07-26.compiled_stats.txt', na.strings = '') %>%
+    dplyr::select(model, path) %>%
+    dplyr::distinct() %>%
+    dplyr::filter(!is.na(path)) 
+st_file %>%
+    data.table::fwrite(., '/project/haky/users/temi/projects/TFXcan-snakemake/metadata/models734.prostate.txt', sep = '\t', quote = FALSE, row.names = FALSE)
+```
+
+
+

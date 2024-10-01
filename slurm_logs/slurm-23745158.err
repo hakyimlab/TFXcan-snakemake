@@ -1,0 +1,3 @@
+unknown option --parameters
+usage: python3 [option] ... [-c cmd | -m mod | file | -] [arg] ...
+Try `python -h' for more information.

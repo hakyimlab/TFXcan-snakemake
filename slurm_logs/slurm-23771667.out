@@ -1,0 +1,5 @@
+Tue Sep 24 11:00:06 CDT 2024
+Found 2 gpus
+INFO - Sequence source is personalized. Using a reference genome + vcf files.
+INFO - Using parsl local configuration for beagle3: True
+INFO - Parsl version: 2023.04.17

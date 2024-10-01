@@ -34,6 +34,7 @@ snakemake -s snakefile.smk --configfile config/pipeline_bc.yaml --profile profil
 
 snakemake -s snakefile.smk --configfile config/pipeline_bc.yaml --profile profiles/simple/ -np
 
-
-
 snakemake -s snakefile.smk --configfile config/pipeline_pcrisk.yaml --profile profiles/simple/ -np
+
+
+/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_enpact_scores.R --input_file data/prostate_cancer_risk_2024-09-30/aggregated_predictions/prostate_cancer_risk/NA20827_aggByCollect_prostate_cancer_risk.csv.gz --output_file /scratch/midway3/temi/enpact_predictions/prostate_cancer_risk/NA20827.prostate_cancer_risk.aggByCollect.2024-09-30.csv.gz --enpact_models_directory /beagle3/haky/users/temi/projects/TFPred-snakemake --enpact_models_metadata metadata/models734.prostate.txt
