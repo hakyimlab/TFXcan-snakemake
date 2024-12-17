@@ -243,7 +243,7 @@ def beagle3_htParslConfig(params):
             HighThroughputExecutor(
                 label="htex_slurm",
                 available_accelerators=4,  # Pin each worker to a different GPU
-                max_workers=4,
+                max_workers_per_node=4,
                 provider=SlurmProvider(
                     launcher=SrunLauncher(),  # Ensures 1 manger per node, work on all 64 cores
                     account=user_opts['beagle3']['account'],
@@ -261,6 +261,70 @@ def beagle3_htParslConfig(params):
         retries=6
     )
     return config
+
+
+
+def caslake_htParslConfig(params):
+
+    import parsl
+    from parsl.config import Config as ParslConfig
+    from parsl.providers import SlurmProvider
+    from parsl.executors import HighThroughputExecutor
+    from parsl.launchers import SrunLauncher
+    from parsl.channels import LocalChannel
+    import os
+
+    print(f'Parsl version: {parsl.__version__}')
+    workingdir = params['working_dir']
+    rundir = os.path.join(workingdir, 'runinfo')
+    scheduler_options = [f"#SBATCH --partition=caslake",
+                        "#SBATCH --cpus-per-task=4",
+                        "#SBATCH --ntasks-per-node=1"]
+    scheduler_options = '\n'.join(scheduler_options)
+
+    #SBATCH --constraint=rtx6000		# Only RTX 6000 (can set to v100 or a100)
+    #SBATCH --cpus-per-task=1		# Number of threads
+    #SBATCH --ntasks-per-node=1		# Number of CPU cores to drive GPU
+    # ,"#SBATCH --constraint=rtx6000"
+
+    user_opts = {
+        'caslake': {
+            # Node setup: activate necessary conda environment and such.
+            'worker_init': params['worker_init'],
+            # ALCF allocation to use
+            'account': 'pi-haky',
+        }
+    }
+
+    config = ParslConfig(
+        executors=[
+            HighThroughputExecutor(
+                label="htex_slurm",
+                available_accelerators=4,  # Pin each worker to a different GPU
+                max_workers_per_node=4,
+                provider=SlurmProvider(
+                    channel=LocalChannel(
+                        envs={}, 
+                        script_dir=None, 
+                        userhome='./run'
+                    ), 
+                    launcher=SrunLauncher(),  # Ensures 1 manger per node, work on all 64 cores
+                    account=user_opts['caslake']['account'],
+                    worker_init=user_opts['caslake']['worker_init'],
+                    walltime=params['walltime'],
+                    init_blocks=params['init_blocks'],
+                    scheduler_options=scheduler_options,
+                    nodes_per_block=params['num_of_full_nodes'], 
+                    min_blocks=params['min_num_blocks'],
+                    max_blocks=params['max_num_blocks'],
+                ),
+            )
+        ],
+        run_dir=rundir,
+        retries=6
+    )
+    return config
+
 
 
 def beagle3_localParslConfig(params):
@@ -286,7 +350,7 @@ def beagle3_localParslConfig(params):
         executors=[
             HighThroughputExecutor(
                 label="htex_Local",
-                max_workers=4, # vs max_workers
+                max_workers_per_node=4, # vs max_workers
                 available_accelerators=4,
                 worker_debug=True,
                 cores_per_worker=18, # how many cores per worker #nodes_per_block, 2 is usually enough or 1.

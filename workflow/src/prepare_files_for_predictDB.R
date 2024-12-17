@@ -6,10 +6,11 @@
 suppressPackageStartupMessages(library("optparse"))
 
 option_list <- list(
-    make_option("--enpact_scores_file", help='input: A file containing the Enpact scores for the models'),
+    make_option("--enpact_scores_database", help='input: A file containing the Enpact scores for the models'),
+    make_option("--subset", help='input: The subset of the Enpact scores to use'),
     make_option("--formatted_escores_file", help='output: The formatted Enpact scores file'),
     make_option("--formatted_annot_file", help='output: The formatted annotation file'),
-    make_option("--include_models", default = NULL),
+    #make_option("--include_models", default = NULL),
     make_option("--filtered_GWAS_file", help='input: The filtered GWAS file'),
     make_option("--blacklist", default = NULL, help='input: Remove loci within these blacklist regions')
 )
@@ -21,44 +22,59 @@ library(tidyverse)
 library(glue)
 
 # opt <- list()
-# opt$include_models <- NULL
-# opt$blacklist <- '/project/haky/users/temi/projects/TFXcan-snakemake/metadata/HLA_blocks.txt'
-# opt$filtered_GWAS_file <- '/project/haky/users/temi/projects/TFXcan-snakemake/data/PCRISK_GWAS_2024-06-07/collection/pc_risk.filteredGWAS.txt.gz'
+# opt$subset <- "AR_Prostate"
+# opt$enpact_scores_database <- "/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/prostate_cancer_risk_2024-09-30/enpactdb/prostate_cancer_risk.enpact_scores.array.rds.gz"
+# # opt$include_models <- NULL
+# opt$blacklist <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/HLA_blocks.txt'
+# opt$filtered_GWAS_file <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/prostate_cancer_risk_2024-09-30/collection/prostate_cancer_risk.filteredGWAS.topSNPs.txt.gz'
 # opt$enpact_scores_file <- '/project/haky/users/temi/projects/TFXcan-snakemake/data/PCRISK_GWAS_2024-06-07/enpactdb/pc_risk.enpact_scores.txt.gz'
 # dt$NAME[startsWith(dt$NAME, 'HSF1_Mammary-Gland')] |> print()
 
 
-print(opt)
-if(!is.null(opt$include_models)){
-    include_models <- data.table::fread(include_models, header = F) %>%
-        pull(V1)
+
+db <- readRDS(opt$enpact_scores_database)
+mnames <- dimnames(db)[[3]]
+if(opt$subset %in% mnames){
+    subset_db <- db[,,opt$subset]
 } else {
-    include_models <- NULL
+    stop('The subset is not in the database')
 }
 
 
-enpact_scores_dt <- data.table::fread(opt$enpact_scores_file)
+# print(opt)
+# if(!is.null(opt$include_models)){
+#     include_models <- data.table::fread(include_models, header = F) %>%
+#         pull(V1)
+# } else {
+#     include_models <- NULL
+# }
+
+
+# enpact_scores_dt <- data.table::fread(opt$enpact_scores_file)
+gwas_filtered <- data.table::fread(opt$filtered_GWAS_file) %>%
+    dplyr::rename(chrom = chr)
 
 if(!is.null(opt$blacklist)){
     blacklist <- data.table::fread(opt$blacklist, header = T) %>%
         dplyr::select(chrom, start, end)
 
     # read in the annotation file too and filter out the blacklist regions
-    annot_dt_1 <- data.table::fread(opt$filtered_GWAS_file) %>%
+    annot_dt_1 <- gwas_filtered %>%
         dplyr::mutate(chr = gsub('chr', '', chrom), start = pos, end = pos + 1, gene_type='protein_coding') %>%
         dplyr::filter(!dplyr::between(pos, blacklist$start, blacklist$end))
 } else {
     blacklist <- NULL
     # read in the annotation file too
-    annot_dt_1 <- data.table::fread(opt$filtered_GWAS_file) %>%
+    annot_dt_1 <- gwas_filtered %>%
         dplyr::mutate(chr = gsub('chr', '', chrom), start = pos, end = pos + 1, gene_type='protein_coding')
 }
 
-annot_dt_2 <- enpact_scores_dt %>%
-    dplyr::select(NAME) %>%
-    tidyr::separate(col = NAME, into=c('model', 'locus'), sep=':', remove=F) %>%
-    tidyr::separate(col = locus, into = c('chrom', 'start', 'end'), sep= '_', remove=F) %>%
-    dplyr::mutate(chr = gsub('chr', '', chrom), start = as.integer(start), end= as.integer(end)) %>% 
+annot_dt_2 <- rownames(subset_db) %>%
+    base::strsplit(split='_') %>%
+    do.call('rbind', .) %>%
+    as.data.table() %>%
+    setNames(c('chrom', 'start', 'end')) %>%
+    dplyr::mutate(chr = gsub('chr', '', chrom), start = as.integer(start), end= as.integer(end), NAME = paste(opt$subset, chrom, start, end, sep = "_")) %>% 
     dplyr::select(chr, start, end, NAME)
 
 annot_dt <- dplyr::inner_join(annot_dt_1, annot_dt_2, by = c('chr' = 'chr', 'start' = 'start', 'end' = 'end')) %>%
@@ -67,8 +83,11 @@ annot_dt <- dplyr::inner_join(annot_dt_1, annot_dt_2, by = c('chr' = 'chr', 'sta
 annot_dt <- annot_dt %>%
     dplyr::mutate(gene_name = gsub(':', '_',gene_name), gene_id = gene_name) 
 
-enpact_scores_dt <- enpact_scores_dt %>%
-    dplyr::mutate(NAME = gsub(':', '_', NAME))
+enpact_scores_dt <- subset_db %>%
+    as.data.frame() %>%
+    tibble::rownames_to_column('NAME') %>%
+    dplyr::mutate(NAME = gsub(':', '_', NAME)) %>%
+    dplyr::mutate(NAME = paste(opt$subset, NAME, sep = "_"))
 
 annot_dt <- annot_dt %>% dplyr::mutate(gene_id = gsub('-', '', gene_id), gene_name = gsub('-', '', gene_name))
 enpact_scores_dt <- enpact_scores_dt %>% dplyr::mutate(NAME = gsub('-', '', NAME))

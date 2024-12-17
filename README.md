@@ -1,7 +1,7 @@
 
-## TFXcan: 
+# TFXcan
 
-This pipeline tests TF binding-GWAS trait associations.
+This pipeline tests TF binding-GWAS trait associations. It uses SNP-based Enpact models.
 
 ## Usage:
 
@@ -12,7 +12,7 @@ This pipeline tests TF binding-GWAS trait associations.
 
 This pipeline depends on a number of software to do the following:
 
-1. Finemap GWAS SNPs (SuSie)
+1. Finemap GWAS SNPs (SuSie); optional because you can decide not to finemap and just use the top SNPs per locus
 
 2. Predict with Enformer (this dependency is optional) (Enformer, GPUs, pytorch)
 
@@ -24,13 +24,19 @@ We suggest the following to have a hitch-free environment:
 
 1. Use conda to create an environment and install the software with the [environment file](/beagle3/haky/users/shared_software/TFXcan-pipeline-tools)
 
-## Main inputs:
+## Input:
 
 In general, the pipeline expects:
 
 1. A yaml config or parameters file. Details are [here]()
 
 2. A metadata sheet of the GWAS summary statistics. Details are [here]()
+
+## Command:
+
+
+## Output:
+
 
 #### Notes: 
 

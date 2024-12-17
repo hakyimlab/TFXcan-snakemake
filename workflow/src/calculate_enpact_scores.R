@@ -15,7 +15,6 @@ option_list <- list(
 )
 
 opt <- parse_args(OptionParser(option_list=option_list))
-print(opt)
 
 library(data.table)
 library(tidyverse)
@@ -24,29 +23,42 @@ library(glue)
 
 # setwd("/project/haky/users/temi/projects/TFXcan-snakemake/")
 # opt <- list()
-# opt$input_file <- "data/aggregated_predictions/test_aggByCollect_testosterone.csv.gz"
-# opt$output_file <- "data/enpact_predictions/test_testosterone_2023-12-07.csv.gz"
-# opt$enpact_models_directory <-  "/project/haky/users/temi/data/enpact_models"
-# opt$enpact_models_metadata <-  "metadata/models.enpact.txt"
+# opt$input_file <- "data/prostate_cancer_risk_2024-09-30/aggregated_predictions/prostate_cancer_risk/NA20827_aggByCollect_prostate_cancer_risk.csv.gz"
+# opt$output_file <- "/scratch/midway3/temi/enpact_predictions/prostate_cancer_risk/NA20827.prostate_cancer_risk.aggByCollect.2024-09-30.csv.gz"
+# opt$enpact_models_directory <-  "/beagle3/haky/users/temi/projects/TFPred-snakemake"
+# opt$enpact_models_metadata <-  "metadata/models734.prostate.txt"
 
 
-mt <- data.table::fread(opt$enpact_models_metadata)
+mt <- data.table::fread(opt$enpact_models_metadata, na.strings = '') %>%
+    dplyr::select(model, path) %>%
+    dplyr::distinct() %>%
+    dplyr::filter(!is.na(path))
+
+# mt <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/metadata/models734.prostate.txt')
 
 # filter and get the models
 
-nn <- c()
-models_list <- apply(mt, 1, function(each_row){
-    name <- each_row[1]
-    model <- each_row[2]
-    mpath <- file.path(opt$enpact_models_directory, model)
-    if(file.exists(mpath)){
-        nn <<- append(nn, name)
-        return(mpath)
-    }
-})
+# nn <- c()
+# models_list <- apply(mt, 1, function(each_row){
+#     name <- each_row[1]
+#     model <- each_row[2]
+#     mpath <- file.path(opt$enpact_models_directory, model)
+#     if(file.exists(mpath)){
+#         nn <<- append(nn, name)
+#         return(mpath)
+#     }
+# })
 
-names(models_list) <- nn
-models_list <- as.list(models_list)
+
+mpaths <- file.path(opt$enpact_models_directory, mt$path)
+names(mpaths) <- mt$model
+mpaths <- mpaths[file.exists(mpaths)]
+models_list <- as.list(mpaths)
+
+# names(models_list) <- nn
+# models_list <- as.list(models_list)
+
+# print(models_list[1:3])
 
 # predict
 dt <- data.table::fread(opt$input_file)
@@ -57,7 +69,6 @@ X <- as.matrix(dt[, -c(1)])
 # models_list <- c(models_list[1:4], models_list['AR_Prostate'])
 
 predictions <- purrr::map(.x=models_list, .f = function(each_model){
-    #print(each_model)
     if(file.exists(each_model)){
         model <- readRDS(each_model)
         tryCatch({
@@ -70,6 +81,9 @@ predictions <- purrr::map(.x=models_list, .f = function(each_model){
         return(NULL)
     }
 }) 
+
+# mm <- readRDS("/beagle3/haky/users/temi/projects/TFPred-snakemake/data/ENPACT_734_2024-07-26/models/ARNT_BoneMarrow/ARNT_BoneMarrow_2024-07-26.logistic.rds")
+# predict(mm, X, s = "lambda.1se", type = 'link') |> as.vector()
 
 predictions <- Filter(Negate(is.null), predictions) %>%
     do.call('cbind', .)

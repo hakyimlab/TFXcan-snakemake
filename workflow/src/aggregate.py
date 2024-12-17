@@ -93,15 +93,16 @@ if use_parsl == True:
     #bpath = os.path.join(base_path, 'modeling_pipeline')
     print(f'INFO - Using parsl.')
 
-    if args.hpc == 'beagle3':
-        parsl_params = {'working_dir':base_path, 'job_name':'aggregate_predictions', 'queue':"preemptable", 'walltime':"08:00:00", 'num_of_full_nodes': 2, 'min_num_blocks':0, 'max_num_blocks':4}
+    if args.hpc == 'caslake':
+        init = f"source ~/.bashrc; conda activate /beagle3/haky/users/shared_software/TFXcan-pipeline-tools; which python; export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib"
+        parsl_params = {'working_dir':base_path, 'job_name':'aggregate_predictions', 'queue':"", 'walltime':"00:10:00", 'num_of_full_nodes': 1, 'min_num_blocks':0, 'max_num_blocks':8, "worker_init": init, 'init_blocks':1}
         #parsl.load(parslConfiguration.localParslConfig_htpool(parsl_params))
         #parsl.load(parslConfiguration.localParslConfig_htpool(parsl_params))
         if args.parsl_executor == 'local':
             parsl.load(parslConfiguration.beagle3_localParslConfig(parsl_params))
             #parsl.load(parslConfiguration.beagle3_tpParslConfig(parsl_params))
         elif args.parsl_executor == 'highthroughput':
-            parsl.load(parslConfiguration.polaris_htParslConfig(parsl_params))
+            parsl.load(parslConfiguration.caslake_htParslConfig(parsl_params))
 
     if args.hpc == 'polaris':
         parsl_params = {'working_dir':base_path, "job_name": "aggregate_predictions", "num_of_full_nodes": 4, "walltime": "06:00:00", "min_num_blocks": 0, "max_num_blocks": 8, "queue": "preemptable", "init_blocks": 1, "hpc": "polaris", "account": "covid-ct", "provider": "highthroughput", "worker_init": "source ~/.bashrc; conda activate /lus/grand/projects/TFXcan/imlab/shared/software/conda_envs/enformer-predict-tools; which python; export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/lus/grand/projects/TFXcan/imlab/shared/software/conda_envs/enformer-predict-tools/lib"}

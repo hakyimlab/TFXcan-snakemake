@@ -24,11 +24,11 @@ print(opt)
 # opt <- list()
 # opt$runname <- 'Asthma_GWAS' 
 # opt$phenotype <- 'asthma_children' 
-# opt$base_directives <- '/project/haky/users/temi/projects/TFXcan-snakemake/config/enformer_base.yaml' 
-# opt$project_directory <- '/project/haky/users/temi/projects/TFXcan-snakemake/data'
+# opt$base_directives <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/config/enformer_base.yaml' 
+# opt$project_directory <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/data'
 # # --project_directory data --predictors_file data/collection/asthma_children/asthma_children.EnformerLoci.txt --model /project2/haky/Data/enformer/raw --fasta_file /project2/haky/Data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta --parameters_file data/enformer_parameters/enformer_parameters_Asthma_GWAS_asthma_children.json --date 2024-01-31
 
-# opt$personalized_parameters_file <- '/project/haky/users/temi/projects/TFXcan-snakemake/config/personalized_base.yaml'
+# opt$personalized_parameters_file <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/config/personalized_base.yaml'
 
 
 
@@ -63,7 +63,7 @@ if(!is.null(opt$personalized_parameters_file)){
         pp <- gsub('\\{\\}', cc, vcf_path)
         if(file.exists(pp)){
             valid_chroms <<- append(valid_chroms, cc)
-            return(pp)
+            return(basename(pp))
         }
     }) 
 

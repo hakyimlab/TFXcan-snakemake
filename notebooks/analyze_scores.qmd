@@ -8,16 +8,24 @@ library(data.table)
 library(tidyverse)
 library(lattice)
 library(grid)
+library(glue)
 ```
 
 ```{r}
-ss <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/data/PCRISK_GWAS_2024-06-07/collection/pc_risk.filteredGWAS.txt.gz') %>%
-    dplyr::mutate(loci = paste('chr', chrom, sep='') %>% paste(., pos, sep = ':'))
+# use the dates to change the data you want to analyze
+rundate <- '2024-09-30' # 2024-09-23
+snakemake_directory <- "/beagle3/haky/users/temi/projects/TFXcan-snakemake"
+```
+
+```{r}
+ss <- data.table::fread(file.path(snakemake_directory, glue("/data/prostate_cancer_risk_{rundate}/collection/prostate_cancer_risk.filteredGWAS.topSNPs.txt.gz"))) %>%
+    dplyr::mutate(loci = paste('chr', chr, sep='') %>% paste(., pos, sep = ':'))
 ss
 ```
 
 ```{r}
-dt <- data.table::fread('/project/haky/users/temi/projects/TFXcan-snakemake/output/summary/pc_risk/pc_risk.enpactScores.spredixcan.csv')
+dt <- data.table::fread(file.path(snakemake_directory, glue("/data/prostate_cancer_risk_{rundate}/summaryTFXcan/prostate_cancer_risk/prostate_cancer_risk.enpactScores.spredixcan.csv")))
+dt[1:5, 1:5]
 ```
 
 ```{r}
@@ -29,7 +37,7 @@ sdt <- dt %>%
     tidyr::separate_wider_delim(gene_name, names = c('tf', 'tissue', 'chrom', 'start', 'end'), delim = '_') %>%
     dplyr::mutate(across(c(start, end), as.numeric))
 
-sdt
+sdt[1:3, 1:3]
 ```
 
 ```{r}
@@ -41,7 +49,7 @@ mdt <- sdt %>%
     as.matrix() %>%
     t()
 
-mdt
+mdt[1:3, 1:3]
 ```
 
 ```{r}

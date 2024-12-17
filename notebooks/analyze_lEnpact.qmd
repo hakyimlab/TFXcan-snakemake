@@ -102,3 +102,32 @@ library(susieR)
 ```{r}
 susieRun[['chr9_4884926_6557589']][["fit"]] |> susieR::susie_plot(y='PIP')
 ```
+
+
+```{r}
+mt <- data.table::fread("/beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/models101.txt") %>%
+    tidyr::separate(model, c("TF", "tissue"), sep = "_")
+mt
+```
+
+
+```{r}
+mt %>% dplyr::count(TF) %>% arrange(desc(n))
+```
+
+```{r}
+
+```
+
+
+## Breast cancer
+
+
+```{r}
+bc_summary <- data.table::fread("/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/breast_cancer_2024-12-11/output/breast_cancer.enpactScores.2024-12-11.spredixcan.txt")
+```
+
+
+```{r}
+bc_summary %>% dplyr::arrange(desc(abs(zscore))) %>% head(n=100)
+```
