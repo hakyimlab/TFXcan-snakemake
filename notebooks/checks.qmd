@@ -1,0 +1,228 @@
+---
+title: "Investigating predictDB training and summaryTFXcan discrepancies"
+author: "Temi"
+description: "..."
+date: 'Tues Oct 22 2024'
+date-modified: today
+categories: [midway3, local, bug, R]
+---
+
+```{r}
+library(data.table)
+library(dplyr)
+```
+
+# Introduction
+I applied TFXcan using two SNP-based models to a summary GWAS of prostate cancer risk. These two SNP-based models were trained on two different enpact scores matrices. This is the only difference between these two undelying models:
+- The first one included all TF_tissue pairs
+- The second one had only `AR_Prostate`
+
+```{r}
+ar_prostate_small <- data.table::fread("/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/prostate_cancer_risk_2024-09-30/predictdb/AR_Prostate/prostate_cancer_risk.enpact_scores.txt") %>%
+    tibble::column_to_rownames("NAME")
+
+ar_prostate_old <- data.table::fread("/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/prostate_cancer_risk_2024-09-30/predictdb/prostate_cancer_risk.enpact_scores.txt") %>%
+    tibble::column_to_rownames("NAME")
+```
+```{r}
+dim(ar_prostate_small) ; ar_prostate_small[1:5, 1:5]
+dim(ar_prostate_old) ; ar_prostate_old[1:5, 1:5]
+```
+
+After I tested association using TFXcan, I found that the z-scores and p-values were different between the two results. I am trying to find out why the z-scores and p-values are different.
+
+```{r}
+small_summary <- data.table::fread("/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/prostate_cancer_risk_2024-09-30/summaryTFXcan/AR_Prostate/prostate_cancer_risk/prostate_cancer_risk.enpactScores.spredixcan.csv")
+dim(small_summary)
+```
+
+```{r}
+# here I filtered for only AR_Prostate
+old_summary <- data.table::fread("/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/prostate_cancer_risk_2024-09-30/summaryTFXcan/prostate_cancer_risk/prostate_cancer_risk.enpactScores.spredixcan.csv") %>%
+    dplyr::filter(startsWith(gene, "AR_Prostate_"), gene %in% small_summary$gene) %>%
+    dplyr::arrange(match(gene, small_summary$gene))
+
+dim(old_summary)
+```
+
+```{r}
+# are zscores the same?
+all.equal(small_summary$zscore, old_summary$zscore)
+identical(small_summary$zscore, old_summary$zscore)
+
+# are pvalues the same?
+all.equal(small_summary$pvalue, old_summary$pvalue)
+identical(small_summary$pvalue, old_summary$pvalue)
+```
+
+
+The p-values and z-scores are aligned by the diagonal, but there are some discrepancies.
+
+```{r}
+# plot zscores
+plot(small_summary$zscore, old_summary$zscore)
+abline(0, 1, col = 'grey', lty = 2)
+```
+```{r}
+plot(small_summary$pvalue, old_summary$pvalue)
+abline(0, 1, col = 'grey', lty = 2)
+```
+
+# Check if the enpact scores files are equivalent
+
+Now I am going to check if the enpact scores files are equivalent. I will compare the two enpact scores files and see if they are equivalent. I saw earlier that the scores are different by a rounding factor of 0.0000001. This is to formalize that check.
+
+```{r}
+# this is the enpact database from which I prepared these two files
+enpact_database <- readRDS("/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/prostate_cancer_risk_2024-09-30/enpactdb/prostate_cancer_risk.enpact_scores.array.rds.gz")
+ar_prostate <- enpact_database[, , "AR_Prostate"]
+dim(ar_prostate) ; ar_prostate[1:5, 1:5]
+```
+
+```{r}
+dim(ar_prostate_small) ; ar_prostate_small[1:5, 1:5]
+dim(ar_prostate_old) ; ar_prostate_old[1:5, 1:5]
+```
+
+```{r}
+newMatrix <- ar_prostate_small |> as.matrix()
+oldMatrix <- ar_prostate_old |> as.matrix()
+dbMatrix <- ar_prostate[,]
+rownames(dbMatrix) <- paste0("AR_Prostate_", rownames(dbMatrix))
+common_loci <- intersect(rownames(newMatrix), rownames(oldMatrix))
+common_ids <- intersect(colnames(newMatrix), colnames(oldMatrix))
+oldMatrix <- oldMatrix[common_loci, common_ids]
+newMatrix <- newMatrix[common_loci, common_ids]
+dbMatrix <- dbMatrix[common_loci, common_ids]
+```
+
+```{r}
+dim(oldMatrix); dim(newMatrix); dim(dbMatrix)
+```
+
+```{r}
+all.equal(oldMatrix, newMatrix, );
+identical(oldMatrix, newMatrix) # this is because of the machine tolerance
+```
+
+```{r}
+all.equal(oldMatrix, dbMatrix)
+identical(oldMatrix, dbMatrix)
+```
+
+```{r}
+oldMatrix[1:5, 1:5]; newMatrix[1:5, 1:5]; dbMatrix[1:5, 1:5]
+```
+
+```{r}
+wh_not_equal <- which(sapply(seq_along(common_loci), function(i) identical(oldMatrix[i, ], dbMatrix[i, ])) == FALSE)
+cl_not_equal <- which(sapply(seq_along(common_ids), function(i) identical(oldMatrix[, i], dbMatrix[, i])) == FALSE)
+
+oldMatrix[wh_not_equal, cl_not_equal] - dbMatrix[wh_not_equal, cl_not_equal]
+```
+
+All the same numbers!
+```{r}
+oldMatrix['AR_Prostate_chr6_116879271_116879272', 'HG00339']; 
+newMatrix['AR_Prostate_chr6_116879271_116879272', 'HG00339']; 
+dbMatrix['AR_Prostate_chr6_116879271_116879272', 'HG00339']
+```
+
+Comparing with the original database, I still see some differences in the matrices.
+
+# Looking at the z-scores
+Some of the Z-scores switched. I need to find out why.
+
+```{r}
+# plot zscores
+plot(small_summary$zscore, old_summary$zscore)
+abline(0, 1, col = 'grey', lty = 2)
+```
+
+```{r}
+sign_differences <- sign(small_summary$zscore) == sign(old_summary$zscore)
+table(sign_differences)
+```
+
+```{r}
+small_summary[!sign_differences, c('gene', 'zscore', 'pvalue')] |> head(10)
+old_summary[!sign_differences, c('gene', 'zscore', 'pvalue')] |> head(10)
+```
+
+```{r}
+oldMatrix['AR_Prostate_chr5_169745129_169745130', 'HG00339'];
+newMatrix['AR_Prostate_chr5_169745129_169745130', 'HG00339'];
+dbMatrix['AR_Prostate_chr5_169745129_169745130', 'HG00339']
+```
+
+```{r}
+identical(
+    oldMatrix['AR_Prostate_chr5_169745129_169745130', ],
+    newMatrix['AR_Prostate_chr5_169745129_169745130', ]
+)
+```
+
+```{r}
+identical(
+    oldMatrix['AR_Prostate_chr5_169745129_169745130', ],
+    dbMatrix['AR_Prostate_chr5_169745129_169745130', ]
+)
+```
+
+```{r}
+knitr::knit_exit()
+```
+
+
+
+```{r}
+wh_not_equal <- which(sapply(seq_along(common_loci), function(i) identical(oldMatrix[i, ], newMatrix[i, ])) == FALSE)
+wh_not_equal
+```
+```{r}
+oldMatrix[wh_not_equal, ] - newMatrix[wh_not_equal, ]
+```
+
+```{r}
+difference <- oldMatrix['AR_Prostate_chr6_116879271_116879272', ] - newMatrix['AR_Prostate_chr6_116879271_116879272', ]
+
+which(difference != 0)
+```
+
+```{r}
+oldMatrix['AR_Prostate_chr8_127658679_127658680', 'NA20581']; newMatrix['AR_Prostate_chr8_127658679_127658680', 'NA20581']
+```
+
+```{r}
+oldMatrix['AR_Prostate_chr8_127658679_127658680', 'NA20581'] - newMatrix['AR_Prostate_chr8_127658679_127658680', 'NA20581']
+```
+
+```{r}
+class(oldMatrix['AR_Prostate_chr6_116879271_116879272', 'NA20581']);
+class(newMatrix['AR_Prostate_chr6_116879271_116879272', 'NA20581'])
+```
+
+```{r}
+
+data.table::fwrite(oldMatrix[wh_not_equal, ], "/beagle3/haky/users/temi/oldMatrix.csv")
+data.table::fwrite(newMatrix[wh_not_equal, ], "/beagle3/haky/users/temi/newMatrix.csv")
+```
+
+```{r}
+oo <- data.table::fread("/beagle3/haky/users/temi/oldMatrix.csv")
+nn <- data.table::fread("/beagle3/haky/users/temi/newMatrix.csv")
+```
+
+```{r}
+all.equal(oo, nn)
+```
+
+```{r}
+dt <- matrix(runif(100), nrow = 10) |> as.data.frame() 
+dt |> data.table::fwrite("/beagle3/haky/users/temi/random.txt", sep = "\t")
+```
+
+
+```{r}
+mt <- data.table::fread("/beagle3/haky/users/temi/random.txt")
+```

@@ -11,12 +11,12 @@ runSusie: False
 
 enpact_models:
   # directory: '/project/haky/users/temi/data/enpact_models'
-  # metadata: "metadata/models.enpact.txt"
+  # metadata: "metadata/models.enpact.txt" 
   directory: '/beagle3/haky/users/temi/projects/TFPred-snakemake'
-  metadata: "metadata/models734.prostate.txt" #"metadata/models.enpact.185.txt"
+  metadata: "metadata/models734.prostate.txt" #models734.prostate.txt" #"metadata/models.enpact.185.txt"
 
 genome:
-  fasta: "/project/haky/data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta"
+  fasta: "/project2/haky/Data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta"
 
 rscript: "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript"
 
@@ -25,11 +25,11 @@ finemapping:
   # snp_annot: '/project2/haky/Data/1000G/formatted_geno/all_chrs.snp_annot.txt.gz'
   # samples: "/project2/haky/Data/1000G/formatted_geno/samples.text_dosages.txt"
   LD_blocks: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/EUR_LDBlocks.hg38.updated.bed"
-  genotypes_dosages_pattern: '/project/haky/data/1000G/population_data/EUR/bfiles/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.geno.txt.gz'
+  genotypes_dosages_pattern: '/project2/haky/Data/1000G/population_data/EUR/bfiles/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.geno.txt.gz'
 
 predictdb:
   blacklist_regions: /beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/HLA_blocks.txt
-  conda_environment: /project/haky/users/temi/software/conda_envs/predictdb_env
+  conda_environment: /beagle3/haky/users/temi/software/conda_envs/predictdb_env
   nextflow_main_executable: /beagle3/haky/users/temi/projects/TFXcan-snakemake/workflow/PredictDb-nextflow/main.nf
 
 summaryTFXcan:
@@ -43,7 +43,7 @@ summaryTFXcan:
 enformer: 
   base_directives: "config/enformer_base.yaml"
   personalized_directives: "config/personalized_base.yaml"
-  model: "/project/haky/data/enformer/raw"
+  model: "/project2/haky/Data/enformer/raw"
   predict: "/beagle3/haky/users/shared_pipelines/enformer_pipeline_aggregate/scripts/enformer_predict.py"
   aggregate: "workflow/src/aggregate.py"
   aggtype: "aggByCollect"

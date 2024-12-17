@@ -58,7 +58,7 @@ models_list <- as.list(mpaths)
 # names(models_list) <- nn
 # models_list <- as.list(models_list)
 
-# print(models_list)
+# print(models_list[1:3])
 
 # predict
 dt <- data.table::fread(opt$input_file)

@@ -5,7 +5,6 @@
 library(tidyverse)
 ```
 
-
 ```{r}
 st_file <- data.table::fread('/beagle3/haky/users/temi/projects/TFPred-snakemake/data/ENPACT_734_2024-07-26/statistics/ENPACT_734_2024-07-26.compiled_stats.txt')
 st_file %>%
@@ -23,6 +22,42 @@ st_file <- data.table::fread('/beagle3/haky/users/temi/projects/TFPred-snakemake
     dplyr::filter(!is.na(path)) 
 st_file %>%
     data.table::fwrite(., '/project/haky/users/temi/projects/TFXcan-snakemake/metadata/models734.prostate.txt', sep = '\t', quote = FALSE, row.names = FALSE)
+```
+
+Select prostate and others
+
+I want to select tissues that may be "far away" in expression from Prostate tissues
+I use the following: https://gtexportal.org/home/tissueSummaryPage
+```{r}
+st_file <- data.table::fread('/beagle3/haky/users/temi/projects/TFPred-snakemake/data/ENPACT_734_2024-07-26/statistics/ENPACT_734_2024-07-26.compiled_stats.txt', na.strings = '') %>%
+    dplyr::filter(context %in% c('Prostate', 'Cervix', 'Cerebellum', 'Cranial', 'EmbryonicKidney'), !is.na(model)) %>%
+    dplyr::select(model, path) %>%
+    dplyr::distinct()
+st_file %>% data.table::fwrite(., '/beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/models101.txt', sep = '\t', quote = FALSE, row.names = FALSE)
+```
+
+```{r}
+st_file$context |> unique() |> sort()
+```
+
+
+```{r}
+st_file <- data.table::fread('/beagle3/haky/users/temi/projects/TFPred-snakemake/data/ENPACT_734_2024-07-26/statistics/ENPACT_734_2024-07-26.compiled_stats.txt', na.strings = '') %>%
+    dplyr::filter(context %in% c('Prostate'), !is.na(model)) %>%
+    dplyr::select(model, path) %>%
+    dplyr::distinct()
+st_file %>% data.table::fwrite(., '/project2/haky/temi/projects/enpact-predict-snakemake/metadata/enpact.prostate.models.txt', sep = '\t', quote = FALSE, row.names = FALSE)
+```
+
+
+```{r}
+et <- data.table::fread('/beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/models101.txt')
+et <- et %>% tidyr::separate(model, into = c('model', 'tissue'), sep = '_', remove = FALSE)
+et
+```
+
+```{r}
+et$model |> unique()
 ```
 
 

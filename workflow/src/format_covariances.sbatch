@@ -25,5 +25,5 @@ compressed_covariance_file=${1}
 decompressed_covariance_file=${2}
 sed_covariance_file=${3} # Covariances.varID.txt
 
-gzip -d ${compressed_covariance_file}
+gzip -dk ${compressed_covariance_file}
 sed -e 's/:/_/g' ${decompressed_covariance_file} > ${sed_covariance_file}

@@ -15,13 +15,6 @@ snakemake -s snakefile.smk --configfile config/pipeline_pcr.yaml --profile profi
 
 snakemake -s snakefile.smk --configfile config/pipeline_pcr.yaml --profile profiles/simple/ -F
 
-pp = '/project/haky/users/temi/projects/TFXcan-snakemake/data/BC_GWAS/enpact_predictions'
-
-pp = '/scratch/midway3/temi/enpact_predictions'
-
-snakemake.io.glob_wildcards(os.path.join(pp, '{phenotype}', '{idi}.*.csv.gz')).idi
-
-snakemake.io.glob_wildcards(os.path.join(pp, '{phenotype}', '{idi}.{phenop}.aggByCollect.2024-06-04.csv.gz'))
 
 snakemake -s snakefile.smk --configfile config/pipeline_bc2.yaml --profile profiles/simple/ -np
 
@@ -38,3 +31,5 @@ snakemake -s snakefile.smk --configfile config/pipeline_pcrisk.yaml --profile pr
 
 
 /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/calculate_enpact_scores.R --input_file data/prostate_cancer_risk_2024-09-30/aggregated_predictions/prostate_cancer_risk/NA20827_aggByCollect_prostate_cancer_risk.csv.gz --output_file /scratch/midway3/temi/enpact_predictions/prostate_cancer_risk/NA20827.prostate_cancer_risk.aggByCollect.2024-09-30.csv.gz --enpact_models_directory /beagle3/haky/users/temi/projects/TFPred-snakemake --enpact_models_metadata metadata/models734.prostate.txt
+
+snakemake -s snakefile.smk --configfile config/pipeline_pcrisk.yaml --resources load=45 --profile profiles/simple/ -np > dryrun.out

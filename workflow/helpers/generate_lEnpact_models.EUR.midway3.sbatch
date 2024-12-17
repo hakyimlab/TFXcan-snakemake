@@ -6,8 +6,8 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --time=36:00:00
 #SBATCH --mem-per-cpu=1G
-#SBATCH --error=/project/haky/users/temi/projects/TFXcan/lEnpact_training.err
-#SBATCH --output=/project/haky/users/temi/projects/TFXcan/lEnpact_training.log
+#SBATCH --error=/beagle3/haky/users/temi/projects/TFXcan-snakemake/slurm_logs/lEnpact_training.err
+#SBATCH --output=/beagle3/haky/users/temi/projects/TFXcan-snakemake/slurm_logs/lEnpact_training.log
 #SBATCH --account=pi-haky
 
 # source ~/.bashrc
@@ -24,36 +24,36 @@
 
 date
 source ~/.bashrc
-conda activate /project/haky/users/temi/software/conda_envs/predictdb_env
-module load python
-module load R
+conda activate /beagle3/haky/users/temi/software/conda_envs/predictdb-env
+# module load python
+# module load R
 #Rscript -e 'install.packages("/project2/haky/temi/projects/TFXcan-snakemake/workflow/software/optparse_1.7.4.tar.gz", lib="/home/temi/R/x86_64-pc-linux-gnu-library/4.2", repos = NULL, type = "source")'
 #export JAVA_HOME=/usr/lib/jvm/jre-1.8.0-openjdk-1.8.0.352.b08-2.el8_6.x86_64
 
-export JAVA_HOME=/project/haky/users/temi/software/conda_envs/predictdb_env/
+export JAVA_HOME=/beagle3/haky/users/temi/software/conda_envs/predictdb-env/
 
 phenotype=${1}
 s_path=${2}
 loci_annotation=${3}
 enpact_scores=${4}
-geno_dir=/project/haky/data/1000G/population_data/EUR/annot_files
+geno_dir=/project2/haky/Data/1000G/population_data/EUR/annot_files
 
 echo "Running ${phenotype}"
 # outdir
-mkdir -p ${s_path}/${phenotype} && cd ${s_path}/${phenotype}
+mkdir -p ${s_path} && cd ${s_path}
 
 echo $(which nextflow)
 
 export NXF_DISABLE_CHECK_LATEST=true
 
 # run nextflow
-nextflow run /project/haky/users/temi/projects/TFXcan-snakemake/workflow/PredictDb-nextflow/main.nf \
+nextflow run /beagle3/haky/users/temi/projects/TFXcan-snakemake/workflow/PredictDb-nextflow/main.nf \
     --gene_annotation "${loci_annotation}" \
     --snp_annotation "${geno_dir}/EUR.snp_annot.txt" \
     --genotype "${geno_dir}/EUR.geno.txt" \
     --gene_exp "${enpact_scores}" \
     --prefix ${phenotype} \
-    --outdir ${s_path}/${phenotype}/models/ \
+    --outdir ${s_path}/models/ \
     --keepIntermediate \
     -resume \
     -profile midway3 \

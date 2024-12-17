@@ -13,3 +13,5 @@ software/
 workflow/PredictDb-nextflow/**
 workflow/src/archives/**
 archives/**
+slurm_logs/**
+minimal/**

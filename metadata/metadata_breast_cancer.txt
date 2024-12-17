@@ -1,0 +1,2 @@
+phenotype,sumstat
+breast_cancer,breast_cancer.liftover.logistic.assoc.tsv.gz

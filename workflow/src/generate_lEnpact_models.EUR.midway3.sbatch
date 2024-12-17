@@ -24,13 +24,13 @@
 
 date
 source ~/.bashrc
-conda activate /project/haky/users/temi/software/conda_envs/predictdb_env
+conda activate /project/haky/users/temi/software/conda_envs/predictdb-env
 module load python
 module load R
 #Rscript -e 'install.packages("/project2/haky/temi/projects/TFXcan-snakemake/workflow/software/optparse_1.7.4.tar.gz", lib="/home/temi/R/x86_64-pc-linux-gnu-library/4.2", repos = NULL, type = "source")'
 #export JAVA_HOME=/usr/lib/jvm/jre-1.8.0-openjdk-1.8.0.352.b08-2.el8_6.x86_64
 
-export JAVA_HOME=/project/haky/users/temi/software/conda_envs/predictdb_env/
+export JAVA_HOME=/project/haky/users/temi/software/conda_envs/predictdb-env/
 
 phenotype=${1}
 s_path=${2}
