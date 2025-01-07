@@ -1,12 +1,12 @@
 
 # TFXcan
 
-This pipeline tests TF binding-GWAS trait associations. It uses SNP-based Enpact models.
+This pipeline tests TF binding-GWAS trait associations using SNP-based predictors of TF binding.
 
 ## Usage:
 
 1. conda activate /beagle3/haky/users/shared_software/TFXcan-pipeline-tools
-2. snakemake -s snakefile.smk --configfile config/pipeline.yaml --profile profiles/simple/
+2. snakemake -s snakefile.smk --configfile config/pipeline.yaml --profile profiles/simple/ --resources load=45
 
 ## Software: 
 
@@ -36,26 +36,21 @@ In general, the pipeline expects:
 
 
 ## Output:
+The output of the pipeline is the association results of the GWAS trait with the TF binding, and it can be found in the `data/.../output` folder. The output is a summary ***.TFXcan.csv file of the association results file with the following columns:
 
 
 #### Notes: 
 
-* GWAS summary stats with the following headers: 
+* GWAS summary stats with the following headers (others headers are allowed but will be ignored): 
 
     - chrom: 1,2,3, e.t.c (No chromosomes X, Y, or M e.t.c)
 
     - pos: 134 (bp coordinates)
 
-    - variant_id: 1_345_A_G
+    - variant_id: 1_345_A_G i.e. chrom_pos_ref_alt
 
     - pval: GWAS pvalues
 
     - zscore: GWAS zscores; you can pre-calculate this from the beta and standard errors (beta/se)
 
 * The framework assumes that genomic coordinates are in hg38 coordinates
-
-
-
-## Main output:
-The final output is a summary ***.TFXcan.csv file of the association results.
-
