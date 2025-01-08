@@ -1,33 +1,38 @@
 ---
 enformer:
-  prediction_directives: 
-    sub_dir: True
-    output_dir: "enformer_predictions"
+  prediction_directives:
     reverse_complement: false
     sequence_source: 'personalized'
     exclude_regions: true
     predictions_log_dir: "predictions_log"
-    tracks_to_save: -1
-    bins_to_save: -1
     n_regions: 40000
     batch_regions: 1000
     use_parsl: True
     write_log:
-      logdir: "job_logs"
+      overwrite: true
+      logdir: "predictions_log"
       logtypes:
         memory: false
         error: false
         time: false
         cache: false
-    aggregate_by_width: 1
     parsl_parameters:
-      num_of_full_nodes: 1
-      walltime: "06:00:00"
+      nodes_per_block: 1
+      walltime: "24:00:00"
       init_blocks: 1
       min_num_blocks: 0
       max_num_blocks: 2
+      max_workers_per_node: 2
       queue:
       account: "pi-haky"
       hpc: "beagle3"
       provider: "local"
-      worker_init: "source ~/.bashrc; conda activate /beagle3/haky/users/shared_software/TFXcan-pipeline-tools; which python; export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib; echo Found `nvidia-smi --list-gpus | wc -l` gpus"
+      worker_init: "date; source ~/.bashrc; conda activate /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/; export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib; echo `hostname`; nvidia-smi"
+
+    ## === aggregate. Save the mean across the bins and leave the tracks as specified --> (1,3) ===
+    aggregation:
+      aggregate: true
+      by_width: 1 # or an integer # i.e use the function below over all bins in the width or pad by n
+      by_function: 'aggByMean' # or 'aggBySum' or 'aggByMean'
+      bins_to_save: null # None would save everything
+      tracks_to_save: null # None would save everything

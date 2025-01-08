@@ -16,7 +16,7 @@ enpact_models:
   metadata: "metadata/enpact734.predictors.txt" #models734.prostate.txt" #"metadata/models.enpact.185.txt"
 
 genome:
-  fasta: "/haky/Data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta"
+  fasta: "/project2/haky/Data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta"
 
 rscript: "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript"
 
@@ -44,7 +44,7 @@ enformer:
   base_directives: "config/enformer_base.yaml"
   personalized_directives: "config/personalized_base.yaml"
   model: "/project2/haky/Data/enformer/raw"
-  predict: "/beagle3/haky/users/shared_pipelines/enformer_pipeline_aggregate/scripts/enformer_predict.py"
+  predict: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/workflow/enformer/enformer_predict.py"
   aggregate: "workflow/src/aggregate.py"
   aggtype: "aggByCollect"
 ...

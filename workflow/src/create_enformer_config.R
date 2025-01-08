@@ -26,11 +26,10 @@ print(opt)
 # opt$phenotype <- 'asthma_children' 
 # opt$base_directives <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/config/enformer_base.yaml' 
 # opt$project_directory <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/data'
+# opt$parameters_file <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/misc/enformer_parameters_Asthma_GWAS_asthma_children.yaml'
 # # --project_directory data --predictors_file data/collection/asthma_children/asthma_children.EnformerLoci.txt --model /project2/haky/Data/enformer/raw --fasta_file /project2/haky/Data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta --parameters_file data/enformer_parameters/enformer_parameters_Asthma_GWAS_asthma_children.json --date 2024-01-31
 
 # opt$personalized_parameters_file <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/config/personalized_base.yaml'
-
-
 
 library(yaml)
 
@@ -45,6 +44,7 @@ enformer_parameters_json[['prediction_id']] <- opt$phenotype
 enformer_parameters_json[['date']] <- opt$date
 enformer_parameters_json[['model_path']] <- opt$model
 enformer_parameters_json[['fasta_file']] <- opt$fasta_file
+enformer_parameters_json[['output_dir']] <- opt$project_directory
 
 # chANGE the metadata dir
 enformer_parameters_json[['metadata_dir']] <- dirname(opt$parameters_file)
@@ -82,10 +82,12 @@ if(!is.null(opt$personalized_parameters_file)){
 
 }
 
-write(
-    jsonlite::toJSON(enformer_parameters_json, na='null', pretty=TRUE, auto_unbox=T),
-    file=opt$parameters_file
-)
+yaml::write_yaml(enformer_parameters_json, opt$parameters_file, fileEncoding = "UTF-8")
+
+# write(
+#     jsonlite::toJSON(enformer_parameters_json, na='null', pretty=TRUE, auto_unbox=T),
+#     file=opt$parameters_file
+# )
 
 
 # /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript prepare/workflow/scripts/create_enformer_config.R --transcription_factor AR --tissue Breast --base_directives config/enformer_base.yaml --project_directory data/predictions_folder --predictors_file data/predictor_files/AR_Breast.predictors.txt --model "/project2/haky/Data/enformer/raw" --fasta_file "/project2/haky/Data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta" --parameters_file data/prediction_parameters/enformer_parameters_cistrome_AR_Breast.json

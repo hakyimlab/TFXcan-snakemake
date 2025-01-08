@@ -57,7 +57,7 @@ rule collect_top_snps_results:
 
 rule create_enformer_configuration:
     input: rules.collect_top_snps_results.output.enformer_loci
-    output: os.path.join(ENFORMER_PARAMETERS, f'enformer_parameters_{runname}_{{phenotype}}.json')
+    output: os.path.join(ENFORMER_PARAMETERS, f'enformer_parameters_{runname}_{{phenotype}}.yaml')
     message: "working on {wildcards}"
     resources:
         partition="caslake"
@@ -83,10 +83,10 @@ rule predict_with_enformer:
     input:
         rules.create_enformer_configuration.output
     output:
-        os.path.join(ENFORMER_PARAMETERS, f'aggregation_config_{runname}_{{phenotype}}.json')
+        os.path.join(ENFORMER_PARAMETERS, f'aggregation_config_{runname}_{{phenotype}}.yaml')
     resources:
         partition="caslake",
-        time = "12:00:00",
+        time = "24:00:00",
         mem_cpu=4,
         cpu_task=4
     params:
@@ -97,187 +97,187 @@ rule predict_with_enformer:
         "working on {params.jobname}"
     shell:
         """
-        sbatch workflow/src/run_enformer.sbatch {params.enformer_predict_script} {input}
+        sbatch workflow/enformer/enformer_predict.sbatch {params.enformer_predict_script} {input}
         """
 
-rule aggregate_predictions:
-    input:
-        rules.predict_with_enformer.output
-    output:
-        #touch(os.path.join(CHECKPOINTS_DIR, '{phenotype}.checkpoint')),
-        directory(os.path.join(AGGREGATED_PREDICTIONS, '{phenotype}'))
-    message: 
-        "working on {wildcards}"
-    resources:
-        partition="caslake",
-        mem_cpu=4,
-        cpu_task=4,
-        #mem_mb=24000,
-        time = "00:30:00"
-    params:
-        jobname = '{phenotype}',
-        runmeta = runmeta,
-        aggregation_script = config['enformer']['aggregate'],
-        aggtype = config['enformer']['aggtype'],
-        hpc = "caslake",
-        parsl_executor = "highthroughput",
-        delete_enformer_outputs = config["delete_enformer_outputs"],
-        aggregation_config = rules.predict_with_enformer.output,
-        output_dir = os.path.join(AGGREGATED_PREDICTIONS, '{phenotype}')
-    run:
-        if params.delete_enformer_outputs == True:
-            shell("mkdir -p {params.output_dir} && python3 {params.aggregation_script} --metadata_file {params.aggregation_config} --agg_types {params.aggtype} --output_directory {params.output_dir} --hpc {params.hpc} --parsl_executor {params.parsl_executor} --delete_enformer_outputs")
-        elif params.delete_enformer_outputs == False: # don't delete the outputs
-            shell("mkdir -p {params.output_dir} && python3 {params.aggregation_script} --metadata_file {params.aggregation_config} --agg_types {params.aggtype} --output_directory {params.output_dir} --hpc {params.hpc} --parsl_executor {params.parsl_executor}")
+# rule aggregate_predictions:
+#     input:
+#         rules.predict_with_enformer.output
+#     output:
+#         #touch(os.path.join(CHECKPOINTS_DIR, '{phenotype}.checkpoint')),
+#         directory(os.path.join(AGGREGATED_PREDICTIONS, '{phenotype}'))
+#     message: 
+#         "working on {wildcards}"
+#     resources:
+#         partition="caslake",
+#         mem_cpu=4,
+#         cpu_task=4,
+#         #mem_mb=24000,
+#         time = "00:30:00"
+#     params:
+#         jobname = '{phenotype}',
+#         runmeta = runmeta,
+#         aggregation_script = config['enformer']['aggregate'],
+#         aggtype = config['enformer']['aggtype'],
+#         hpc = "caslake",
+#         parsl_executor = "highthroughput",
+#         delete_enformer_outputs = config["delete_enformer_outputs"],
+#         aggregation_config = rules.predict_with_enformer.output,
+#         output_dir = os.path.join(AGGREGATED_PREDICTIONS, '{phenotype}')
+#     run:
+#         if params.delete_enformer_outputs == True:
+#             shell("mkdir -p {params.output_dir} && python3 {params.aggregation_script} --metadata_file {params.aggregation_config} --agg_types {params.aggtype} --output_directory {params.output_dir} --hpc {params.hpc} --parsl_executor {params.parsl_executor} --delete_enformer_outputs")
+#         elif params.delete_enformer_outputs == False: # don't delete the outputs
+#             shell("mkdir -p {params.output_dir} && python3 {params.aggregation_script} --metadata_file {params.aggregation_config} --agg_types {params.aggtype} --output_directory {params.output_dir} --hpc {params.hpc} --parsl_executor {params.parsl_executor}")
 
 
-rule calculate_enpact_scores:
-    input: os.path.join(AGGREGATED_PREDICTIONS, '{phenotype}') #rules.aggregate_predictions.output 
-    output: directory(os.path.join(ENPACT_PREDICTIONS, '{phenotype}'))
-    params:
-        rscript = config['rscript'],
-        runmeta = runmeta,
-        individuals = lambda wildcards: collect_aggregated_individuals(),
-        input_file = lambda wildcards, input: os.path.join(AGGREGATED_PREDICTIONS, wildcards.phenotype, f'{{}}_{config["enformer"]["aggtype"]}_{wildcards.phenotype}.csv.gz'),
-        output_file = lambda wildcards, output: os.path.join(ENPACT_PREDICTIONS, wildcards.phenotype, f'{{}}.{wildcards.phenotype}.{config["enformer"]["aggtype"]}.{rundate}.csv.gz'),
-        models_directory = config['enpact_models']['directory'],
-        models_metadata = config['enpact_models']['metadata'],
-        jobname = '{phenotype}'
-    message: 
-        "working on {params.jobname}"
-    resources:
-        partition="caslake",
-        mem_cpu=16,
-        cpu_task=8,
-        time = "02:00:00",
-    benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.calculate_enpact_scores.tsv")
-    shell:
-        """
-        module load parallel;
-        mkdir -p {output};
-        printf "%s\\n" {params.individuals} | parallel -j 20 '{params.rscript} workflow/src/calculate_enpact_scores.R --input_file {params.input_file} --output_file {params.output_file} --enpact_models_directory {params.models_directory} --enpact_models_metadata {params.models_metadata}'
-        """
+# rule calculate_enpact_scores:
+#     input: os.path.join(AGGREGATED_PREDICTIONS, '{phenotype}') #rules.aggregate_predictions.output 
+#     output: directory(os.path.join(ENPACT_PREDICTIONS, '{phenotype}'))
+#     params:
+#         rscript = config['rscript'],
+#         runmeta = runmeta,
+#         individuals = lambda wildcards: collect_aggregated_individuals(),
+#         input_file = lambda wildcards, input: os.path.join(AGGREGATED_PREDICTIONS, wildcards.phenotype, f'{{}}_{config["enformer"]["aggtype"]}_{wildcards.phenotype}.csv.gz'),
+#         output_file = lambda wildcards, output: os.path.join(ENPACT_PREDICTIONS, wildcards.phenotype, f'{{}}.{wildcards.phenotype}.{config["enformer"]["aggtype"]}.{rundate}.csv.gz'),
+#         models_directory = config['enpact_models']['directory'],
+#         models_metadata = config['enpact_models']['metadata'],
+#         jobname = '{phenotype}'
+#     message: 
+#         "working on {params.jobname}"
+#     resources:
+#         partition="caslake",
+#         mem_cpu=16,
+#         cpu_task=8,
+#         time = "02:00:00",
+#     benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.calculate_enpact_scores.tsv")
+#     shell:
+#         """
+#         module load parallel;
+#         mkdir -p {output};
+#         printf "%s\\n" {params.individuals} | parallel -j 20 '{params.rscript} workflow/src/calculate_enpact_scores.R --input_file {params.input_file} --output_file {params.output_file} --enpact_models_directory {params.models_directory} --enpact_models_metadata {params.models_metadata}'
+#         """
 
-rule create_enpact_scores_database:
-    input: rules.calculate_enpact_scores.output
-    output: 
-        f1 = os.path.join(ENPACT_DB, "{phenotype}.enpact_scores.array.rds.gz"),
-        f2 = os.path.join(ENPACT_DB, "{phenotype}.enpact_scores.txt.gz")
-    message: "working on {wildcards.phenotype}"
-    resources:
-        partition="caslake"
-    benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.create_enpact_scores_database.tsv")
-    params:
-        rscript = config['rscript'],
-        runmeta = runmeta,
-        jobname = '{phenotype}',
-        input_pattern = os.path.join(ENPACT_PREDICTIONS, '{phenotype}', f'{{}}.{{phenotype}}.{config["enformer"]["aggtype"]}.{rundate}.csv.gz'),
-        individuals = lambda wildcards: ','.join(collect_enpact_individuals())
-    shell:
-        """
-            {params.rscript} workflow/src/create_enpact_scores_database.R --input_files {params.input_pattern} --output_file {output.f2} --output_db {output.f1} --individuals {params.individuals}
-        """
+# rule create_enpact_scores_database:
+#     input: rules.calculate_enpact_scores.output
+#     output: 
+#         f1 = os.path.join(ENPACT_DB, "{phenotype}.enpact_scores.array.rds.gz"),
+#         f2 = os.path.join(ENPACT_DB, "{phenotype}.enpact_scores.txt.gz")
+#     message: "working on {wildcards.phenotype}"
+#     resources:
+#         partition="caslake"
+#     benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.create_enpact_scores_database.tsv")
+#     params:
+#         rscript = config['rscript'],
+#         runmeta = runmeta,
+#         jobname = '{phenotype}',
+#         input_pattern = os.path.join(ENPACT_PREDICTIONS, '{phenotype}', f'{{}}.{{phenotype}}.{config["enformer"]["aggtype"]}.{rundate}.csv.gz'),
+#         individuals = lambda wildcards: ','.join(collect_enpact_individuals())
+#     shell:
+#         """
+#             {params.rscript} workflow/src/create_enpact_scores_database.R --input_files {params.input_pattern} --output_file {output.f2} --output_db {output.f1} --individuals {params.individuals}
+#         """
 
-rule prepare_files_for_predictDB:
-    input: os.path.join(ENPACT_DB, "{phenotype}.enpact_scores.array.rds.gz") #rules.create_enpact_scores_database.output.f1
-    output: 
-        enpact_scores = os.path.join(PREDICTDB_DATA, "{model}", '{phenotype}.enpact_scores.txt'),
-        annot_file = os.path.join(PREDICTDB_DATA, "{model}", '{phenotype}.tf_tissue_annot.txt')
-    params:
-        rscript = config['rscript'],
-        runmeta = runmeta,
-        jobname = '{phenotype}_{model}',
-        output_dir = os.path.join(PREDICTDB_DATA, '{phenotype}'),
-        filtered_gwas = os.path.join(COLLECTION_DIR, '{phenotype}.filteredGWAS.topSNPs.txt.gz'), #rules.collect_top_snps_results.output.filtered_sumstats,
-        blacklist = config['predictdb']['blacklist_regions'],
-        model = "{model}"
-    resources:
-        partition="caslake"
-    benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.{{model}}.prepare_files_for_predictDB.tsv")
-    shell: "{params.rscript} workflow/src/prepare_files_for_predictDB.R --enpact_scores_database {input} --subset {params.model} --formatted_escores_file {output.enpact_scores} --formatted_annot_file {output.annot_file} --filtered_GWAS_file {params.filtered_gwas} --blacklist {params.blacklist}"
+# rule prepare_files_for_predictDB:
+#     input: os.path.join(ENPACT_DB, "{phenotype}.enpact_scores.array.rds.gz") #rules.create_enpact_scores_database.output.f1
+#     output: 
+#         enpact_scores = os.path.join(PREDICTDB_DATA, "{model}", '{phenotype}.enpact_scores.txt'),
+#         annot_file = os.path.join(PREDICTDB_DATA, "{model}", '{phenotype}.tf_tissue_annot.txt')
+#     params:
+#         rscript = config['rscript'],
+#         runmeta = runmeta,
+#         jobname = '{phenotype}_{model}',
+#         output_dir = os.path.join(PREDICTDB_DATA, '{phenotype}'),
+#         filtered_gwas = os.path.join(COLLECTION_DIR, '{phenotype}.filteredGWAS.topSNPs.txt.gz'), #rules.collect_top_snps_results.output.filtered_sumstats,
+#         blacklist = config['predictdb']['blacklist_regions'],
+#         model = "{model}"
+#     resources:
+#         partition="caslake"
+#     benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.{{model}}.prepare_files_for_predictDB.tsv")
+#     shell: "{params.rscript} workflow/src/prepare_files_for_predictDB.R --enpact_scores_database {input} --subset {params.model} --formatted_escores_file {output.enpact_scores} --formatted_annot_file {output.annot_file} --filtered_GWAS_file {params.filtered_gwas} --blacklist {params.blacklist}"
 
-rule generate_lEnpact_models:
-    input:
-        enpact_scores = rules.prepare_files_for_predictDB.output.enpact_scores,
-        annot_file = rules.prepare_files_for_predictDB.output.annot_file
-    output:
-        covariances_model = os.path.join(LENPACT_DIR, "{model}", '{phenotype}', 'models/database/predict_db_{phenotype}.txt.gz')
-    params:
-        jobname = '{phenotype}_{model}',
-        runmeta = runmeta,
-        output_dir = os.path.abspath(os.path.join(LENPACT_DIR, "{model}", '{phenotype}')),
-        annot_file = os.path.abspath(rules.prepare_files_for_predictDB.output.annot_file),
-        enpact_scores = os.path.abspath(rules.prepare_files_for_predictDB.output.enpact_scores),
-        lEnpact_model = os.path.join(LENPACT_DIR, "{model}", '{phenotype}', 'models/filtered_db/predict_db_{phenotype}_filtered.db'),
-        #lEnpact_directory = os.path.join(LENPACT_DIR, "{model}", '{phenotype}'),
-        generate_sbatch = os.path.abspath("workflow/helpers/generate_lEnpact_models.EUR.midway3.sbatch")
-    resources:
-        partition="caslake",
-        time="36:00:00",
-        load=5
-    benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.{{model}}.generate_lEnpact_models.tsv")
-    shell: "cd {params.output_dir} && {params.generate_sbatch} {wildcards.phenotype} {params.output_dir} {params.annot_file} {params.enpact_scores}"
+# rule generate_lEnpact_models:
+#     input:
+#         enpact_scores = rules.prepare_files_for_predictDB.output.enpact_scores,
+#         annot_file = rules.prepare_files_for_predictDB.output.annot_file
+#     output:
+#         covariances_model = os.path.join(LENPACT_DIR, "{model}", '{phenotype}', 'models/database/predict_db_{phenotype}.txt.gz')
+#     params:
+#         jobname = '{phenotype}_{model}',
+#         runmeta = runmeta,
+#         output_dir = os.path.abspath(os.path.join(LENPACT_DIR, "{model}", '{phenotype}')),
+#         annot_file = os.path.abspath(rules.prepare_files_for_predictDB.output.annot_file),
+#         enpact_scores = os.path.abspath(rules.prepare_files_for_predictDB.output.enpact_scores),
+#         lEnpact_model = os.path.join(LENPACT_DIR, "{model}", '{phenotype}', 'models/filtered_db/predict_db_{phenotype}_filtered.db'),
+#         #lEnpact_directory = os.path.join(LENPACT_DIR, "{model}", '{phenotype}'),
+#         generate_sbatch = os.path.abspath("workflow/helpers/generate_lEnpact_models.EUR.midway3.sbatch")
+#     resources:
+#         partition="caslake",
+#         time="36:00:00",
+#         load=5
+#     benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.{{model}}.generate_lEnpact_models.tsv")
+#     shell: "cd {params.output_dir} && {params.generate_sbatch} {wildcards.phenotype} {params.output_dir} {params.annot_file} {params.enpact_scores}"
 
-            # gzip -d -k {input.covariances};
-            # sed -e 's/:/_/g' {output.f1} > {output.f2}
-rule format_covariances:
-    input:
-        covariances = rules.generate_lEnpact_models.output.covariances_model
-    output:
-        f1 = os.path.join(LENPACT_DIR, "{model}", '{phenotype}/models/database/predict_db_{phenotype}.txt'),
-        f2 = os.path.join(LENPACT_DIR, "{model}", '{phenotype}/models/database/Covariances.varID.txt')
-    params:
-        jobname = '{phenotype}_{model}',
-        runmeta = runmeta,
-        # c1 = os.path.abspath(os.path.join('output', 'lEnpact', '{phenotype}/models/database/predict_db_{phenotype}.txt.gz')),
-        # f1 = os.path.abspath(os.path.join('output', 'lEnpact', '{phenotype}/models/database/predict_db_{phenotype}.txt')),
-        # f2 = os.path.abspath(os.path.join('output', 'lEnpact', '{phenotype}/models/database/Covariances.varID.txt'))
-    resources:
-        partition="caslake",
-        time="01:00:00"
-    benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.{{model}}.format_covariances.tsv")
-    shell: "workflow/src/format_covariances.sbatch {input.covariances} {output.f1} {output.f2}"
+#             # gzip -d -k {input.covariances};
+#             # sed -e 's/:/_/g' {output.f1} > {output.f2}
+# rule format_covariances:
+#     input:
+#         covariances = rules.generate_lEnpact_models.output.covariances_model
+#     output:
+#         f1 = os.path.join(LENPACT_DIR, "{model}", '{phenotype}/models/database/predict_db_{phenotype}.txt'),
+#         f2 = os.path.join(LENPACT_DIR, "{model}", '{phenotype}/models/database/Covariances.varID.txt')
+#     params:
+#         jobname = '{phenotype}_{model}',
+#         runmeta = runmeta,
+#         # c1 = os.path.abspath(os.path.join('output', 'lEnpact', '{phenotype}/models/database/predict_db_{phenotype}.txt.gz')),
+#         # f1 = os.path.abspath(os.path.join('output', 'lEnpact', '{phenotype}/models/database/predict_db_{phenotype}.txt')),
+#         # f2 = os.path.abspath(os.path.join('output', 'lEnpact', '{phenotype}/models/database/Covariances.varID.txt'))
+#     resources:
+#         partition="caslake",
+#         time="01:00:00"
+#     benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.{{model}}.format_covariances.tsv")
+#     shell: "workflow/src/format_covariances.sbatch {input.covariances} {output.f1} {output.f2}"
 
-checkpoint summary_TFXcan:
-    input:
-        #model=os.path.join(LENPACT_DIR, '{phenotype}', 'models/filtered_db/predict_db_{phenotype}_filtered.db'), #rules.generate_lEnpact_models.output.lEnpact_model,
-        cov=rules.format_covariances.output.f2
-    output:
-        summary_tfxcan = os.path.join(SUMMARYTFXCAN_DIR, "{model}", "{phenotype}", "{phenotype}.enpactScores.spredixcan.csv")
-    params:
-        jobname = '{phenotype}-{model}',
-        runmeta = runmeta,
-        covariances = os.path.abspath(os.path.join(LENPACT_DIR, "{model}", '{phenotype}/models/database/Covariances.varID.txt')),
-        gwas_folder = os.path.abspath(os.path.join(PROCESSED_SUMSTATS, '{phenotype}')),
-        gwas_pattern = '.*.sumstats.txt.gz',
-        inp = os.path.join(LENPACT_DIR, "{model}", '{phenotype}', 'models/filtered_db/predict_db_{phenotype}_filtered.db'),
-        outp = os.path.abspath(os.path.join(SUMMARYTFXCAN_DIR, "{model}", '{phenotype}/{phenotype}.enpactScores.spredixcan.csv'))
-    resources:
-        partition="caslake",
-        time="02:00:00",
-        mem_cpu=4,
-        cpu_task=8
-    #benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.{{model}}.summary_TFXcan.tsv")
-    shell: "workflow/src/summary_TFXcan.sbatch {wildcards.phenotype} {params.inp} {params.outp} {params.gwas_folder} {params.gwas_pattern} {input.cov}" #"workflow/src/summary_TFXcan.sbatch {wildcards.phenotype} {params.inp} {params.outp} {params.gwas_folder} {params.gwas_pattern} {params.covariances}"
+# checkpoint summary_TFXcan:
+#     input:
+#         #model=os.path.join(LENPACT_DIR, '{phenotype}', 'models/filtered_db/predict_db_{phenotype}_filtered.db'), #rules.generate_lEnpact_models.output.lEnpact_model,
+#         cov=rules.format_covariances.output.f2
+#     output:
+#         summary_tfxcan = os.path.join(SUMMARYTFXCAN_DIR, "{model}", "{phenotype}", "{phenotype}.enpactScores.spredixcan.csv")
+#     params:
+#         jobname = '{phenotype}-{model}',
+#         runmeta = runmeta,
+#         covariances = os.path.abspath(os.path.join(LENPACT_DIR, "{model}", '{phenotype}/models/database/Covariances.varID.txt')),
+#         gwas_folder = os.path.abspath(os.path.join(PROCESSED_SUMSTATS, '{phenotype}')),
+#         gwas_pattern = '.*.sumstats.txt.gz',
+#         inp = os.path.join(LENPACT_DIR, "{model}", '{phenotype}', 'models/filtered_db/predict_db_{phenotype}_filtered.db'),
+#         outp = os.path.abspath(os.path.join(SUMMARYTFXCAN_DIR, "{model}", '{phenotype}/{phenotype}.enpactScores.spredixcan.csv'))
+#     resources:
+#         partition="caslake",
+#         time="02:00:00",
+#         mem_cpu=4,
+#         cpu_task=8
+#     #benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.{{model}}.summary_TFXcan.tsv")
+#     shell: "workflow/src/summary_TFXcan.sbatch {wildcards.phenotype} {params.inp} {params.outp} {params.gwas_folder} {params.gwas_pattern} {input.cov}" #"workflow/src/summary_TFXcan.sbatch {wildcards.phenotype} {params.inp} {params.outp} {params.gwas_folder} {params.gwas_pattern} {params.covariances}"
 
-rule collect_summaryTFXcan_results:
-    input:
-        expand(os.path.join(SUMMARYTFXCAN_DIR, "{model}", "{phenotype}", '{phenotype}.enpactScores.spredixcan.csv'), model = enpact_models_list, phenotype = run_list.keys())
-        #collect_completed_summary_tfxcan, os.path.join(SUMMARYTFXCAN_DIR, "{phenotype}", "{phenotype}", '{phenotype}.enpactScores.spredixcan.csv'
-        # lambda wildcards: expand(rules.summary_TFXcan.output.summary_tfxcan, zip, model = enpact_models_list, phenotype=wildcards.phenotype)
-        #lambda wildcards: collect_completed_summary_tfxcan(wildcards)
-    output:
-        summary_tfxcan = os.path.join(SUMMARY_OUTPUT, f'{{phenotype}}.enpactScores.{rundate}.spredixcan.txt')
-    message: "working on {wildcards}"
-    params:
-        jobname = runmeta,
-        runmeta = runmeta,
-        rscript = config['rscript'],
-        sFiles = lambda wildcards, input: ",".join(input) #lambda wildcards: ",".join(collect_completed_summary_tfxcan(wildcards))
-    resources:
-        partition="caslake",
-        time="02:00:00",
-        mem_cpu=4,
-        cpu_task=8
-    benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.{rundate}.collect_summaryTFXcan_results.tsv")
-    shell: "{params.rscript} workflow/src/collect_summaryTFXcan_results.R --input_files {params.sFiles} --output_file {output.summary_tfxcan}"
+# rule collect_summaryTFXcan_results:
+#     input:
+#         expand(os.path.join(SUMMARYTFXCAN_DIR, "{model}", "{phenotype}", '{phenotype}.enpactScores.spredixcan.csv'), model = enpact_models_list, phenotype = run_list.keys())
+#         #collect_completed_summary_tfxcan, os.path.join(SUMMARYTFXCAN_DIR, "{phenotype}", "{phenotype}", '{phenotype}.enpactScores.spredixcan.csv'
+#         # lambda wildcards: expand(rules.summary_TFXcan.output.summary_tfxcan, zip, model = enpact_models_list, phenotype=wildcards.phenotype)
+#         #lambda wildcards: collect_completed_summary_tfxcan(wildcards)
+#     output:
+#         summary_tfxcan = os.path.join(SUMMARY_OUTPUT, f'{{phenotype}}.enpactScores.{rundate}.spredixcan.txt')
+#     message: "working on {wildcards}"
+#     params:
+#         jobname = runmeta,
+#         runmeta = runmeta,
+#         rscript = config['rscript'],
+#         sFiles = lambda wildcards, input: ",".join(input) #lambda wildcards: ",".join(collect_completed_summary_tfxcan(wildcards))
+#     resources:
+#         partition="caslake",
+#         time="02:00:00",
+#         mem_cpu=4,
+#         cpu_task=8
+#     benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.{rundate}.collect_summaryTFXcan_results.tsv")
+#     shell: "{params.rscript} workflow/src/collect_summaryTFXcan_results.R --input_files {params.sFiles} --output_file {output.summary_tfxcan}"
