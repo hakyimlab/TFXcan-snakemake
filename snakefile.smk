@@ -45,7 +45,8 @@ def read_metadata(mtdt_file):
     return(dict(zip(dd.phenotype.tolist(), dd.sumstat.tolist())))
 
 run_list = read_metadata(config["metadata"])
-enpact_models_list = pd.read_table(config["enpact_models"]["metadata"]).model.tolist()#[0:5]
+# read in the list of models
+enpact_models_list = pd.read_table(config["enpact_weights"]).columns[1:].tolist()[0:5] #.model.tolist()#[0:5]
 print(f"INFO - Found {len(enpact_models_list)} models for TF-tissue:GWAS association tests.")
 
 # checkpoint functions
@@ -77,6 +78,12 @@ def collect_enpact_individuals():
 
     #print(ids)
     return(ids)
+
+def collect_enpact_files(wildcards):
+    ck_output = checkpoints.prepare_files_for_predictDB.get(**wildcards).output[0]
+    _, models = glob_wildcards(os.path.join(ck_output, f'{{idi}}.{{model}}.enpact_scores.txt'))
+    #files = expand(os.path.join(ENPACT_PREDICTIONS, '{phenotype}', '{idi}.{model}.enpact_scores.txt'), model=model, phenotype = run_list.keys())
+    return(models)
 
 def collect_completed_summary_tfxcan(wildcards):
     #mm, ph, pp = glob_wildcards(os.path.join(SUMMARYTFXCAN_DIR, "{model}", "{phenotype}", '{pp}.enpactScores.spredixcan.csv'))
@@ -111,22 +118,17 @@ rule all:
         expand(os.path.join(ENFORMER_PARAMETERS, f'enformer_parameters_{runname}_{{phenotype}}.yaml'), phenotype = run_list.keys()),
         expand(os.path.join(ENFORMER_PARAMETERS, f'aggregation_config_{runname}_{{phenotype}}.yaml'), phenotype = run_list.keys()),
         # # expand(os.path.join(CHECKPOINTS_DIR, '{phenotype}.checkpoint'), phenotype = run_list.keys()),
-        # expand(os.path.join(AGGREGATED_PREDICTIONS, '{phenotype}'), phenotype = run_list.keys()),
-        # expand(os.path.join(ENPACT_PREDICTIONS, '{phenotype}'), phenotype = run_list.keys()),
-        # expand(os.path.join(ENPACT_DB, "{phenotype}.enpact_scores.array.rds.gz"), phenotype = run_list.keys()),
-        # expand(os.path.join(ENPACT_DB, "{phenotype}.enpact_scores.txt.gz"), phenotype = run_list.keys()),
-        # expand(os.path.join(PREDICTDB_DATA, "{model}", '{phenotype}.enpact_scores.txt'), phenotype = run_list.keys(), model = enpact_models_list),
-        # expand(os.path.join(PREDICTDB_DATA, "{model}", '{phenotype}.tf_tissue_annot.txt'), phenotype = run_list.keys(), model = enpact_models_list),
-        # #expand(os.path.join(LENPACT_DIR, '{phenotype}', 'models/filtered_db/predict_db_{phenotype}_filtered.db'), phenotype = run_list.keys()),
-        # expand(os.path.join(LENPACT_DIR, "{model}", '{phenotype}', 'models/database/predict_db_{phenotype}.txt.gz'), phenotype = run_list.keys(), model = enpact_models_list),
-        # expand(os.path.join(LENPACT_DIR, "{model}", '{phenotype}', 'models/database/predict_db_{phenotype}.txt'), phenotype = run_list.keys(), model = enpact_models_list),
-        # expand(os.path.join(LENPACT_DIR, "{model}", '{phenotype}', 'models/database/Covariances.varID.txt'), phenotype = run_list.keys(), model = enpact_models_list),
-        # expand(os.path.join(SUMMARYTFXCAN_DIR, "{model}", '{phenotype}', '{phenotype}.enpactScores.spredixcan.csv'), phenotype = run_list.keys(), model = enpact_models_list),
-        # expand(os.path.join(SUMMARY_OUTPUT, '{phenotype}.enpactScores.{rundate}.spredixcan.txt'), phenotype = run_list.keys(), rundate = [rundate]),
-        # # expand(os.path.join('output', 'lEnpact', '{phenotype}', 'models/filtered_db/predict_db_{phenotype}_filtered.db'), phenotype = run_list.keys()),
-        # # expand(os.path.join('output', 'lEnpact', '{phenotype}', 'models/database/predict_db_{phenotype}.txt.gz'), phenotype = run_list.keys()),
-        # # expand(os.path.join('output', 'lEnpact', '{phenotype}', 'models/database/Covariances.varID.txt'), phenotype = run_list.keys()),
-        # # expand(os.path.join('output', 'summary', '{phenotype}', '{phenotype}.enpactScores.spredixcan.csv'), phenotype = run_list.keys())
+        expand(os.path.join(AGGREGATED_PREDICTIONS, f'{{phenotype}}.{runmeta}.h5'), phenotype = run_list.keys()),
+        expand(os.path.join(AGGREGATED_PREDICTIONS, f'{{phenotype}}.{runmeta}.processed.metadata.tsv'), phenotype = run_list.keys()),
+        expand(os.path.join(AGGREGATED_PREDICTIONS, f'{{phenotype}}.{runmeta}.processed.matrix.tsv.gz'), phenotype = run_list.keys()),
+        expand(os.path.join(PREDICTDB_DATA, "{phenotype}", '{phenotype}.{model}.enpact_scores.txt'), phenotype = run_list.keys(), model = enpact_models_list),
+        expand(os.path.join(PREDICTDB_DATA, "{phenotype}", '{phenotype}.{model}.annotation.txt'), phenotype = run_list.keys(), model = enpact_models_list),
+        expand(os.path.join(LENPACT_DIR, '{phenotype}', "{model}", 'models/filtered_db/predict_db_{phenotype}_filtered.db'), phenotype = run_list.keys(), model = enpact_models_list),
+        expand(os.path.join(LENPACT_DIR, '{phenotype}', "{model}", 'models/database/predict_db_{phenotype}.txt.gz'), phenotype = run_list.keys(), model = enpact_models_list),
+        expand(os.path.join(LENPACT_DIR, '{phenotype}', "{model}", 'models/database/predict_db_{phenotype}.txt'), phenotype = run_list.keys(), model = enpact_models_list),
+        expand(os.path.join(LENPACT_DIR, '{phenotype}', "{model}", 'models/database/Covariances.varID.txt'), phenotype = run_list.keys(), model = enpact_models_list),
+        expand(os.path.join(SUMMARYTFXCAN_DIR, '{phenotype}', "{model}-{phenotype}.enpactScores.spredixcan.csv"), phenotype = run_list.keys(), model = enpact_models_list),
+        expand(os.path.join(SUMMARY_OUTPUT, '{phenotype}.enpactScores.{rundate}.spredixcan.txt'), phenotype = run_list.keys(), rundate = [rundate])
 
 if config['runSusie'] == True:
     print(f'INFO - Running ENFORMER is set to True. Running the pipeline with ENFORMER...')

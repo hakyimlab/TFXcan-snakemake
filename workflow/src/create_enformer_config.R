@@ -15,7 +15,8 @@ option_list <- list(
 	make_option("--fasta_file", help='fasta file, typically hg38'),
     make_option("--date", help='fasta file, typically hg38'),
     make_option("--parameters_file", help='the json file that will be created'),
-    make_option("--personalized_parameters_file", default=NULL, help='the json file that will be created')
+    make_option("--personalized_parameters_file", default=NULL, help='the json file that will be created'),
+    make_option("--copy_aggregation_config", default=NULL, help='the yaml file that will be created')
 )
 
 opt <- parse_args(OptionParser(option_list=option_list))
@@ -35,6 +36,7 @@ library(yaml)
 
 # read and write the enformer config file
 directives <- yaml::yaml.load_file(opt$base_directives)
+
 enformer_parameters_json <- directives$enformer$prediction_directives
 # you may change these as appropriate
 enformer_parameters_json[['project_dir']] <- normalizePath(opt$project_directory)
@@ -48,6 +50,7 @@ enformer_parameters_json[['output_dir']] <- opt$project_directory
 
 # chANGE the metadata dir
 enformer_parameters_json[['metadata_dir']] <- dirname(opt$parameters_file)
+enformer_parameters_json[['copy_aggregation_yaml']] <- opt$copy_aggregation_config
 
 # this ensures that personalized parameters are used
 if(!is.null(opt$personalized_parameters_file)){
@@ -82,7 +85,13 @@ if(!is.null(opt$personalized_parameters_file)){
 
 }
 
-yaml::write_yaml(enformer_parameters_json, opt$parameters_file, fileEncoding = "UTF-8")
+yaml::write_yaml(enformer_parameters_json, opt$parameters_file, fileEncoding = "UTF-8", handlers = list(
+  logical = function(x) {
+    result <- ifelse(x, "true", "false")
+    class(result) <- "verbatim"
+    return(result)
+  })
+)
 
 # write(
 #     jsonlite::toJSON(enformer_parameters_json, na='null', pretty=TRUE, auto_unbox=T),

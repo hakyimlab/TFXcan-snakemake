@@ -9,6 +9,23 @@
 # - return_check_function
 
 import os, sys, parsl
+import pandas as pd
+
+def check_logs(log_file, intervals, samples):
+
+    lfile = pd.read_csv(log_file, sep = "\t")
+    # create a dataframe of what you expect
+    dt_expected = pd.DataFrame([(x, y) for x in intervals for y in samples], columns = ['locus', 'sample'])
+    uncompleted = dt_expected[~dt_expected.apply(tuple, 1).isin(lfile[['locus', 'sample']].apply(tuple, 1))]
+    return((uncompleted['locus'].unique().tolist(), uncompleted['sample'].unique().tolist()))
+
+
+def continue_batches(predictions_folder):
+    """
+    Where do I continue from?
+    """
+
+    return(len(os.listdir(predictions_folder)))
 
 def return_samples_to_predict_on(query, logging_list_per_sample):
     ss = [sample for sample in logging_list_per_sample.keys() if query in logging_list_per_sample[sample]]

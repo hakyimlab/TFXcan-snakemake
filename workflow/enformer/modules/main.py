@@ -8,7 +8,7 @@
 import os, sys, yaml, re, parsl, time, dataclasses
 import pandas as pd, numpy as np
 import directives, datatypeUtils, collectUtils, predictionUtils, batchUtils, checksUtils, datatypeUtils, mergeUtils
-
+import shutil
 # main 
 def main(args, script_path):
 
@@ -66,7 +66,6 @@ def main(args, script_path):
              # use only the chromosomes that have been made available in the config file vcf params
             print(f'INFO - Sequence source is {sequence_source}. Using a reference genome + vcf files.')
             chromosomes = list(vcf_files_dict['files'].keys())
-
             batch_individuals = parameters["batch_individuals"]
             n_individuals = int(parameters['n_individuals'])
         # list of chromosomes (if the sequence source is reference)
@@ -74,7 +73,6 @@ def main(args, script_path):
             print(f'INFO - Sequence source is {sequence_source}. Using a reference genome.')
             chromosomes = [f'chr{i}' for i in range(1, 23)]
             chromosomes.extend(['chrX'])
-
         if reverse_complement:
             print(f'INFO - Predicting on reverse complements too')
 
@@ -136,19 +134,26 @@ def main(args, script_path):
         
     # list of intervals to be predicted on
     a = pd.read_table(interval_list_file, sep=' ', header=None).dropna(axis=0) #.drop_duplicates(subset=['region', 'sample', 'status', 'sequence_source'], keep='last')
-    list_of_regions = a[0].tolist()[0:(n_regions)] # a list of queries
+    list_of_regions = a[0].tolist()[0:] if n_regions == -1 else a[0].tolist()[0:(n_regions)] # a list of queries
     print(f'INFO - Found {len(list_of_regions)} regions to be split into batches with at most {batch_regions} regions in each batch.')
 
-    # filter the list of chromosomes to be compatible with the available regions
-    chromosomes = list(set([r.split('_')[0] for r in list_of_regions]))
-    #print(f'INFO - Chromosomes to predict on are: {chromosomes}')
+    # a trick to ensure that the individuals are not more than necessary when using ...
+    if os.path.isfile(prediction_logfile):
+        lfile = pd.read_csv(prediction_logfile, sep = "\t")
+        ss = list(set(lfile['sample'].tolist()))
+        id_list = [ii for ii in id_list if ii in ss] 
+
+    # check if the regions have been logged before
+    ## this is where you want to check if the data has been logged or not
+    list_of_regions, id_list = checksUtils.check_logs(prediction_logfile, list_of_regions, id_list)
+    print(f'INFO - After checking logs, there are {len(list_of_regions)} regions and {len(id_list)} samples remaining to predict on.')
 
     # should some regions be excluded?
     if exclude_regions == True:
         # seach for the invalid_regions.csv file
-        exclude_file = os.path.join(job_log_dir, 'invalid_queries.csv')
-        if os.path.isfile(exclude_file):
-            exclude_these_regions = pd.read_csv(exclude_file)['region'].tolist()
+        #exclude_file = os.path.join(job_log_dir, 'invalid_queries.csv')
+        if os.path.isfile(invalid_queries):
+            exclude_these_regions = pd.read_csv(invalid_queries, sep = '\t')['locus'].unique().tolist()
             print(f'INFO - Found regions to be excluded from the input regions.')
             list_of_regions = [l for l in list_of_regions if l not in exclude_these_regions]  
             print(f'INFO - Updated number of regions to predict on is {len(list_of_regions)}')
@@ -188,61 +193,70 @@ def main(args, script_path):
 
     # ==== to make this fast, pass multiple regions to one parsl app ======
     sample_app_futures = []
-    count = 0
+    start_batch = checksUtils.continue_batches(predictions_dir)
+    count = 0 if start_batch == 0 else start_batch
+    print("INFO - Starting from batch number: ", count)
     output_files_list = []
-    for sample_list in sample_batches:
-        #print(f'INFO - Predicting on {len(sample_list)} samples')
-        for chromosome in chromosomes:
-            #print(f'INFO - Predicting on {chromosome}')
-            #print(chromosome)
-            chr_list_of_regions = [r for r in list_of_regions if r.startswith(f"{chromosome}_")]
-            if sequence_source == 'personalized':
-                if chromosome not in vcf_files_dict['files'].keys():
-                    print(f'WARNING - {chromosome} VCF is not available.')
+    # filter the list of chromosomes to be compatible with the available regions
+
+    if not list_of_regions:
+        print(f'WARNING - No regions to predict on. Exiting...')
+    else:
+        chromosomes = list(set([r.split('_')[0] for r in list_of_regions]))
+        #print(f'INFO - Chromosomes to predict on are: {chromosomes}')
+        for sample_list in sample_batches:
+            #print(f'INFO - Predicting on {len(sample_list)} samples')
+            for chromosome in chromosomes:
+                #print(f'INFO - Predicting on {chromosome}')
+                #print(chromosome)
+                chr_list_of_regions = [r for r in list_of_regions if r.startswith(f"{chromosome}_")]
+                if sequence_source == 'personalized':
+                    if chromosome not in vcf_files_dict['files'].keys():
+                        print(f'WARNING - {chromosome} VCF is not available.')
+                        continue
+                    else:
+                        chr_vcf_file = os.path.join(vcf_files_dict['folder'], vcf_files_dict['files'][chromosome])
+                elif sequence_source == 'reference':
+                    chr_vcf_file = None
+
+                if not chr_list_of_regions:
+                    print(f'WARNING - {chromosome} sites are not available.')
                     continue
+
+                # I want many regions to be put in a parsl app
+                if len(chr_list_of_regions) > batch_regions:
+                    region_batches = batchUtils.generate_batch_n_elems(chr_list_of_regions, n=batch_regions) # batch_regions total batches
                 else:
-                    chr_vcf_file = os.path.join(vcf_files_dict['folder'], vcf_files_dict['files'][chromosome])
-            elif sequence_source == 'reference':
-                chr_vcf_file = None
+                    region_batches = [chr_list_of_regions]
+                
+                for region_list in region_batches:
+                    #print(len(sample_list))
+                    #print(f'{len(region_list)} regions in {chromosome} for {len(sample_list)} samples')
+                    # sample_app_futures.append(prediction_fxn(batch_regions=list(region_list), samples=list(sample_list), path_to_vcf = chr_vcf_file, batch_num = count, script_path=script_path, output_dir=output_dir, prediction_logfiles_folder=prediction_logfiles_folder, sequence_source=sequence_source, tmp_config_path=params_path, p_two=p_two))
+                    # 
+                    output_prefix = os.path.join(predictions_dir, f'{prediction_data_name}.{run_date}.batch_{count}')
+                    output_files_list.append(f'{output_prefix}.h5')
+                    batch_holder_dict = datatypeUtils.DirectivesHolder(use_parsl=use_parsl, batch_regions=list(region_list), 
+                                                                    samples=list(sample_list), path_to_vcf=chr_vcf_file, batch_number=count, 
+                                                                    script_path=script_path, output_directory=output_dir, prediction_logfiles_folder=prediction_logfiles_folder, sequence_source=sequence_source, debugging=False, grow_memory=True, write_log=parameters['write_log'], reverse_complement=reverse_complement, mainRunScript=None, tmp_config_path=params_path, 
+                                                                    bins_indices = bins_indices, tracks_indices = tracks_indices, run_date=run_date, predictions_expected_shape=predictions_expected_shape, model_path=parameters['model_path'], fasta_file=parameters['fasta_file'],
+                                                                    aggregate = parameters["aggregation"]["aggregate"], aggregate_by_width = by_width, aggregation_width = width, aggregation_function = by_function, output_file_prefix=output_prefix, prediction_logfile = prediction_logfile, invalid_queries=invalid_queries)
+                    batch_holder_dict = dataclasses.asdict(batch_holder_dict)
+                    queries, queries_directives = check_for_batches_to_run(batch_dictionary=batch_holder_dict, module_directives = module_holder)
+                    # print(queries)
+                    # print(queries_directives)
+                    sample_app_futures.append(prediction_fxn(queries, queries_directives, module_holder))
+                    count = count + 1
 
-            if not chr_list_of_regions:
-                print(f'WARNING - {chromosome} sites are not available.')
-                continue
-
-            # I want many regions to be put in a parsl app
-            if len(chr_list_of_regions) > batch_regions:
-                region_batches = batchUtils.generate_batch_n_elems(chr_list_of_regions, n=batch_regions) # batch_regions total batches
-            else:
-                region_batches = [chr_list_of_regions]
-            
-            for region_list in region_batches:
-                #print(len(sample_list))
-                #print(f'{len(region_list)} regions in {chromosome} for {len(sample_list)} samples')
-                # sample_app_futures.append(prediction_fxn(batch_regions=list(region_list), samples=list(sample_list), path_to_vcf = chr_vcf_file, batch_num = count, script_path=script_path, output_dir=output_dir, prediction_logfiles_folder=prediction_logfiles_folder, sequence_source=sequence_source, tmp_config_path=params_path, p_two=p_two))
-                # 
-                output_prefix = os.path.join(predictions_dir, f'{prediction_data_name}.{run_date}.batch_{count}')
-                output_files_list.append(f'{output_prefix}.h5')
-                batch_holder_dict = datatypeUtils.DirectivesHolder(use_parsl=use_parsl, batch_regions=list(region_list), 
-                                                                 samples=list(sample_list), path_to_vcf=chr_vcf_file, batch_number=count, 
-                                                                 script_path=script_path, output_directory=output_dir, prediction_logfiles_folder=prediction_logfiles_folder, sequence_source=sequence_source, debugging=False, grow_memory=True, write_log=parameters['write_log'], reverse_complement=reverse_complement, mainRunScript=None, tmp_config_path=params_path, 
-                                                                 bins_indices = bins_indices, tracks_indices = tracks_indices, run_date=run_date, predictions_expected_shape=predictions_expected_shape, model_path=parameters['model_path'], fasta_file=parameters['fasta_file'],
-                                                                 aggregate = parameters["aggregation"]["aggregate"], aggregate_by_width = by_width, aggregation_width = width, aggregation_function = by_function, output_file_prefix=output_prefix, prediction_logfile = prediction_logfile, invalid_queries=invalid_queries)
-                batch_holder_dict = dataclasses.asdict(batch_holder_dict)
-                queries, queries_directives = check_for_batches_to_run(batch_dictionary=batch_holder_dict, module_directives = module_holder)
-                # print(queries)
-                # print(queries_directives)
-                sample_app_futures.append(prediction_fxn(queries, queries_directives, module_holder))
-                count = count + 1
-
-    if use_parsl == True:
-        print(f'INFO - Executing {len(sample_app_futures)} parsl apps')
-        # for q in sample_app_futures:
-        #     print(q.result())
-        exec_futures = [q.result() for q in sample_app_futures] 
-        #print(sample_app_futures)
-        #print(f'INFO - Finished predictions for all')
-    elif use_parsl == False:
-        print(f'INFO - Finished predictions for: {len(sample_app_futures)} batches')
+        if use_parsl == True:
+            print(f'INFO - Executing {len(sample_app_futures)} parsl apps')
+            # for q in sample_app_futures:
+            #     print(q.result())
+            exec_futures = [q.result() for q in sample_app_futures] 
+            #print(sample_app_futures)
+            #print(f'INFO - Finished predictions for all')
+        elif use_parsl == False:
+            print(f'INFO - Finished predictions for: {len(sample_app_futures)} batches')
     
     # == After predictions are complete, a yaml file will be written out to help with aggregation
     print(f'INFO - Writing `{prediction_data_name}.aggregation_config.yaml` file to {metadata_dir}')
@@ -255,7 +269,11 @@ def main(args, script_path):
     with(open(mfile, mode='w')) as wj:
         yaml.dump(agg_dt, wj)
 
-
+    # copy the aggregation config to a another folder
+    if 'copy_aggregation_yaml' in parameters.keys() and parameters['copy_aggregation_yaml'] is not None:
+        if isinstance(parameters['copy_aggregation_yaml'], str):
+            shutil.copy(mfile, parameters['copy_aggregation_yaml'])
+            print(f'INFO - Copied `{prediction_data_name}.aggregation_config.yaml` file to {parameters["copy_aggregation_yaml"]}')
 
 
 

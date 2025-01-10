@@ -1,7 +1,7 @@
 ---
 individuals: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/EUR_individuals.1KG.txt"
 n_individuals: -1
-batch_individuals: 100
+batch_individuals: 20
 vcf_files:
   folder: "/project2/haky/Data/1000G/vcf_snps_only"
   files_pattern: "ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.vcf.gz"

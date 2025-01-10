@@ -21,6 +21,7 @@ def combine_predictions_from_dictionary(dd, separator=':', prefix='') -> dict:
 
 def split_predictions_into_metadata_and_array(dd, batch_num, separator = ':') -> tuple:
     import numpy as np
+    print(dd)
     if dd is None:
         raise Exception('ERROR - Predictions dictionary is empty')
     else:

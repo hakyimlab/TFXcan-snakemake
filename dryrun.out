@@ -1,47 +1,109 @@
-INFO - Found 712 models for TF-tissue:GWAS association tests.
+INFO - Found 5 models for TF-tissue:GWAS association tests.
 INFO - Running Susie is set to False. Choosing top SNPs per significant GWAS loci...
 Building DAG of jobs...
 Job stats:
 job                              count    min threads    max threads
 -----------------------------  -------  -------------  -------------
 all                                  1              1              1
-create_enformer_configuration        1              1              1
-predict_with_enformer                1              1              1
-total                                3              1              1
+collect_summaryTFXcan_results        1              1              1
+summary_TFXcan                       5              1              1
+total                                7              1              1
 
 
-[Wed Jan  8 12:09:43 2025]
-Job 2: working on phenotype=breast_cancer
-Reason: Missing output files: data/breast_cancer_2024-12-11/enformer_parameters/enformer_parameters_breast_cancer_breast_cancer.yaml
+[Fri Jan 10 15:35:16 2025]
+checkpoint summary_TFXcan:
+    input: /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_Breast/models/filtered_db/predict_db_breast_cancer_filtered.db, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_Breast/models/database/Covariances.varID.txt
+    output: data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_Breast-breast_cancer.enpactScores.spredixcan.csv
+    jobid: 19
+    benchmark: data/breast_cancer_2024-12-11/benchmark/breast_cancer.AR_Breast.summary_TFXcan.tsv
+    reason: Missing output files: data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_Breast-breast_cancer.enpactScores.spredixcan.csv; Updated input files: /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_Breast/models/filtered_db/predict_db_breast_cancer_filtered.db, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_Breast/models/database/Covariances.varID.txt
+    wildcards: phenotype=breast_cancer, model=AR_Breast
+    resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=<TBD>, partition=caslake, time=02:00:00, account=pi-haky, nodes=1, gpu=0, mem_cpu=4, cpu_task=8
+DAG of jobs will be updated after completion.
 
-[Wed Jan  8 12:09:43 2025]
-Job 5: working on breast_cancer
-Reason: Missing output files: data/breast_cancer_2024-12-11/enformer_parameters/aggregation_config_breast_cancer_breast_cancer.yaml; Input files updated by another job: data/breast_cancer_2024-12-11/enformer_parameters/enformer_parameters_breast_cancer_breast_cancer.yaml
+workflow/src/summary_TFXcan.sbatch breast_cancer /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_Breast/models/filtered_db/predict_db_breast_cancer_filtered.db data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_Breast-breast_cancer.enpactScores.spredixcan.csv /beagle3/haky/users/temi/projects/TFXcan-snakemake/data/breast_cancer_2024-12-11/processed_sumstats/breast_cancer .*.sumstats.txt.gz /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_Breast/models/database/Covariances.varID.txt
 
+[Fri Jan 10 15:35:16 2025]
+checkpoint summary_TFXcan:
+    input: /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_EmbryonicKidney/models/filtered_db/predict_db_breast_cancer_filtered.db, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_EmbryonicKidney/models/database/Covariances.varID.txt
+    output: data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_EmbryonicKidney-breast_cancer.enpactScores.spredixcan.csv
+    jobid: 20
+    benchmark: data/breast_cancer_2024-12-11/benchmark/breast_cancer.AR_EmbryonicKidney.summary_TFXcan.tsv
+    reason: Missing output files: data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_EmbryonicKidney-breast_cancer.enpactScores.spredixcan.csv; Updated input files: /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_EmbryonicKidney/models/database/Covariances.varID.txt, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_EmbryonicKidney/models/filtered_db/predict_db_breast_cancer_filtered.db
+    wildcards: phenotype=breast_cancer, model=AR_EmbryonicKidney
+    resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=<TBD>, partition=caslake, time=02:00:00, account=pi-haky, nodes=1, gpu=0, mem_cpu=4, cpu_task=8
+DAG of jobs will be updated after completion.
 
-        sbatch workflow/enformer/enformer_predict.sbatch /beagle3/haky/users/temi/projects/TFXcan-snakemake/workflow/enformer/enformer_predict.py data/breast_cancer_2024-12-11/enformer_parameters/enformer_parameters_breast_cancer_breast_cancer.yaml
-        
+workflow/src/summary_TFXcan.sbatch breast_cancer /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_EmbryonicKidney/models/filtered_db/predict_db_breast_cancer_filtered.db data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_EmbryonicKidney-breast_cancer.enpactScores.spredixcan.csv /beagle3/haky/users/temi/projects/TFXcan-snakemake/data/breast_cancer_2024-12-11/processed_sumstats/breast_cancer .*.sumstats.txt.gz /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_EmbryonicKidney/models/database/Covariances.varID.txt
 
-[Wed Jan  8 12:09:43 2025]
+[Fri Jan 10 15:35:16 2025]
+checkpoint summary_TFXcan:
+    input: /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_MammaryGland/models/filtered_db/predict_db_breast_cancer_filtered.db, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_MammaryGland/models/database/Covariances.varID.txt
+    output: data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_MammaryGland-breast_cancer.enpactScores.spredixcan.csv
+    jobid: 21
+    benchmark: data/breast_cancer_2024-12-11/benchmark/breast_cancer.AR_MammaryGland.summary_TFXcan.tsv
+    reason: Missing output files: data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_MammaryGland-breast_cancer.enpactScores.spredixcan.csv; Updated input files: /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_MammaryGland/models/database/Covariances.varID.txt, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_MammaryGland/models/filtered_db/predict_db_breast_cancer_filtered.db
+    wildcards: phenotype=breast_cancer, model=AR_MammaryGland
+    resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=<TBD>, partition=caslake, time=02:00:00, account=pi-haky, nodes=1, gpu=0, mem_cpu=4, cpu_task=8
+DAG of jobs will be updated after completion.
+
+workflow/src/summary_TFXcan.sbatch breast_cancer /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_MammaryGland/models/filtered_db/predict_db_breast_cancer_filtered.db data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_MammaryGland-breast_cancer.enpactScores.spredixcan.csv /beagle3/haky/users/temi/projects/TFXcan-snakemake/data/breast_cancer_2024-12-11/processed_sumstats/breast_cancer .*.sumstats.txt.gz /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_MammaryGland/models/database/Covariances.varID.txt
+
+[Fri Jan 10 15:35:16 2025]
+checkpoint summary_TFXcan:
+    input: /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_Prostate/models/filtered_db/predict_db_breast_cancer_filtered.db, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_Prostate/models/database/Covariances.varID.txt
+    output: data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_Prostate-breast_cancer.enpactScores.spredixcan.csv
+    jobid: 22
+    benchmark: data/breast_cancer_2024-12-11/benchmark/breast_cancer.AR_Prostate.summary_TFXcan.tsv
+    reason: Missing output files: data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_Prostate-breast_cancer.enpactScores.spredixcan.csv; Updated input files: /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_Prostate/models/filtered_db/predict_db_breast_cancer_filtered.db, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_Prostate/models/database/Covariances.varID.txt
+    wildcards: phenotype=breast_cancer, model=AR_Prostate
+    resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=<TBD>, partition=caslake, time=02:00:00, account=pi-haky, nodes=1, gpu=0, mem_cpu=4, cpu_task=8
+DAG of jobs will be updated after completion.
+
+workflow/src/summary_TFXcan.sbatch breast_cancer /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_Prostate/models/filtered_db/predict_db_breast_cancer_filtered.db data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_Prostate-breast_cancer.enpactScores.spredixcan.csv /beagle3/haky/users/temi/projects/TFXcan-snakemake/data/breast_cancer_2024-12-11/processed_sumstats/breast_cancer .*.sumstats.txt.gz /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_Prostate/models/database/Covariances.varID.txt
+
+[Fri Jan 10 15:35:16 2025]
+checkpoint summary_TFXcan:
+    input: /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/ARNT_BoneMarrow/models/filtered_db/predict_db_breast_cancer_filtered.db, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/ARNT_BoneMarrow/models/database/Covariances.varID.txt
+    output: data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/ARNT_BoneMarrow-breast_cancer.enpactScores.spredixcan.csv
+    jobid: 23
+    benchmark: data/breast_cancer_2024-12-11/benchmark/breast_cancer.ARNT_BoneMarrow.summary_TFXcan.tsv
+    reason: Missing output files: data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/ARNT_BoneMarrow-breast_cancer.enpactScores.spredixcan.csv; Updated input files: /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/ARNT_BoneMarrow/models/filtered_db/predict_db_breast_cancer_filtered.db, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/ARNT_BoneMarrow/models/database/Covariances.varID.txt
+    wildcards: phenotype=breast_cancer, model=ARNT_BoneMarrow
+    resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=<TBD>, partition=caslake, time=02:00:00, account=pi-haky, nodes=1, gpu=0, mem_cpu=4, cpu_task=8
+DAG of jobs will be updated after completion.
+
+workflow/src/summary_TFXcan.sbatch breast_cancer /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/ARNT_BoneMarrow/models/filtered_db/predict_db_breast_cancer_filtered.db data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/ARNT_BoneMarrow-breast_cancer.enpactScores.spredixcan.csv /beagle3/haky/users/temi/projects/TFXcan-snakemake/data/breast_cancer_2024-12-11/processed_sumstats/breast_cancer .*.sumstats.txt.gz /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/ARNT_BoneMarrow/models/database/Covariances.varID.txt
+
+[Fri Jan 10 15:35:16 2025]
+Job 24: working on phenotype=breast_cancer
+Reason: Input files updated by another job: data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_EmbryonicKidney-breast_cancer.enpactScores.spredixcan.csv, data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/ARNT_BoneMarrow-breast_cancer.enpactScores.spredixcan.csv, data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_Prostate-breast_cancer.enpactScores.spredixcan.csv, data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_Breast-breast_cancer.enpactScores.spredixcan.csv, data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_MammaryGland-breast_cancer.enpactScores.spredixcan.csv
+
+/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript workflow/src/collect_summaryTFXcan_results.R --input_files data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_Breast-breast_cancer.enpactScores.spredixcan.csv,data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_EmbryonicKidney-breast_cancer.enpactScores.spredixcan.csv,data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_MammaryGland-breast_cancer.enpactScores.spredixcan.csv,data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_Prostate-breast_cancer.enpactScores.spredixcan.csv,data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/ARNT_BoneMarrow-breast_cancer.enpactScores.spredixcan.csv --output_file data/breast_cancer_2024-12-11/output/breast_cancer.enpactScores.2024-12-11.spredixcan.txt
+
+[Fri Jan 10 15:35:16 2025]
 localrule all:
-    input: data/sumstats/breast_cancer.liftover.logistic.assoc.tsv.gz, data/breast_cancer_2024-12-11/processed_sumstats/breast_cancer, data/breast_cancer_2024-12-11/enformer_parameters/enformer_parameters_breast_cancer_breast_cancer.yaml, data/breast_cancer_2024-12-11/enformer_parameters/aggregation_config_breast_cancer_breast_cancer.yaml
+    input: data/sumstats/breast_cancer.liftover.logistic.assoc.tsv.gz, data/breast_cancer_2024-12-11/processed_sumstats/breast_cancer, data/breast_cancer_2024-12-11/enformer_parameters/enformer_parameters_breast_cancer_breast_cancer.yaml, data/breast_cancer_2024-12-11/enformer_parameters/aggregation_config_breast_cancer_breast_cancer.yaml, data/breast_cancer_2024-12-11/aggregated_predictions/breast_cancer.breast_cancer_2024-12-11.h5, data/breast_cancer_2024-12-11/aggregated_predictions/breast_cancer.breast_cancer_2024-12-11.processed.metadata.tsv, data/breast_cancer_2024-12-11/aggregated_predictions/breast_cancer.breast_cancer_2024-12-11.processed.matrix.tsv.gz, data/breast_cancer_2024-12-11/predictdb/breast_cancer/breast_cancer.AR_Breast.enpact_scores.txt, data/breast_cancer_2024-12-11/predictdb/breast_cancer/breast_cancer.AR_EmbryonicKidney.enpact_scores.txt, data/breast_cancer_2024-12-11/predictdb/breast_cancer/breast_cancer.AR_MammaryGland.enpact_scores.txt, data/breast_cancer_2024-12-11/predictdb/breast_cancer/breast_cancer.AR_Prostate.enpact_scores.txt, data/breast_cancer_2024-12-11/predictdb/breast_cancer/breast_cancer.ARNT_BoneMarrow.enpact_scores.txt, data/breast_cancer_2024-12-11/predictdb/breast_cancer/breast_cancer.AR_Breast.annotation.txt, data/breast_cancer_2024-12-11/predictdb/breast_cancer/breast_cancer.AR_EmbryonicKidney.annotation.txt, data/breast_cancer_2024-12-11/predictdb/breast_cancer/breast_cancer.AR_MammaryGland.annotation.txt, data/breast_cancer_2024-12-11/predictdb/breast_cancer/breast_cancer.AR_Prostate.annotation.txt, data/breast_cancer_2024-12-11/predictdb/breast_cancer/breast_cancer.ARNT_BoneMarrow.annotation.txt, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_Breast/models/filtered_db/predict_db_breast_cancer_filtered.db, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_EmbryonicKidney/models/filtered_db/predict_db_breast_cancer_filtered.db, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_MammaryGland/models/filtered_db/predict_db_breast_cancer_filtered.db, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_Prostate/models/filtered_db/predict_db_breast_cancer_filtered.db, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/ARNT_BoneMarrow/models/filtered_db/predict_db_breast_cancer_filtered.db, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_Breast/models/database/predict_db_breast_cancer.txt.gz, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_EmbryonicKidney/models/database/predict_db_breast_cancer.txt.gz, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_MammaryGland/models/database/predict_db_breast_cancer.txt.gz, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_Prostate/models/database/predict_db_breast_cancer.txt.gz, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/ARNT_BoneMarrow/models/database/predict_db_breast_cancer.txt.gz, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_Breast/models/database/predict_db_breast_cancer.txt, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_EmbryonicKidney/models/database/predict_db_breast_cancer.txt, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_MammaryGland/models/database/predict_db_breast_cancer.txt, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_Prostate/models/database/predict_db_breast_cancer.txt, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/ARNT_BoneMarrow/models/database/predict_db_breast_cancer.txt, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_Breast/models/database/Covariances.varID.txt, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_EmbryonicKidney/models/database/Covariances.varID.txt, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_MammaryGland/models/database/Covariances.varID.txt, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/AR_Prostate/models/database/Covariances.varID.txt, /scratch/midway3/temi/lEnpact/breast_cancer_2024-12-11/breast_cancer/ARNT_BoneMarrow/models/database/Covariances.varID.txt, data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_Breast-breast_cancer.enpactScores.spredixcan.csv, data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_EmbryonicKidney-breast_cancer.enpactScores.spredixcan.csv, data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_MammaryGland-breast_cancer.enpactScores.spredixcan.csv, data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_Prostate-breast_cancer.enpactScores.spredixcan.csv, data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/ARNT_BoneMarrow-breast_cancer.enpactScores.spredixcan.csv, data/breast_cancer_2024-12-11/output/breast_cancer.enpactScores.2024-12-11.spredixcan.txt
     jobid: 0
-    reason: Input files updated by another job: data/breast_cancer_2024-12-11/enformer_parameters/enformer_parameters_breast_cancer_breast_cancer.yaml, data/breast_cancer_2024-12-11/enformer_parameters/aggregation_config_breast_cancer_breast_cancer.yaml
+    reason: Input files updated by another job: data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_EmbryonicKidney-breast_cancer.enpactScores.spredixcan.csv, data/breast_cancer_2024-12-11/output/breast_cancer.enpactScores.2024-12-11.spredixcan.txt, data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/ARNT_BoneMarrow-breast_cancer.enpactScores.spredixcan.csv, data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_Prostate-breast_cancer.enpactScores.spredixcan.csv, data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_Breast-breast_cancer.enpactScores.spredixcan.csv, data/breast_cancer_2024-12-11/summaryTFXcan/breast_cancer/AR_MammaryGland-breast_cancer.enpactScores.spredixcan.csv
     resources: mem_mb=<TBD>, disk_mb=<TBD>, tmpdir=/scratch/midway3/temi, partition=caslake, time=02:00:00, account=pi-haky, nodes=1, gpu=0, mem_cpu=4, cpu_task=4
 
 Job stats:
 job                              count    min threads    max threads
 -----------------------------  -------  -------------  -------------
 all                                  1              1              1
-create_enformer_configuration        1              1              1
-predict_with_enformer                1              1              1
-total                                3              1              1
+collect_summaryTFXcan_results        1              1              1
+summary_TFXcan                       5              1              1
+total                                7              1              1
 
 Reasons:
     (check individual jobs above for details)
     input files updated by another job:
-        all, predict_with_enformer
+        all, collect_summaryTFXcan_results
     missing output files:
-        create_enformer_configuration, predict_with_enformer
+        summary_TFXcan
+    updated input files:
+        summary_TFXcan
 
 This was a dry-run (flag -n). The order of jobs does not reflect the order of execution.
+The run involves checkpoint jobs, which will result in alteration of the DAG of jobs (e.g. adding more jobs) after their completion.
