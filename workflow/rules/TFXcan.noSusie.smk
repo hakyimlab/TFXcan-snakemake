@@ -11,7 +11,7 @@ rule process_summary_statistics:
         mem_mb = 10000
     shell:
         """
-        {params.rscript} workflow/src/process_summary_statistics.R --summary_stats_file {input} --output_folder {output} --phenotype {wildcards.phenotype} --diagnostics_file {params.diag_file}
+        Rscript workflow/src/process_summary_statistics.R --summary_stats_file {input} --output_folder {output} --phenotype {wildcards.phenotype} --diagnostics_file {params.diag_file}
         """
 
 rule select_top_snps: 
@@ -35,7 +35,7 @@ rule select_top_snps:
     shell:
         """
         module load parallel;
-        printf "%s\\n" {params.chroms} | parallel -j 12 "{params.rscript} workflow/src/select_top_snps.R --chromosome {{}} --sumstats {params.input_sumstats} --LDBlocks_info {params.ld_blocks} --output_folder {output} --phenotype {wildcards.phenotype} --diagnostics_file {params.diag_file}"
+        printf "%s\\n" {params.chroms} | parallel -j 12 "Rscript workflow/src/select_top_snps.R --chromosome {{}} --sumstats {params.input_sumstats} --LDBlocks_info {params.ld_blocks} --output_folder {output} --phenotype {wildcards.phenotype} --diagnostics_file {params.diag_file}"
         """
 
 rule collect_top_snps_results:
@@ -52,7 +52,7 @@ rule collect_top_snps_results:
         partition="caslake"
     shell:
         """
-        {params.rscript} workflow/src/collect_topsnps_results.R --selection_dir {input} --phenotype {wildcards.phenotype} --filtered_sumstats {output.filtered_sumstats} --enformer_loci {output.enformer_loci}
+        Rscript workflow/src/collect_topsnps_results.R --selection_dir {input} --phenotype {wildcards.phenotype} --filtered_sumstats {output.filtered_sumstats} --enformer_loci {output.enformer_loci}
         """
 
 rule create_enformer_configuration:
@@ -76,9 +76,9 @@ rule create_enformer_configuration:
         cp_aggregation = os.path.join(ENFORMER_PARAMETERS, f'aggregation_config_{runname}_{{phenotype}}.yaml')
     run:  
         if params.personalized_predictions == True:
-            shell("{params.rscript} workflow/src/create_enformer_config.R --runname {params.dset} --phenotype {wildcards.phenotype} --base_directives {params.bdirectives} --project_directory {params.pdir} --predictors_file {input} --model {params.model} --fasta_file {params.fasta_file} --parameters_file {output} --date {params.ddate} --personalized_parameters_file {params.personalized_directives} --copy_aggregation_config {params.cp_aggregation}")
+            shell("Rscript workflow/src/create_enformer_config.R --runname {params.dset} --phenotype {wildcards.phenotype} --base_directives {params.bdirectives} --project_directory {params.pdir} --predictors_file {input} --model {params.model} --fasta_file {params.fasta_file} --parameters_file {output} --date {params.ddate} --personalized_parameters_file {params.personalized_directives} --copy_aggregation_config {params.cp_aggregation}")
         elif params.personalized_predictions == False:
-            shell("{params.rscript} workflow/src/create_enformer_config.R --runname {params.dset} --phenotype {wildcards.phenotype} --base_directives {params.bdirectives} --project_directory {params.pdir} --predictors_file {input} --model {params.model} --fasta_file {params.fasta_file} --parameters_file {output} --date {params.ddate} --copy_aggregation_config {params.cp_aggregation}")
+            shell("Rscript workflow/src/create_enformer_config.R --runname {params.dset} --phenotype {wildcards.phenotype} --base_directives {params.bdirectives} --project_directory {params.pdir} --predictors_file {input} --model {params.model} --fasta_file {params.fasta_file} --parameters_file {output} --date {params.ddate} --copy_aggregation_config {params.cp_aggregation}")
 
 rule predict_with_enformer:
     input:
@@ -196,6 +196,11 @@ rule generate_lEnpact_models:
     benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.{{model}}.generate_lEnpact_models.tsv")
     shell: "cd {params.output_dir} && {params.generate_sbatch} {wildcards.phenotype} {params.output_dir} {params.annot_file} {params.enpact_scores}"
 
+    # reference_genotypes = config['predictdb']['reference_genotypes'],
+    # reference_annotations = config['predictdb']['reference_annotations'],
+    # nextflow_main_executable = config['predictdb']['nextflow_main_executable'],
+    # "cd {params.output_dir} && {params.generate_sbatch} {wildcards.phenotype} {params.output_dir} {params.annot_file} {params.enpact_scores} {params.reference_genotypes} {params.reference_annotations} {params.nextflow_main_executable}"
+
             # gzip -d -k {input.covariances};
             # sed -e 's/:/_/g' {output.f1} > {output.f2}
 rule format_covariances:
@@ -255,7 +260,7 @@ rule collect_summaryTFXcan_results:
         mem_cpu=4,
         cpu_task=8
     benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.{rundate}.collect_summaryTFXcan_results.tsv")
-    shell: "{params.rscript} workflow/src/collect_summaryTFXcan_results.R --input_files {params.sFiles} --output_file {output.summary_tfxcan}"
+    shell: "Rscript workflow/src/collect_summaryTFXcan_results.R --input_files {params.sFiles} --output_file {output.summary_tfxcan}"
 
 
 
@@ -296,7 +301,7 @@ rule collect_summaryTFXcan_results:
 #         """
 #         module load parallel;
 #         mkdir -p {output};
-#         printf "%s\\n" {params.individuals} | parallel -j 20 '{params.rscript} workflow/src/calculate_enpact_scores.R --input_file {params.input_file} --output_file {params.output_file} --enpact_models_directory {params.models_directory} --enpact_models_metadata {params.models_metadata}'
+#         printf "%s\\n" {params.individuals} | parallel -j 20 'Rscript workflow/src/calculate_enpact_scores.R --input_file {params.input_file} --output_file {params.output_file} --enpact_models_directory {params.models_directory} --enpact_models_metadata {params.models_metadata}'
 #         """
 
 # rule create_enpact_scores_database:
@@ -316,7 +321,7 @@ rule collect_summaryTFXcan_results:
 #         individuals = lambda wildcards: ','.join(collect_enpact_individuals())
 #     shell:
 #         """
-#             {params.rscript} workflow/src/create_enpact_scores_database.R --input_files {params.input_pattern} --output_file {output.f2} --output_db {output.f1} --individuals {params.individuals}
+#             Rscript workflow/src/create_enpact_scores_database.R --input_files {params.input_pattern} --output_file {output.f2} --output_db {output.f1} --individuals {params.individuals}
 #         """
 
 
