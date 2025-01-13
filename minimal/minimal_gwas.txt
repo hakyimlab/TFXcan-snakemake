@@ -1,0 +1,2 @@
+phenotype,sumstat
+minimal_pcr,prostate_cancer_risk.liftover.logistic.assoc.tsv.gz
