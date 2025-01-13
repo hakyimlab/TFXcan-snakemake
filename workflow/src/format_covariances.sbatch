@@ -6,7 +6,6 @@
 # Date: Mon Sep 30 2024
 # Variables: gwas_file, phenotype
 
-
 date
 
 slurm_workdir=${SLURM_SUBMIT_DIR}
@@ -22,8 +21,12 @@ echo "INFO - Running on host `hostname`"
 
 # variables
 compressed_covariance_file=${1}
-decompressed_covariance_file=${2}
-sed_covariance_file=${3} # Covariances.varID.txt
+sed_covariance_file=${2} # Covariances.varID.txt.gz
 
-gzip -dk ${compressed_covariance_file}
-sed -e 's/:/_/g' ${decompressed_covariance_file} > ${sed_covariance_file}
+# unpigz -c input.vcf.gz | sed 's/^chr//' | pigz > output.vcf.gz
+unpigz -ck ${compressed_covariance_file} | sed -e 's/:/_/g' | pigz > ${sed_covariance_file}
+
+# decompress old file 
+#  ${decompressed_covariance_file} > ${sed_covariance_file} # replace : with _ in the file
+# tar -cz ${sed_covariance_file}.gz ${sed_covariance_file} # compress the file
+# rm ${sed_covariance_file} ${decompressed_covariance_file} # remove the old files

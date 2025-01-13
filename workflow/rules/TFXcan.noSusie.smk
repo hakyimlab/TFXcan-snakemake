@@ -1,5 +1,5 @@
 rule process_summary_statistics:
-    input: os.path.join(INPUT_SUMSTATS, '{phenotype}.liftover.logistic.assoc.tsv.gz')
+    input: os.path.join(INPUT_SUMSTATS, '{phenotype}.gwas_sumstats.processed.txt.gz')
     output: directory(os.path.join(PROCESSED_SUMSTATS, '{phenotype}'))
     params:
         rscript = config['rscript'],
@@ -179,7 +179,7 @@ rule generate_lEnpact_models:
         enpact_scores = os.path.join(PREDICTDB_DATA, "{phenotype}", "{phenotype}.{model}.enpact_scores.txt"),
         annot_file = os.path.join(PREDICTDB_DATA, "{phenotype}", "{phenotype}.{model}.annotation.txt")
     output:
-        covariances_model = os.path.join(LENPACT_DIR, '{phenotype}', "{model}", 'models/database/predict_db_{phenotype}.txt.gz'),
+        covariances_model = os.path.join(LENPACT_DIR, '{phenotype}', "{model}", 'models/filtered_db/predict_db_{phenotype}_filtered.txt.gz'),
         lEnpact_model = os.path.join(LENPACT_DIR, '{phenotype}', "{model}", 'models/filtered_db/predict_db_{phenotype}_filtered.db')
     params:
         jobname = '{phenotype}_{model}',
@@ -202,22 +202,21 @@ rule format_covariances:
     input:
         covariances = rules.generate_lEnpact_models.output.covariances_model
     output:
-        f1 = os.path.join(LENPACT_DIR, "{phenotype}", "{model}", 'models/database/predict_db_{phenotype}.txt'),
-        f2 = os.path.join(LENPACT_DIR, "{phenotype}", "{model}", 'models/database/Covariances.varID.txt')
+        formatted_covariances = os.path.join(LENPACT_DIR, "{phenotype}", "{model}", 'models/filtered_db/Covariances.varID.txt.gz')
     params:
         jobname = '{phenotype}_{model}',
         runmeta = runmeta
     resources:
         partition="caslake",
-        time="01:00:00"
+        time="00:30:00"
     benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.{{model}}.format_covariances.tsv")
-    shell: "workflow/src/format_covariances.sbatch {input.covariances} {output.f1} {output.f2}"
+    shell: "workflow/src/format_covariances.sbatch {input.covariances} {output.formatted_covariances}"
 
 checkpoint summary_TFXcan:
     input:
         #model=os.path.join(LENPACT_DIR, '{phenotype}', 'models/filtered_db/predict_db_{phenotype}_filtered.db'), #rules.generate_lEnpact_models.output.lEnpact_model,
         snp_model = rules.generate_lEnpact_models.output.lEnpact_model,
-        cov = rules.format_covariances.output.f2
+        cov = rules.format_covariances.output.formatted_covariances
     output:
         summary_tfxcan = os.path.join(SUMMARYTFXCAN_DIR, "{phenotype}", "{model}-{phenotype}.enpactScores.spredixcan.csv")
     params:

@@ -2,7 +2,7 @@
 
 #SBATCH --job-name=enformer_predict
 #SBATCH --partition=beagle3
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:4
 #SBATCH --cpus-per-task=8
 #SBATCH --time=24:00:00
 #SBATCH --mem-per-cpu=8G

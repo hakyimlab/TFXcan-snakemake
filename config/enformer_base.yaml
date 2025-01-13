@@ -5,8 +5,8 @@ enformer:
     sequence_source: 'personalized'
     exclude_regions: true
     predictions_log_dir: "predictions_log"
-    n_regions: 150
-    batch_regions: 150
+    n_regions: -1
+    batch_regions: 100
     use_parsl: True
     write_log:
       overwrite: false
@@ -21,8 +21,8 @@ enformer:
       walltime: "24:00:00"
       init_blocks: 1
       min_num_blocks: 0
-      max_num_blocks: 1
-      max_workers_per_node: 1
+      max_num_blocks: 4
+      max_workers_per_node: 4
       queue:
       account: "pi-haky"
       hpc: "beagle3"

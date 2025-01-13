@@ -27,5 +27,7 @@ dFiles <- purrr::map(.x=sFiles, .f=function(each_file){
 dFiles <- Filter(Negate(is.null), dFiles)
 # bind the rows
 dt <- dplyr::bind_rows(dFiles)
+# rename the columns
+dt <- dt %>% dplyr::select(-c(gene_name)) %>% dplyr::rename(tfbs = gene)
 # write the file
 data.table::fwrite(dt, opt$output_file, sep = "\t", quote = F, row.names = F)

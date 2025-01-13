@@ -422,3 +422,33 @@ mt %>%
 dt %>% dplyr::mutate(NAME = gsub('-', '', NAME)) %>%
     data.table::fwrite('/project/haky/users/temi/projects/TFXcan-snakemake/data/PCR_GWAS_2024-06-04/predictdb/prostate_cancer_risk.FT.enpact_scores.txt', col.names = T, row.names = F, sep = '\t', quote = F)
 ```
+
+## Standing height GWAS
+
+```{r}
+# chrom   pos     alt     ref     variant_id      beta    se      pval    zscore
+height_ss <- data.table::fread('/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/sumstats/standing_height.gwas_sumstats.tsv.gz') %>%
+    dplyr::rename(chrom = chromosome, pos = base_pair_location, ref = other_allele, alt = effect_allele, beta = beta, se = standard_error, pval = neg_log_10_p_value) %>% 
+    dplyr::filter(nchar(alt) == 1 & nchar(ref) == 1) %>%
+    dplyr::mutate(zscore = beta/se, variant_id = paste(chrom, pos, ref, alt, sep = '_'), pval = 10^-(pval)) %>%
+    dplyr::filter(pval <= 1e-6)
+```
+
+
+
+
+```{r}
+height_ss %>% 
+    data.table::fwrite('/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/sumstats/standing_height.gwas_sumstats.processed.txt.gz', col.names = T, row.names = F, sep = '\t', quote = F, compress = 'gzip')
+```
+
+```{r}
+xdt <- data.frame(num= 1:26, let = LETTERS, let2 = letters) %>%
+    dplyr::mutate(vv = paste(let, let2, num, sep = '_'))
+xdt
+```
+
+
+```{r}
+dt_height 
+```

@@ -1,0 +1,2 @@
+phenotype,sumstat
+standing_height,standing_height.gwas_sumstats.processed.txt.gz

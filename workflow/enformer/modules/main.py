@@ -142,11 +142,12 @@ def main(args, script_path):
         lfile = pd.read_csv(prediction_logfile, sep = "\t")
         ss = list(set(lfile['sample'].tolist()))
         id_list = [ii for ii in id_list if ii in ss] 
+        list_of_regions, id_list = checksUtils.check_logs(prediction_logfile, list_of_regions, id_list)
+        print(f'INFO - After checking logs, there are {len(list_of_regions)} regions and {len(id_list)} samples remaining to predict on.')
 
     # check if the regions have been logged before
     ## this is where you want to check if the data has been logged or not
-    list_of_regions, id_list = checksUtils.check_logs(prediction_logfile, list_of_regions, id_list)
-    print(f'INFO - After checking logs, there are {len(list_of_regions)} regions and {len(id_list)} samples remaining to predict on.')
+    
 
     # should some regions be excluded?
     if exclude_regions == True:

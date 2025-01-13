@@ -54,7 +54,6 @@ nextflow run /beagle3/haky/users/temi/projects/TFXcan-snakemake/workflow/Predict
     --gene_exp "${enpact_scores}" \
     --prefix ${phenotype} \
     --outdir ${s_path}/models/ \
-    --keepIntermediate \
     -resume \
     -profile midway3 \
     --nested_cv
