@@ -16,17 +16,18 @@ genome:
 
 rscript: "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript"
 
-finemapping:
-  # genotypes: "/project2/haky/Data/1000G/formatted_geno/all_chrs.geno.txt.gz"
-  # snp_annot: '/project2/haky/Data/1000G/formatted_geno/all_chrs.snp_annot.txt.gz'
-  # samples: "/project2/haky/Data/1000G/formatted_geno/samples.text_dosages.txt"
-  LD_blocks: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/EUR_LDBlocks.hg38.updated.bed"
-  genotypes_dosages_pattern: '/project2/haky/Data/1000G/population_data/EUR/bfiles/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.geno.txt.gz'
+processing:
+  LD_blocks: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/EUR_LDBlocks.hg38.updated.
+  bed"
+  reference_annotations: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt
 
+# necessities for predictdb
 predictdb:
   blacklist_regions: /beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/HLA_blocks.txt
-  conda_environment: /beagle3/haky/users/temi/software/conda_envs/predictdb-env
+  conda_environment: /beagle3/haky/users/temi/software/conda_envs/predictdb_env
   nextflow_main_executable: /beagle3/haky/users/temi/projects/TFXcan-snakemake/workflow/PredictDb-nextflow/main.nf
+  reference_genotypes: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.geno.txt
+  reference_annotations: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt
 
 summaryTFXcan:
   conda_environment: /beagle3/haky/users/temi/software/conda_envs/imlabtools

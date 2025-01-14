@@ -110,13 +110,13 @@ rule all:
         expand(os.path.join(AGGREGATED_PREDICTIONS, f'{{phenotype}}.{runmeta}.h5'), phenotype = run_list.keys()),
         expand(os.path.join(AGGREGATED_PREDICTIONS, f'{{phenotype}}.{runmeta}.processed.metadata.tsv'), phenotype = run_list.keys()),
         expand(os.path.join(AGGREGATED_PREDICTIONS, f'{{phenotype}}.{runmeta}.processed.matrix.tsv.gz'), phenotype = run_list.keys()),
-        expand(os.path.join(PREDICTDB_DATA, "{phenotype}", '{phenotype}.{model}.enpact_scores.txt'), phenotype = run_list.keys(), model = enpact_models_list),
-        expand(os.path.join(PREDICTDB_DATA, "{phenotype}", '{phenotype}.{model}.annotation.txt'), phenotype = run_list.keys(), model = enpact_models_list),
-        expand(os.path.join(LENPACT_DIR, '{phenotype}', "{model}", 'models/filtered_db/predict_db_{phenotype}_filtered.db'), phenotype = run_list.keys(), model = enpact_models_list),
-        expand(os.path.join(LENPACT_DIR, '{phenotype}', "{model}", 'models/filtered_db/predict_db_{phenotype}_filtered.txt.gz'), phenotype = run_list.keys(), model = enpact_models_list),
-        expand(os.path.join(LENPACT_DIR, '{phenotype}', "{model}", 'models/filtered_db/Covariances.varID.txt.gz'), phenotype = run_list.keys(), model = enpact_models_list),
-        expand(os.path.join(SUMMARYTFXCAN_DIR, '{phenotype}', "{model}-{phenotype}.enpactScores.spredixcan.csv"), phenotype = run_list.keys(), model = enpact_models_list),
-        expand(os.path.join(SUMMARY_OUTPUT, '{phenotype}.enpactScores.{rundate}.spredixcan.txt'), phenotype = run_list.keys(), rundate = [rundate])
+        # expand(os.path.join(PREDICTDB_DATA, "{phenotype}", '{phenotype}.{model}.enpact_scores.txt'), phenotype = run_list.keys(), model = enpact_models_list),
+        # expand(os.path.join(PREDICTDB_DATA, "{phenotype}", '{phenotype}.{model}.annotation.txt'), phenotype = run_list.keys(), model = enpact_models_list),
+        # expand(os.path.join(LENPACT_DIR, '{phenotype}', "{model}", 'models/filtered_db/predict_db_{phenotype}_filtered.db'), phenotype = run_list.keys(), model = enpact_models_list),
+        # expand(os.path.join(LENPACT_DIR, '{phenotype}', "{model}", 'models/filtered_db/predict_db_{phenotype}_filtered.txt.gz'), phenotype = run_list.keys(), model = enpact_models_list),
+        # expand(os.path.join(LENPACT_DIR, '{phenotype}', "{model}", 'models/filtered_db/Covariances.varID.txt.gz'), phenotype = run_list.keys(), model = enpact_models_list),
+        # expand(os.path.join(SUMMARYTFXCAN_DIR, '{phenotype}', "{model}-{phenotype}.enpactScores.spredixcan.csv"), phenotype = run_list.keys(), model = enpact_models_list),
+        # expand(os.path.join(SUMMARY_OUTPUT, '{phenotype}.enpactScores.{rundate}.spredixcan.txt'), phenotype = run_list.keys(), rundate = [rundate])
 
 if config['runSusie'] == True:
     print(f'INFO - Running ENFORMER is set to True. Running the pipeline with ENFORMER...')

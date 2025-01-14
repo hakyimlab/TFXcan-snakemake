@@ -60,3 +60,10 @@ The output of the pipeline is the association results of the GWAS trait with the
     - zscore: GWAS zscores; you can pre-calculate this from the beta and standard errors (beta/se)
 
 * The framework assumes that genomic coordinates are in hg38 coordinates
+
+
+## Updates:
+
+[X] The pipeline now matches SNPs with the reference panel and uses the matched SNPs for the PredictDB training. This is to ensure that the SNPs used for the PredictDB training are the same as the SNPs used for the GWAS.
+
+[X] All software necessary for TFXcan are shipped with the pipeline. You only need to install the conda environment.

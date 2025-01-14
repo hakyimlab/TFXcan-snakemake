@@ -5,13 +5,14 @@ rule process_summary_statistics:
         rscript = config['rscript'],
         runmeta = runmeta,
         jobname = '{phenotype}',
-        diag_file = os.path.join(DATA_DIR, 'diagnostics', f'{{phenotype}}.gwas_diagnostics.summary')
+        diag_file = os.path.join(DATA_DIR, 'diagnostics', f'{{phenotype}}.gwas_diagnostics.summary'),
+        reference_annotations = config['processing']['reference_annotations']
     message: "working on {wildcards}" 
     resources:
         mem_mb = 10000
     shell:
         """
-        Rscript workflow/src/process_summary_statistics.R --summary_stats_file {input} --output_folder {output} --phenotype {wildcards.phenotype} --diagnostics_file {params.diag_file}
+        Rscript workflow/process/process_summary_statistics.R --summary_stats_file {input} --output_folder {output} --annotation_file {params.reference_annotations} --diagnostics_file {params.diag_file}
         """
 
 rule select_top_snps: 
@@ -25,7 +26,7 @@ rule select_top_snps:
         rscript = config['rscript'],
         jobname = '{phenotype}',
         input_sumstats = lambda wildcards: os.path.join(PROCESSED_SUMSTATS, wildcards.phenotype, f'chr{{}}.sumstats.txt.gz'),
-        ld_blocks = config['finemapping']['LD_blocks'],
+        ld_blocks = config['processing']['LD_blocks'],
         chroms = collect_chromosomes,
         diag_file = os.path.join(DATA_DIR, 'diagnostics', f'{{phenotype}}.chr{{}}.topSNPs_diagnostics.summary')
     message: "working on {wildcards}"
@@ -35,7 +36,7 @@ rule select_top_snps:
     shell:
         """
         module load parallel;
-        printf "%s\\n" {params.chroms} | parallel -j 12 "Rscript workflow/src/select_top_snps.R --chromosome {{}} --sumstats {params.input_sumstats} --LDBlocks_info {params.ld_blocks} --output_folder {output} --phenotype {wildcards.phenotype} --diagnostics_file {params.diag_file}"
+        printf "%s\\n" {params.chroms} | parallel -j 12 "Rscript workflow/process/select_top_snps.R --chromosome {{}} --sumstats {params.input_sumstats} --LDBlocks_info {params.ld_blocks} --output_folder {output} --phenotype {wildcards.phenotype} --diagnostics_file {params.diag_file}"
         """
 
 rule collect_top_snps_results:
@@ -52,7 +53,7 @@ rule collect_top_snps_results:
         partition="caslake"
     shell:
         """
-        Rscript workflow/src/collect_topsnps_results.R --selection_dir {input} --phenotype {wildcards.phenotype} --filtered_sumstats {output.filtered_sumstats} --enformer_loci {output.enformer_loci}
+        Rscript workflow/process/collect_topsnps_results.R --selection_dir {input} --phenotype {wildcards.phenotype} --filtered_sumstats {output.filtered_sumstats} --enformer_loci {output.enformer_loci}
         """
 
 rule create_enformer_configuration:
@@ -76,9 +77,9 @@ rule create_enformer_configuration:
         cp_aggregation = os.path.join(ENFORMER_PARAMETERS, f'aggregation_config_{runname}_{{phenotype}}.yaml')
     run:  
         if params.personalized_predictions == True:
-            shell("Rscript workflow/src/create_enformer_config.R --runname {params.dset} --phenotype {wildcards.phenotype} --base_directives {params.bdirectives} --project_directory {params.pdir} --predictors_file {input} --model {params.model} --fasta_file {params.fasta_file} --parameters_file {output} --date {params.ddate} --personalized_parameters_file {params.personalized_directives} --copy_aggregation_config {params.cp_aggregation}")
+            shell("Rscript workflow/process/create_enformer_config.R --runname {params.dset} --phenotype {wildcards.phenotype} --base_directives {params.bdirectives} --project_directory {params.pdir} --predictors_file {input} --model {params.model} --fasta_file {params.fasta_file} --parameters_file {output} --date {params.ddate} --personalized_parameters_file {params.personalized_directives} --copy_aggregation_config {params.cp_aggregation}")
         elif params.personalized_predictions == False:
-            shell("Rscript workflow/src/create_enformer_config.R --runname {params.dset} --phenotype {wildcards.phenotype} --base_directives {params.bdirectives} --project_directory {params.pdir} --predictors_file {input} --model {params.model} --fasta_file {params.fasta_file} --parameters_file {output} --date {params.ddate} --copy_aggregation_config {params.cp_aggregation}")
+            shell("Rscript workflow/process/create_enformer_config.R --runname {params.dset} --phenotype {wildcards.phenotype} --base_directives {params.bdirectives} --project_directory {params.pdir} --predictors_file {input} --model {params.model} --fasta_file {params.fasta_file} --parameters_file {output} --date {params.ddate} --copy_aggregation_config {params.cp_aggregation}")
 
 rule predict_with_enformer:
     input:
@@ -171,7 +172,7 @@ checkpoint prepare_files_for_predictDB:
     benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.prepare_files_for_predictDB.tsv")
     shell: 
         """
-        python3 workflow/src/enpact_predict.py --matrix {input.matrix} --weights {params.enpact_weights} --metadata {input.metadata} --split --output_basename {params.output_basename}
+        python3 workflow/process/enpact_predict.py --matrix {input.matrix} --weights {params.enpact_weights} --metadata {input.metadata} --split --output_basename {params.output_basename}
         """
 
 rule generate_lEnpact_models:

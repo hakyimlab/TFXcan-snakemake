@@ -226,3 +226,48 @@ dt |> data.table::fwrite("/beagle3/haky/users/temi/random.txt", sep = "\t")
 ```{r}
 mt <- data.table::fread("/beagle3/haky/users/temi/random.txt")
 ```
+
+
+```{r}
+library(RSQLite)
+```
+
+
+```{r}
+con <- dbConnect(RSQLite::SQLite(), "/scratch/midway3/temi/lEnpact/standing_height_2025-01-10/standing_height/FOSL1_Breast/models/filtered_db/predict_db_standing_height_filtered.db")
+dbListTables(con)
+```
+
+
+```{r}
+ww <- dbGetQuery(con, "SELECT * FROM weights") %>% as.data.table()
+```
+
+```{r}
+dbDisconnect(con)
+```
+
+
+
+```{r}
+sumstats <- data.table::fread('/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/standing_height_2025-01-10/processed_sumstats/standing_height/chr21.sumstats.txt.gz')
+```
+
+
+```{r}
+'21_36879122_G_A' %in% sumstats$SNP
+```
+
+
+```{r}
+'21_36879122_A_G' %in% ww$varID
+```
+
+```{r}
+which(sumstats$SNP %in% ww$varID)
+```
+
+
+```{r}
+head(ww)
+```

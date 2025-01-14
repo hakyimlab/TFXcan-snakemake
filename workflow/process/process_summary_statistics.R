@@ -8,7 +8,7 @@ suppressPackageStartupMessages(library("optparse"))
 option_list <- list(
     make_option("--summary_stats_file", help='A GWAS summary statistics file; should be a tsv file with columns: chrom, pos, ref, alt, pval, beta, se, zscore'),
     make_option("--output_folder", help='the output folder'),
-    make_option("--phenotype", help = 'a GWAS phenotype'),
+    make_option("--annotation_file", help = 'a GWAS phenotype'),
     make_option("--pvalue_threshold", default=5e-8, type='numeric', help = 'the pvalue threshold for significance; default is 5e-8'),
     make_option('--diagnostics_file', type='character', default=NULL, help='A file to write diagnostics to; default is NULL i.e no diagnostics file will be written')
 )
@@ -20,18 +20,25 @@ opt <- parse_args(OptionParser(option_list=option_list))
 library(data.table)
 library(tidyverse)
 library(glue)
+library(bigsnpr)
 
 print(opt)
 
+
+# setwd('/beagle3/haky/users/temi/projects/TFXcan-snakemake')
 # opt <- list()
-# opt$summary_stats_file <- '/project2/haky/temi/projects/TFXcan-snakemake/data/sumstats/asthma_children.liftover.logistic.assoc.tsv.gz'
+# opt$summary_stats_file <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/sumstats/standing_height.gwas_sumstats.processed.txt.gz'
 # opt$pvalue_threshold <- 5e-8
 # opt$output_folder <- '/project2/haky/temi/projects/TFXcan-snakemake/data/processed_sumstats/testosterone'
-# opt$phenotype <- 'asthma_children'
+# opt$annotation_file <- '/project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt'
 # opt$diagnostics_folder <- '/project2/haky/temi/projects/TFXcan-snakemake/data/diagnostics'
 
 chrom_filter <- c(1:22)
 if(!dir.exists(opt$output_folder)){dir.create(opt$output_folder)}
+
+if(!file.exists(opt$annotation_file)){
+    stop('ERROR - The reference annotation file does not exist.')
+}
 
 dt <- data.table::fread(opt$summary_stats_file) 
 
@@ -60,13 +67,39 @@ if(!'zscore' %in% colnames(dt)){
         dplyr::mutate(zscore = beta/se)
 }
 
-# split and save 
+dt <- dt %>% dplyr::mutate(chrom = as.numeric(chrom))
 
+# split and match the snps 
 split_dt <- dt %>%
     base::split(f=.$chrom)
 
+## use purrr to match snps
+annotation <- data.table::fread(opt$annotation_file) %>% 
+    data.table::setDT() %>%
+    dplyr::rename(a0=ref_vcf, a1=alt_vcf)
+
 nn <- names(split_dt)
-lapply(seq_along(split_dt), function(i){
+
+matched_stats <- purrr::map(nn, function(ch){
+    x <- split_dt[[ch]]
+    x <- x %>% dplyr::rename(chr=chrom, a0=ref, a1=alt)
+    annot <- annotation %>% dplyr::filter(chr == ch) #%>% dplyr::mutate(chr = as.numeric(chr))
+    # match snps
+    matched_stats <- tryCatch({
+        mm <- bigsnpr::snp_match(x, annot, return_flip_and_rev = TRUE) |> data.table::setDT() %>% 
+            dplyr::select(chrom=chr, pos, ref=a0, alt=a1, rsid, varID, beta, se, zscore, pval, adjP, gwas_significant)
+        return(mm)
+    }, error = function(e){
+        print(glue('ERROR -  Not enough variants have been matched for chromosome {ch}.'))
+        return(NULL)
+    })
+    return(matched_stats)
+}, .progress = TRUE)
+
+names(matched_stats) <- nn
+matched_stats <- Filter(Negate(is.null), matched_stats) 
+
+lapply(seq_along(matched_stats), function(i){
     data.table::fwrite(split_dt[[i]], file=glue('{opt$output_folder}/chr{nn[i]}.sumstats.txt.gz'), 
         quote=F, col.names=T, row.names=F, sep='\t', compress='gzip')
 })

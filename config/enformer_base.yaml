@@ -21,8 +21,8 @@ enformer:
       walltime: "24:00:00"
       init_blocks: 1
       min_num_blocks: 0
-      max_num_blocks: 4
-      max_workers_per_node: 4
+      max_num_blocks: 2
+      max_workers_per_node: 2
       queue:
       account: "pi-haky"
       hpc: "beagle3"
