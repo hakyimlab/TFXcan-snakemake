@@ -61,5 +61,7 @@ df_metadata.to_csv(metadata_file, sep = '\t', index = False)
 
 # write out the data
 xt = pd.DataFrame(dt)
-data_file = f'{args.output_basename}.matrix.tsv.gz'
-xt.to_csv(data_file, sep = '\t', index = False, compression = 'gzip')
+# data_file = f'{args.output_basename}.matrix.tsv.gz'
+data_file = f'{args.output_basename}.matrix.h5.gz'
+xt.to_hdf(data_file, key = 'matrix', mode='w', complevel=9)
+#xt.to_csv(data_file, sep = '\t', index = False, compression = 'gzip')

@@ -234,8 +234,12 @@ library(RSQLite)
 
 
 ```{r}
-con <- dbConnect(RSQLite::SQLite(), "/scratch/midway3/temi/lEnpact/standing_height_2025-01-10/standing_height/FOSL1_Breast/models/filtered_db/predict_db_standing_height_filtered.db")
+con <- dbConnect(RSQLite::SQLite(), "/scratch/midway3/temi/lEnpact/standing_height_2025-01-10/standing_height/REST_Cervix/models/filtered_db/predict_db_standing_height_filtered.db")
 dbListTables(con)
+```
+
+```{r}
+15_24272543_G_T
 ```
 
 
@@ -250,7 +254,11 @@ dbDisconnect(con)
 
 
 ```{r}
-sumstats <- data.table::fread('/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/standing_height_2025-01-10/processed_sumstats/standing_height/chr21.sumstats.txt.gz')
+sumstats <- data.table::fread('/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/standing_height_2025-01-10/processed_sumstats/standing_height/chr15.sumstats.txt.gz')
+```
+
+```{r}
+ww %>% dplyr::filter(startsWith(varID, "15_"))
 ```
 
 
@@ -267,7 +275,21 @@ sumstats <- data.table::fread('/beagle3/haky/users/temi/projects/TFXcan-snakemak
 which(sumstats$SNP %in% ww$varID)
 ```
 
+```{r}
+which(ww$varID %in% sumstats$SNP)
+```
+
 
 ```{r}
 head(ww)
+```
+
+
+```{r}
+sdt <- data.table::fread('/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/standing_height_2025-01-10/summaryTFXcan/standing_height/NRF1_Breast-standing_height.enpactScores.spredixcan.csv')
+```
+
+
+```{r}
+hist(sdt$pvalue)
 ```

@@ -15,6 +15,7 @@ parser.add_argument("--weights", help="Path to file", type=str)
 parser.add_argument("--metadata", help="Path to file", type=str)
 parser.add_argument("--split", help="", action=argparse.BooleanOptionalAction)
 parser.add_argument("--output_basename", help="", type=str)
+parser.add_argument("--subset_of_loci", help="", type=str, default=None)
 args = parser.parse_args()
 
 # '/beagle3/haky/users/temi/projects/Enpact/files/ENPACT_734_2024-07-26.compiled_weights.lambda.1se.txt.gz'
@@ -23,7 +24,8 @@ dt_weights = pd.read_table(args.weights).drop(columns = ['feature'])
 mnames = dt_weights.columns.tolist()
 weights = dt_weights.to_numpy()
 
-xt = pd.read_table(args.matrix)
+# xt = pd.read_table(args.matrix)
+xt = pd.read_hdf(args.matrix).to_numpy()
 enpact_predictions = np.matmul(xt, weights)
 enpact_predictions = pd.DataFrame(enpact_predictions)
 enpact_predictions.columns = mnames
@@ -38,6 +40,10 @@ df_predictions = pd.concat([df_metadata, enpact_predictions], axis = 1)
 if not os.path.exists(os.path.dirname(args.output_basename)):
     os.makedirs(os.path.dirname(args.output_basename), exist_ok=True)
 
+if args.subset_of_loci is not None and os.path.exists(args.subset_of_loci):
+    print(f"INFO - Subsetting the loci to {args.subset_of_loci}")
+    loci_subset = pd.read_table(args.subset_of_loci, header = None).iloc[:, 0].tolist()
+    df_predictions = df_predictions[df_predictions['locus'].isin(loci_subset)]
 
 def split_and_save(tf_tissue, df, output_basename):
     df = df[['locus', 'individual', tf_tissue]]

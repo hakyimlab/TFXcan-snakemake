@@ -9,7 +9,8 @@ rule process_summary_statistics:
         reference_annotations = config['processing']['reference_annotations']
     message: "working on {wildcards}" 
     resources:
-        mem_mb = 10000
+        mem_cpu=8,
+        cpu_task=8
     shell:
         """
         Rscript workflow/process/process_summary_statistics.R --summary_stats_file {input} --output_folder {output} --annotation_file {params.reference_annotations} --diagnostics_file {params.diag_file}
@@ -133,7 +134,7 @@ rule process_predictions:
         rules.aggregate_predictions.output
     output:
         metadata = os.path.join(AGGREGATED_PREDICTIONS, f'{{phenotype}}.{runmeta}.processed.metadata.tsv'),
-        matrix = os.path.join(AGGREGATED_PREDICTIONS, f'{{phenotype}}.{runmeta}.processed.matrix.tsv.gz')
+        matrix = os.path.join(AGGREGATED_PREDICTIONS, f'{{phenotype}}.{runmeta}.processed.matrix.h5.gz')
     message: 
         "working on {wildcards}"
     resources:
@@ -164,6 +165,7 @@ checkpoint prepare_files_for_predictDB:
         blacklist = config['predictdb']['blacklist_regions'],
         output_basename = os.path.join(PREDICTDB_DATA, '{phenotype}', '{phenotype}'),
         enpact_weights = config['enpact_weights'],
+        loci_subset = rules.collect_top_snps_results.output.enformer_loci
     resources:
         partition="caslake",
         mem_cpu=8,
@@ -172,7 +174,7 @@ checkpoint prepare_files_for_predictDB:
     benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.prepare_files_for_predictDB.tsv")
     shell: 
         """
-        python3 workflow/process/enpact_predict.py --matrix {input.matrix} --weights {params.enpact_weights} --metadata {input.metadata} --split --output_basename {params.output_basename}
+        python3 workflow/process/enpact_predict.py --matrix {input.matrix} --weights {params.enpact_weights} --metadata {input.metadata} --split --output_basename {params.output_basename} --subset_of_loci {params.loci_subset}
         """
 
 rule generate_lEnpact_models:
