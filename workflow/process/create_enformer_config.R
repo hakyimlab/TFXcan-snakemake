@@ -41,8 +41,8 @@ enformer_parameters_json <- directives$enformer$prediction_directives
 # you may change these as appropriate
 enformer_parameters_json[['project_dir']] <- normalizePath(opt$project_directory)
 enformer_parameters_json[["interval_list_file"]] <- opt$predictors_file
-enformer_parameters_json[['prediction_data_name']] <- opt$runname
-enformer_parameters_json[['prediction_id']] <- opt$phenotype
+enformer_parameters_json[['prediction_data_name']] <- paste(opt$runname, opt$phenotype, sep = '_')
+# enformer_parameters_json[['prediction_id']] <- opt$phenotype
 enformer_parameters_json[['date']] <- opt$date
 enformer_parameters_json[['model_path']] <- opt$model
 enformer_parameters_json[['fasta_file']] <- opt$fasta_file

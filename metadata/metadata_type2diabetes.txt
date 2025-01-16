@@ -1,0 +1,3 @@
+phenotype,sumstat
+males,type_2_diabetes.males.gwas_sumstats.processed.txt.gz
+females,type_2_diabetes.females.gwas_sumstats.processed.txt.gz

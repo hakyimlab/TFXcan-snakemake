@@ -41,7 +41,13 @@ sumstats <- data.table::fread(opt$sumstats) %>%
     dplyr::filter(gwas_significant == 'YES')
 
 if(nrow(sumstats) == 0){
-    stop(glue("INFO - No significant GWAS hits for chromosome {opt$chromosome}"))
+    message(glue("INFO - No significant GWAS hits for chromosome {opt$chromosome}"))
+    # data.table::fwrite(glue("{opt$output_folder}/{opt$phenotype}.chr{opt$chromosome}.filteredGWAS.topSNPs.txt"), sep='\t', quote=FALSE, row.names=FALSE)
+    # data.table::fwrite(file=file.path(opt$output_folder, glue('{opt$phenotype}.chr{opt$chromosome}.EnformerLoci.topSNPs.txt')), quote=F, row.names=F, sep = '\t', col.names=F)
+
+    opt <- options(show.error.messages=FALSE)
+    on.exit(options(opt))
+    quit()
 }
 
 LD_block <- data.table::fread(opt$LDBlocks_info) %>%
@@ -91,12 +97,12 @@ topsnps %>%
     data.table::fwrite(glue("{opt$output_folder}/{opt$phenotype}.chr{opt$chromosome}.filteredGWAS.topSNPs.txt"), sep='\t', quote=FALSE, row.names=FALSE)
 
 topsnps %>%
-        dplyr::mutate(locus = paste(chr, pos, pos + 1, sep='_')) %>%
-        dplyr::mutate(locus = dplyr::case_when(
-            !grepl('chr', locus, fixed=TRUE) ~ paste('chr', locus, sep=''),
-            .default = as.character(locus)
-        )) %>%
-        dplyr::pull(locus) %>%
-        base::data.frame(.) %>%
-        data.table::fwrite(file=file.path(opt$output_folder, glue('{opt$phenotype}.chr{opt$chromosome}.EnformerLoci.topSNPs.txt')), quote=F, row.names=F, sep = '\t', col.names=F)
+    dplyr::mutate(locus = paste(chr, pos, pos + 1, sep='_')) %>%
+    dplyr::mutate(locus = dplyr::case_when(
+        !grepl('chr', locus, fixed=TRUE) ~ paste('chr', locus, sep=''),
+        .default = as.character(locus)
+    )) %>%
+    dplyr::pull(locus) %>%
+    base::data.frame(.) %>%
+    data.table::fwrite(file=file.path(opt$output_folder, glue('{opt$phenotype}.chr{opt$chromosome}.EnformerLoci.topSNPs.txt')), quote=F, row.names=F, sep = '\t', col.names=F)
 

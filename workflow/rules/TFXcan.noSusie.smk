@@ -1,24 +1,30 @@
-rule process_summary_statistics:
-    input: os.path.join(INPUT_SUMSTATS, '{phenotype}.gwas_sumstats.processed.txt.gz')
+checkpoint process_summary_statistics:
+    input: '{phenotype}'
+    # input: 
+    #     #os.path.join(INPUT_SUMSTATS, '{phenotype}.gwas_sumstats.processed.txt.gz')
+    #     lambda wildcards: expand(os.path.join(INPUT_SUMSTATS, "{sumstat}"), sumstat=run_list[wildcards.phenotype])
     output: directory(os.path.join(PROCESSED_SUMSTATS, '{phenotype}'))
     params:
         rscript = config['rscript'],
         runmeta = runmeta,
         jobname = '{phenotype}',
         diag_file = os.path.join(DATA_DIR, 'diagnostics', f'{{phenotype}}.gwas_diagnostics.summary'),
-        reference_annotations = config['processing']['reference_annotations']
+        reference_annotations = config['processing']['reference_annotations'],
+        input_sumstats = lambda wildcards: os.path.join(INPUT_SUMSTATS, run_list[wildcards.phenotype]),
+        #output_directory = os.path.join(PROCESSED_SUMSTATS, '{phenotype}')
     message: "working on {wildcards}" 
     resources:
         mem_cpu=8,
         cpu_task=8
     shell:
         """
-        Rscript workflow/process/process_summary_statistics.R --summary_stats_file {input} --output_folder {output} --annotation_file {params.reference_annotations} --diagnostics_file {params.diag_file}
+        Rscript workflow/process/process_summary_statistics.R --summary_stats_file {params.input_sumstats} --output_folder {output} --annotation_file {params.reference_annotations} --diagnostics_file {params.diag_file}
         """
 
-rule select_top_snps: 
+checkpoint select_top_snps: 
     input: 
-        rules.process_summary_statistics.output,
+        #collect_chromosomes
+        #rules.process_summary_statistics.output,
         collect_processed_summary_statistics
     output:
         directory(os.path.join(FILTERING_DIR, '{phenotype}'))
@@ -41,7 +47,7 @@ rule select_top_snps:
         """
 
 rule collect_top_snps_results:
-    input: rules.select_top_snps.output
+    input: lambda wildcards: checkpoints.select_top_snps.get(**wildcards).output[0]
     output:
         filtered_sumstats = os.path.join(COLLECTION_DIR, '{phenotype}.filteredGWAS.topSNPs.txt.gz'),
         enformer_loci = os.path.join(COLLECTION_DIR, '{phenotype}.EnformerLoci.topSNPs.txt')
@@ -236,7 +242,6 @@ checkpoint summary_TFXcan:
         #outp = os.path.abspath(os.path.join(SUMMARYTFXCAN_DIR, "{phenotype}", '{model}", "{phenotype}.enpactScores.spredixcan.csv'))
     resources:
         partition="caslake",
-        time="02:00:00",
         mem_cpu=4,
         cpu_task=8
     benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.{{model}}.summary_TFXcan.tsv")
@@ -259,7 +264,7 @@ rule collect_summaryTFXcan_results:
         sFiles = lambda wildcards, input: ",".join(input) #lambda wildcards: ",".join(collect_completed_summary_tfxcan(wildcards))
     resources:
         partition="caslake",
-        time="02:00:00",
+        time="00:30:00",
         mem_cpu=4,
         cpu_task=8
     benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.{rundate}.collect_summaryTFXcan_results.tsv")

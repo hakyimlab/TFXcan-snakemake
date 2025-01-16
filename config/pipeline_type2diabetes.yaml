@@ -1,0 +1,46 @@
+
+---
+pipeline_dir: '/beagle3/haky/users/temi/projects/TFXcan-snakemake'
+runname: 'type2diabetes' # change this variable name 
+date: "2025-01-15" #"2024-06-07" "2024-09-23"
+metadata: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/metadata_type2diabetes.txt"
+scratch_dir: "/scratch/midway3/temi"
+delete_enformer_outputs: False # should you delete enformer predictions after aggregating them? Saves disk space
+personalized_predictions: True # should you run personalized predictions?
+runSusie: False
+
+enpact_weights: /beagle3/haky/users/temi/projects/Enpact/files/ENPACT_734_2024-07-26.compiled_weights.lambda.1se.txt.gz
+
+genome:
+  fasta: "/project2/haky/Data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta"
+
+rscript: "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript"
+
+processing:
+  LD_blocks: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/EUR_LDBlocks.hg38.updated.bed"
+  reference_annotations: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt
+
+# necessities for predictdb
+predictdb:
+  blacklist_regions: /beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/HLA_blocks.txt
+  conda_environment: /beagle3/haky/users/temi/software/conda_envs/predictdb_env
+  nextflow_main_executable: /beagle3/haky/users/temi/projects/TFXcan-snakemake/workflow/PredictDb-nextflow/main.nf
+  reference_genotypes: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.geno.txt
+  reference_annotations: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt
+
+summaryTFXcan:
+  conda_environment: /beagle3/haky/users/temi/software/conda_envs/imlabtools
+  summaryXcan_executable: /beagle3/haky/users/temi/software/MetaXcan/software/SPrediXcan.py # this is the SPrediXcan.py script
+
+# plink:
+#   folder: "/project2/haky/Data/1000G/plink_ref_panel"
+#   basename: "ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased"
+
+enformer: 
+  base_directives: "config/enformer_base.yaml"
+  personalized_directives: "config/personalized_base.yaml"
+  model: "/project2/haky/Data/enformer/raw"
+  predict: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/workflow/enformer/enformer_predict.py"
+  aggregate: "workflow/src/aggregate.py"
+  aggtype: "aggByCollect"
+...

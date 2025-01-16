@@ -36,3 +36,5 @@ snakemake -s snakefile.smk --configfile config/pipeline_pcrisk.yaml --resources 
 
 
 snakemake -s snakefile.smk --configfile config/pipeline_standing_height.yaml --profile profiles/simple/ --resources load=45
+
+snakemake -s snakefile.smk --configfile config/pipeline_type2diabetes.yaml --profile profiles/simple/ --resources load=180

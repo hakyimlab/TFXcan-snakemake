@@ -51,20 +51,24 @@ print(f"INFO - Found {len(enpact_models_list)} models for TF-tissue:GWAS associa
 
 # checkpoint functions
 def collect_processed_summary_statistics(wildcards):
-    chromosomes = glob_wildcards(os.path.join(PROCESSED_SUMSTATS, '{phenotype}', 'chr{chrom}.sumstats.txt.gz')).chrom
-    output = expand(os.path.join(PROCESSED_SUMSTATS, "{phenotype}", 'chr{chrom}.sumstats.txt.gz'), chrom=chromosomes, phenotype = run_list.keys())
+    checkpoint_output = checkpoints.process_summary_statistics.get(**wildcards).output[0]
+    chromosomes = glob_wildcards(os.path.join(checkpoint_output, 'chr{chrom}.sumstats.txt.gz')).chrom
+    #chromosomes = glob_wildcards(os.path.join(PROCESSED_SUMSTATS, '{phenotype}', 'chr{chrom}.sumstats.txt.gz')).chrom
+    output = expand(os.path.join(checkpoint_output, 'chr{chrom}.sumstats.txt.gz'), chrom=chromosomes)
     return output
 
 def collect_filtered_summary_statistics(wildcards):
     #checkpoint_output = checkpoints.process_summary_statistics.get(**wildcards).output[0]
-    chromosomes = glob_wildcards(os.path.join(FILTERING_DIR, '{phenotype}', 'chr{chrom}.sumstats.txt.gz')).chrom #glob_wildcards(os.path.join(checkpoint_output, 'chr{chrom}.sumstats.txt.gz')).chrom
-    output = expand(os.path.join(PROCESSED_SUMSTATS, "{phenotype}", 'chr{chrom}.sumstats.txt.gz'), chrom=chromosomes, phenotype = run_list.keys())
+    #checkpoint_output = checkpoints.process_summary_statistics.get(**wildcards).output[0]
+    chromosomes = glob_wildcards(os.path.join(FILTERING_DIR, f'{wildcards.phenotype}', 'chr{chrom}.sumstats.txt.gz')).chrom #glob_wildcards(os.path.join(checkpoint_output, 'chr{chrom}.sumstats.txt.gz')).chrom
+    output = expand(os.path.join(PROCESSED_SUMSTATS, f"{wildcards.phenotype}", 'chr{chrom}.sumstats.txt.gz'), chrom=chromosomes)
     # print(output)
     return output
 
 def collect_chromosomes(wildcards):
     #checkpoint_output = checkpoints.process_summary_statistics.get(**wildcards).output[0]
-    chromosomes = glob_wildcards(os.path.join(PROCESSED_SUMSTATS, "{phenotype}", 'chr{chrom}.sumstats.txt.gz')).chrom
+    checkpoint_output = checkpoints.process_summary_statistics.get(**wildcards).output[0]
+    chromosomes = glob_wildcards(os.path.join(checkpoint_output, 'chr{chrom}.sumstats.txt.gz')).chrom
     return(chromosomes)
 
 def collect_aggregated_individuals():
@@ -99,12 +103,12 @@ def collect_completed_summary_tfxcan(wildcards):
     #print(exp[0:4])
     #print(exp)
     return(exp)
-
+print(run_list)
 
 rule all:
     input:
-        expand(os.path.join(INPUT_SUMSTATS, '{phenotype}.gwas_sumstats.processed.txt.gz'), phenotype = run_list.keys()),
-        expand(os.path.join(PROCESSED_SUMSTATS, '{phenotype}'), phenotype = run_list.keys()),
+        #expand(os.path.join(INPUT_SUMSTATS, '{sumstat}'), phenotype = run_list.keys(), sumstat = run_list.values()),
+        directory(expand(os.path.join(PROCESSED_SUMSTATS, '{phenotype}'), phenotype = run_list.keys())),
         expand(os.path.join(ENFORMER_PARAMETERS, f'enformer_parameters_{runname}_{{phenotype}}.yaml'), phenotype = run_list.keys()),
         expand(os.path.join(ENFORMER_PARAMETERS, f'aggregation_config_{runname}_{{phenotype}}.yaml'), phenotype = run_list.keys()),
         expand(os.path.join(AGGREGATED_PREDICTIONS, f'{{phenotype}}.{runmeta}.h5'), phenotype = run_list.keys()),
