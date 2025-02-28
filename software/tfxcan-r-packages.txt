@@ -1,0 +1,769 @@
+Package	LibPath	Version	Priority	Depends	Imports	LinkingTo	Suggests	Enhances	License	License_is_FOSS	License_restricts_use	OS_type	MD5sum	NeedsCompilation	Built
+abind	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.4-8		R (>= 1.5.0)	methods, utils				MIT + file LICENSE					no	4.3.3
+aplot	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.2.3		R (>= 4.1.0)	ggfun (>= 0.1.3), ggplot2, ggplotify, patchwork, magrittr,
+methods, utils		ggtree		Artistic-2.0					no	4.3.3
+AsioHeaders	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.22.1-2							BSL-1.0					no	4.3.2
+askpass	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.2.1			sys (>= 2.1)		testthat		MIT + file LICENSE					yes	4.3.3
+BH	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.84.0-0							BSL-1.0					no	4.3.3
+bigD	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.3.0		R (>= 3.3.0)			covr, testthat (>= 3.0.0), tibble (>= 3.2.1)		MIT + file LICENSE					no	4.3.3
+BiocIO	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.12.0		R (>= 4.3.0)	BiocGenerics, S4Vectors, methods, tools		testthat, knitr, rmarkdown, BiocStyle		Artistic-2.0					no	4.3.3
+BiocManager	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.30.25			utils		BiocVersion, BiocStyle, remotes, rmarkdown, testthat, withr,
+curl, knitr		Artistic-2.0					no	4.3.3
+BiocVersion	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	3.18.1		R (>= 4.3.0)					Artistic-2.0					no	4.3.3
+boot	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.3-31	recommended	R (>= 3.0.0), graphics, stats			MASS, survival		Unlimited					no	4.3.3
+carData	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	3.0-5		R (>= 3.5.0)			car (>= 3.0-0)		GPL (>= 2)					no	4.3.3
+circlize	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.4.16		R (>= 4.0.0), graphics	GlobalOptions (>= 0.1.2), shape, grDevices, utils, stats,
+colorspace, methods, grid		knitr, dendextend (>= 1.0.1), ComplexHeatmap (>= 2.0.0),
+gridBase, png, markdown, bezier, covr, rmarkdown		MIT + file LICENSE					no	4.3.3
+codetools	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.2-20	recommended	R (>= 2.1)					GPL					no	4.3.3
+colorspace	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	2.1-1		R (>= 3.0.0), methods	graphics, grDevices, stats		datasets, utils, KernSmooth, MASS, kernlab, mvtnorm, vcd,
+tcltk, shiny, shinyjs, ggplot2, dplyr, scales, grid, png, jpeg,
+knitr, rmarkdown, RColorBrewer, rcartocolor, scico, viridis,
+wesanderson		BSD_3_clause + file LICENSE					yes	4.3.3
+corrplot	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.95					seriation, knitr, RColorBrewer, rmarkdown, magrittr,
+prettydoc, testthat		MIT + file LICENSE					no	4.3.3
+cowplot	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.1.3		R (>= 3.5.0)	ggplot2 (>= 3.4.0), grid, gtable, grDevices, methods, rlang,
+scales		Cairo, covr, dplyr, forcats, gridGraphics (>= 0.4-0), knitr,
+lattice, magick, maps, PASWR, patchwork, rmarkdown, ragg,
+testthat (>= 1.0.0), tidyr, vdiffr (>= 0.3.0), VennDiagram		GPL-2					no	4.3.3
+cpp11	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.5.0		R (>= 3.6.0)			bench, brio, callr, cli, covr, decor, desc, ggplot2, glue,
+knitr, lobstr, mockery, progress, rmarkdown, scales, Rcpp,
+testthat (>= 3.2.0), tibble, utils, vctrs, withr		MIT + file LICENSE					no	4.3.3
+crayon	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.5.3			grDevices, methods, utils		mockery, rstudioapi, testthat, withr		MIT + file LICENSE					no	4.3.3
+crosstalk	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.2.1			htmltools (>= 0.3.6), jsonlite, lazyeval, R6		shiny, ggplot2, testthat (>= 2.1.0), sass, bslib		MIT + file LICENSE					no	4.3.3
+DBI	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.2.3		methods, R (>= 3.0.0)			arrow, blob, covr, DBItest, dbplyr, downlit, dplyr, glue,
+hms, knitr, magrittr, nanoarrow (>= 0.3.0.1), RMariaDB,
+rmarkdown, rprojroot, RSQLite (>= 1.1-2), testthat (>= 3.0.0),
+vctrs, xml2		LGPL (>= 2.1)					no	4.3.3
+dbplyr	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	2.5.0		R (>= 3.6)	blob (>= 1.2.0), cli (>= 3.6.1), DBI (>= 1.1.3), dplyr (>=
+1.1.2), glue (>= 1.6.2), lifecycle (>= 1.0.3), magrittr,
+methods, pillar (>= 1.9.0), purrr (>= 1.0.1), R6 (>= 2.2.2),
+rlang (>= 1.1.1), tibble (>= 3.2.1), tidyr (>= 1.3.0),
+tidyselect (>= 1.2.1), utils, vctrs (>= 0.6.3), withr (>=
+2.5.0)		bit64, covr, knitr, Lahman, nycflights13, odbc (>= 1.4.2),
+RMariaDB (>= 1.2.2), rmarkdown, RPostgres (>= 1.4.5),
+RPostgreSQL, RSQLite (>= 2.3.1), testthat (>= 3.1.10)		MIT + file LICENSE					no	4.3.3
+deconvolveR	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.2-1		R (>= 3.0)	splines, stats		cowplot, ggplot2, knitr, rmarkdown		GPL (>= 2)					no	4.3.3
+Deriv	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	4.1.6			methods		testthat (>= 0.11.0)		GPL (>= 3)					no	4.3.3
+doParallel	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.0.17		R (>= 2.14.0), foreach (>= 1.2.0), iterators (>= 1.0.0),
+parallel, utils			caret, mlbench, rpart, RUnit	compiler	GPL-2					no	4.3.3
+dplyr	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.1.4		R (>= 3.5.0)	cli (>= 3.4.0), generics, glue (>= 1.3.2), lifecycle (>=
+1.0.3), magrittr (>= 1.5), methods, pillar (>= 1.9.0), R6,
+rlang (>= 1.1.0), tibble (>= 3.2.0), tidyselect (>= 1.2.0),
+utils, vctrs (>= 0.6.4)		bench, broom, callr, covr, DBI, dbplyr (>= 2.2.1), ggplot2,
+knitr, Lahman, lobstr, microbenchmark, nycflights13, purrr,
+rmarkdown, RMySQL, RPostgreSQL, RSQLite, stringi (>= 1.7.6),
+testthat (>= 3.1.5), tidyr (>= 1.3.0), withr		MIT + file LICENSE					yes	4.3.3
+dqrng	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.4.1		R (>= 3.5.0)	Rcpp (>= 0.12.16)	Rcpp, BH (>= 1.64.0-1), sitmo (>= 2.0.0)	BH, testthat, knitr, rmarkdown, mvtnorm (>= 1.2-3), bench,
+sitmo		AGPL-3					yes	4.3.3
+ellipse	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.5.0		R (>= 2.0.0),graphics,stats			MASS		GPL (>= 2)					no	4.3.3
+etrunct	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.1					testthat		MIT + file LICENSE					no	4.3.3
+evaluate	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.0.1		R (>= 3.6.0)			covr, ggplot2 (>= 3.3.6), lattice, methods, rlang, testthat
+(>= 3.0.0), withr		MIT + file LICENSE					no	4.3.3
+farver	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	2.1.2					covr, testthat (>= 3.0.0)		MIT + file LICENSE					yes	4.3.3
+fontawesome	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.5.3		R (>= 3.3.0)	rlang (>= 1.0.6), htmltools (>= 0.5.1.1)		covr, dplyr (>= 1.0.8), gt (>= 0.9.0), knitr (>= 1.31),
+testthat (>= 3.0.0), rsvg		MIT + file LICENSE					no	4.3.3
+foreach	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.5.2		R (>= 2.5.0)	codetools, utils, iterators		randomForest, doMC, doParallel, testthat, knitr, rmarkdown		Apache License (== 2.0)					no	4.3.3
+formatR	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.14		R (>= 3.2.3)			rstudioapi, shiny, testit, rmarkdown, knitr		GPL					no	4.3.3
+Formula	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.2-5		R (>= 2.0.0), stats					GPL-2 | GPL-3					no	4.3.3
+futile.logger	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.4.3		R (>= 3.0.0)	utils, lambda.r (>= 1.1.0), futile.options		testthat, jsonlite		LGPL-3					no	4.3.3
+futile.options	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.0.1		R (>= 2.8.0)					LGPL-3					no	4.3.3
+getopt	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.20.4			stats		testthat		GPL (>= 2)					no	4.3.3
+ggfun	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.1.7		R (>= 4.1.0)	cli, dplyr, ggplot2, grid, rlang, utils, yulab.utils (>=
+0.1.6)		ggplotify, knitr, rmarkdown, prettydoc, tidyr, ggnewscale		Artistic-2.0					no	4.3.3
+gggrid	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.2-0		grid, ggplot2			knitr, rmarkdown, vwline		GPL-3					no	4.3.3
+ggplot2	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	3.5.1		R (>= 3.5)	cli, glue, grDevices, grid, gtable (>= 0.1.1), isoband,
+lifecycle (> 1.0.1), MASS, mgcv, rlang (>= 1.1.0), scales (>=
+1.3.0), stats, tibble, vctrs (>= 0.6.0), withr (>= 2.5.0)		covr, dplyr, ggplot2movies, hexbin, Hmisc, knitr, mapproj,
+maps, multcomp, munsell, nlme, profvis, quantreg, ragg (>=
+1.2.6), RColorBrewer, rmarkdown, rpart, sf (>= 0.7-3), svglite
+(>= 2.1.2), testthat (>= 3.1.2), vdiffr (>= 1.0.6), xml2	sp	MIT + file LICENSE					no	4.3.3
+ggplotify	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.1.2		R (>= 3.4.0)	ggplot2, graphics, grDevices, grid, gridGraphics, yulab.utils		aplot, colorspace, cowplot, ggimage, knitr, rmarkdown,
+lattice, prettydoc, vcd, utils		Artistic-2.0					no	4.3.3
+ggrepel	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.9.6		R (>= 3.0.0), ggplot2 (>= 2.2.0)	grid, Rcpp, rlang (>= 0.3.0), scales (>= 0.5.0), withr (>=
+2.5.0)	Rcpp	knitr, rmarkdown, testthat, svglite, vdiffr, gridExtra, ggpp,
+patchwork, devtools, prettydoc, ggbeeswarm, dplyr, magrittr,
+readr, stringr		GPL-3 | file LICENSE					yes	4.3.3
+GlobalOptions	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.1.2		R (>= 3.3.0), methods	utils		testthat (>= 1.0.0), knitr, markdown, GetoptLong		MIT + file LICENSE					no	4.3.3
+gprofiler2	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.2.3		R (>= 3.5)	jsonlite, RCurl, ggplot2, plotly, tidyr (>= 1.0.0), crosstalk,
+grDevices, gridExtra, grid, viridisLite, dplyr		knitr, rmarkdown, prettydoc		GPL (>= 2)					no	4.3.3
+gridGraphics	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.5-1		grid, graphics	grDevices		magick (>= 1.3), pdftools (>= 1.6)		GPL (>= 2)					no	4.3.3
+gtable	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.3.6		R (>= 4.0)	cli, glue, grid, lifecycle, rlang (>= 1.1.0), stats		covr, ggplot2, knitr, profvis, rmarkdown, testthat (>= 3.0.0)		MIT + file LICENSE					no	4.3.3
+gtools	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	3.9.5		methods, stats, utils			car, gplots, knitr, rstudioapi, SGP, taxize		GPL-2					yes	4.3.3
+highr	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.11		R (>= 3.3.0)	xfun (>= 0.18)		knitr, markdown, testit		GPL					no	4.3.3
+horseshoe	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.2.0		R (>= 3.1.0)	stats		Hmisc, ggplot2, knitr, rmarkdown		GPL-3					no	4.3.3
+htmltools	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.5.8.1		R (>= 2.14.1)	base64enc, digest, fastmap (>= 1.1.0), grDevices, rlang (>=
+1.0.0), utils		Cairo, markdown, ragg, shiny, testthat, withr	knitr	GPL (>= 2)					yes	4.3.3
+htmlwidgets	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.6.4			grDevices, htmltools (>= 0.5.7), jsonlite (>= 0.9.16), knitr
+(>= 1.8), rmarkdown, yaml		testthat	shiny (>= 1.1)	MIT + file LICENSE					no	4.3.3
+httpgd	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	2.0.2		R (>= 3.2.0)	unigd	unigd, cpp11 (>= 0.2.4), AsioHeaders (>= 1.22.1)	testthat, xml2 (>= 1.0.0), knitr, rmarkdown, covr, future,
+httr, jsonlite		GPL (>= 2)					yes	4.3.2
+invgamma	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.1							GPL-2					no	4.3.3
+iterators	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.0.14		R (>= 2.5.0), utils			RUnit, foreach		Apache License (== 2.0)					no	4.3.3
+lambda.r	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.2.4		R (>= 3.0.0)	formatR		testit		LGPL-3					no	4.3.3
+lattice	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.22-6	recommended	R (>= 4.0.0)	grid, grDevices, graphics, stats, utils		KernSmooth, MASS, latticeExtra, colorspace	chron, zoo	GPL (>= 2)					yes	4.3.3
+LDlinkR	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.4.0			httr (>= 1.4.0), utils (>= 3.4.2)		testthat, knitr, rmarkdown, spelling		GPL (>= 2)					no	4.3.3
+lifecycle	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.0.4		R (>= 3.6)	cli (>= 3.4.0), glue, rlang (>= 1.1.0)		covr, crayon, knitr, lintr, rmarkdown, testthat (>= 3.0.1),
+tibble, tidyverse, tools, vctrs, withr		MIT + file LICENSE					no	4.3.3
+markdown	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.13		R (>= 2.11.1)	utils, commonmark (>= 1.9.0), xfun (>= 0.38)		knitr, rmarkdown (>= 2.18), yaml, RCurl		MIT + file LICENSE					no	4.3.3
+MatrixModels	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.5-3		R (>= 3.6.0)	stats, methods, Matrix (>= 1.6-0)				GPL (>= 2)					no	4.3.3
+munsell	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.5.1			colorspace, methods		ggplot2, testthat		MIT + file LICENSE					no	4.3.3
+numDeriv	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	2016.8-1.1		R (>= 2.11.1)					GPL-2					no	4.3.3
+optparse	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.7.5		R (>= 3.6.0)	methods, getopt (>= 1.20.2)		knitr (>= 1.15.19), stringr, testthat		GPL (>= 2)					no	4.3.3
+pbapply	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.7-2		R (>= 3.2.0)	parallel		shiny, future, future.apply		GPL (>= 2)					no	4.3.3
+pheatmap	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.0.12		R (>= 2.0)	grid, RColorBrewer, scales, gtable, stats, grDevices, graphics				GPL-2					no	4.3.3
+plogr	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.2.0					Rcpp		MIT + file LICENSE					no	4.3.3
+plotly	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	4.10.4		R (>= 3.2.0), ggplot2 (>= 3.0.0)	tools, scales, httr (>= 1.3.0), jsonlite (>= 1.6), magrittr,
+digest, viridisLite, base64enc, htmltools (>= 0.3.6),
+htmlwidgets (>= 1.5.2.9001), tidyr (>= 1.0.0), RColorBrewer,
+dplyr, vctrs, tibble, lazyeval (>= 0.2.0), rlang (>= 0.4.10),
+crosstalk, purrr, data.table, promises		MASS, maps, hexbin, ggthemes, GGally, ggalluvial, testthat,
+knitr, shiny (>= 1.1.0), shinytest (>= 1.3.0), curl, rmarkdown,
+Cairo, broom, webshot, listviewer, dendextend, sf, png,
+IRdisplay, processx, plotlyGeoAssets, forcats, withr,
+palmerpenguins, rversions, reticulate, rsvg		MIT + file LICENSE					no	4.3.3
+plotrix	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	3.8-4		R (>= 3.5.0)	grDevices, graphics, stats, utils				GPL (>= 2)					no	4.3.3
+Polychrome	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.5.1		R (>= 3.5.0)	colorspace, scatterplot3d, methods, graphics, grDevices,
+stats, utils		RColorBrewer, knitr, rmarkdown, ggplot2		Apache License (== 2.0)					no	4.3.3
+progress	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.2.3		R (>= 3.6)	crayon, hms, prettyunits, R6		Rcpp, testthat (>= 3.0.0), withr		MIT + file LICENSE					no	4.3.3
+promises	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.3.0			fastmap (>= 1.1.0), later, magrittr (>= 1.5), R6, Rcpp, rlang,
+stats	later, Rcpp	future (>= 1.21.0), knitr, purrr, rmarkdown, spelling,
+testthat, vembedr		MIT + file LICENSE					yes	4.3.3
+qvalue	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	2.34.0		R(>= 2.10)	splines, ggplot2, grid, reshape2		knitr		LGPL					no	4.3.1
+Rcpp	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.0.13			methods, utils		tinytest, inline, rbenchmark, pkgKitten (>= 0.1.2)		GPL (>= 2)					yes	4.3.3
+RcppArmadillo	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	14.0.2-1		R (>= 3.3.0)	Rcpp (>= 1.0.8), stats, utils, methods	Rcpp	tinytest, Matrix (>= 1.3.0), pkgKitten, reticulate, slam		GPL (>= 2)					yes	4.3.3
+RcppEigen	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.3.4.0.2		R (>= 3.6.0)	Rcpp (>= 0.11.0), stats, utils	Rcpp	Matrix, inline, tinytest, pkgKitten, microbenchmark		GPL (>= 2) | file LICENSE					yes	4.3.3
+RcppProgress	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.4.2					RcppArmadillo, devtools, roxygen2, testthat		GPL (>= 3)					no	4.3.3
+reactable	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.4.4		R (>= 3.1)	digest, htmltools (>= 0.5.2), htmlwidgets (>= 1.5.3),
+jsonlite, reactR		covr, crosstalk, dplyr, fontawesome, knitr, leaflet, MASS,
+rmarkdown, shiny, sparkline, testthat, tippy, V8		MIT + file LICENSE					no	4.3.3
+reactR	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.6.1			htmltools		htmlwidgets (>= 1.5.3), rmarkdown, shiny, V8, knitr, usethis,
+jsonlite		MIT + file LICENSE					no	4.3.3
+remotes	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	2.5.0		R (>= 3.0.0)	methods, stats, tools, utils		brew, callr, codetools, covr, curl, git2r (>= 0.23.0), knitr,
+mockery, pingr, pkgbuild (>= 1.0.1), rmarkdown, rprojroot,
+testthat (>= 3.0.0), webfakes, withr		MIT + file LICENSE					no	4.3.3
+rlist	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.4.6.2		R (>= 2.15)	yaml, jsonlite, XML, data.table		testthat, stringdist		MIT + file LICENSE					no	4.3.3
+rmarkdown	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	2.29		R (>= 3.0)	bslib (>= 0.2.5.1), evaluate (>= 0.13), fontawesome (>=
+0.5.0), htmltools (>= 0.5.1), jquerylib, jsonlite, knitr (>=
+1.43), methods, tinytex (>= 0.31), tools, utils, xfun (>=
+0.36), yaml (>= 2.1.19)		digest, dygraphs, fs, rsconnect, downlit (>= 0.4.0), katex
+(>= 1.4.0), sass (>= 0.4.0), shiny (>= 1.6.0), testthat (>=
+3.0.3), tibble, vctrs, cleanrmd, withr (>= 2.4.2), xml2		GPL-3					no	4.3.3
+Rtsne	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.17			Rcpp (>= 0.11.0), stats	Rcpp	irlba, testthat		file LICENSE	yes				yes	4.3.3
+scales	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.3.0		R (>= 3.6)	cli, farver (>= 2.0.3), glue, labeling, lifecycle, munsell (>=
+0.5), R6, RColorBrewer, rlang (>= 1.0.0), viridisLite		bit64, covr, dichromat, ggplot2, hms (>= 0.5.0), stringi,
+testthat (>= 3.0.0)		MIT + file LICENSE					yes	4.3.3
+scatterplot3d	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.3-44		R (>= 2.7.0)	grDevices, graphics, stats				GPL-2					no	4.3.3
+shape	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.4.6.1		R (>= 2.01)	stats, graphics, grDevices				GPL (>= 3)					no	4.3.3
+sitmo	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	2.0.2		R (>= 3.2.0)	Rcpp (>= 0.12.13)	Rcpp	knitr, rmarkdown, ggplot2		MIT + file LICENSE					yes	4.3.3
+snow	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.4-4		R (>= 2.13.1), utils			rlecuyer	Rmpi	GPL					no	4.3.3
+SQUAREM	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	2021.1		R (>= 3.0)			setRNG		GPL (>= 2)					no	4.3.3
+stringr	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.5.1		R (>= 3.6)	cli, glue (>= 1.6.1), lifecycle (>= 1.0.3), magrittr, rlang
+(>= 1.0.0), stringi (>= 1.5.3), vctrs (>= 0.4.0)		covr, dplyr, gt, htmltools, htmlwidgets, knitr, rmarkdown,
+testthat (>= 3.0.0), tibble		MIT + file LICENSE					no	4.3.3
+tidyheatmaps	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.2.1			dplyr, pheatmap, rlang, grDevices, tidyr, tibble, RColorBrewer		testthat (>= 2.1.0), knitr, rmarkdown		MIT + file LICENSE					no	4.3.3
+tidyr	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.3.1		R (>= 3.6)	cli (>= 3.4.1), dplyr (>= 1.0.10), glue, lifecycle (>= 1.0.3),
+magrittr, purrr (>= 1.0.1), rlang (>= 1.1.1), stringr (>=
+1.5.0), tibble (>= 2.1.1), tidyselect (>= 1.2.0), utils, vctrs
+(>= 0.5.2)	cpp11 (>= 0.4.0)	covr, data.table, knitr, readr, repurrrsive (>= 1.1.0),
+rmarkdown, testthat (>= 3.0.0)		MIT + file LICENSE					yes	4.3.3
+tidyselect	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	1.2.1		R (>= 3.4)	cli (>= 3.3.0), glue (>= 1.3.0), lifecycle (>= 1.0.3), rlang
+(>= 1.0.4), vctrs (>= 0.5.2), withr		covr, crayon, dplyr, knitr, magrittr, rmarkdown, stringr,
+testthat (>= 3.1.1), tibble (>= 2.1.3)		MIT + file LICENSE					yes	4.3.3
+tinytex	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.53			xfun (>= 0.29)		testit, rstudioapi		MIT + file LICENSE					no	4.3.3
+trust	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.1-8		R (>= 2.10.0)	stats				MIT + file LICENSE					no	4.3.3
+unigd	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.1.2		R (>= 3.2.0)	systemfonts (>= 1.0.0)	cpp11 (>= 0.2.4), systemfonts	testthat (>= 3.0.0), xml2 (>= 1.0.0), fontquiver (>= 0.2.0),
+covr, knitr, rmarkdown		GPL (>= 2)					yes	4.3.2
+withr	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	3.0.2		R (>= 3.6.0)	graphics, grDevices		callr, DBI, knitr, methods, rlang, rmarkdown (>= 2.12),
+RSQLite, testthat (>= 3.0.0)		MIT + file LICENSE					no	4.3.3
+yulab.utils	/home/temi/R/x86_64-conda-linux-gnu-library/4.3	0.1.8			cli, digest, fs, rlang, tools, utils		httr2, jsonlite, openssl, rappdirs		Artistic-2.0					no	4.3.3
+abind	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.4-5		R (>= 1.5.0)	methods, utils				LGPL (>= 2)					no	4.3.1
+AsioHeaders	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.22.1-2							BSL-1.0					no	4.3.1
+askpass	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.1			sys (>= 2.1)		testthat		MIT + file LICENSE					yes	4.3.0
+assertthat	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.2.1			tools		testthat, covr		GPL-3					no	4.3.0
+backports	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.4.1		R (>= 3.0.0)					GPL-2 | GPL-3					yes	4.3.1
+base	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	4.3.1	base				methods		Part of R 4.3.1						4.3.1
+base64enc	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.1-3		R (>= 2.9.0)				png	GPL-2 | GPL-3					yes	4.3.0
+BH	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.81.0-1							BSL-1.0					no	4.3.1
+bigassertr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.1.6					testthat, covr		GPL-3					no	4.3.1
+bigmemory	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	4.6.4		R (>= 3.2.0),	bigmemory.sri, methods, utils, Rcpp, uuid (>= 1.0-2)	BH, uuid (>= 1.0-2), Rcpp	testthat, remotes	biganalytics, bigtabulate	LGPL-3 | Apache License 2.0					yes	4.3.1
+bigmemory.sri	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.1.8			methods			bigmemory	LGPL-3 | Apache License 2.0					no	4.3.1
+bigparallelr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.3.2		foreach	bigassertr (>= 0.1.1), doParallel, flock, parallel,
+parallelly, RhpcBLASctl		testthat, covr		GPL-3					no	4.3.1
+bigreadr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.2.5			bigassertr (>= 0.1.1), data.table, parallelly, Rcpp, utils	Rcpp	spelling, testthat, covr, RSQLite		GPL-3					yes	4.3.1
+bigsnpr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.12.2		R (>= 3.4), bigstatsr (>= 1.5.11)	bigassertr (>= 0.1.6), bigparallelr, bigsparser (>= 0.6),
+bigreadr, bigutilsr (>= 0.3.3), data.table (>= 1.12.4), doRNG,
+foreach, ggplot2, magrittr, Matrix (>= 1.3.0), methods, Rcpp,
+runonce (>= 0.2.3), stats, vctrs	bigsparser, bigstatsr, Rcpp, RcppArmadillo (>= 0.9.600),
+rmio, roptim (>= 0.1.6)	bindata, covr, dbplyr (>= 1.4), dplyr, gaston, glue, Hmisc,
+microbenchmark, pcadapt (>= 4.1), quadprog, RhpcBLASctl,
+rmutil, RSpectra, RSQLite, R.utils, spelling, testthat, tibble,
+xgboost		GPL-3					yes	4.3.1
+bigsparser	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.6.1		R (>= 3.1)	Rcpp, bigassertr, methods, Matrix, rmio (>= 0.4)	Rcpp, RcppEigen, rmio	testthat (>= 2.1.0)		GPL-3					yes	4.3.1
+bigstatsr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.5.12		R (>= 3.4)	bigassertr (>= 0.1.1), bigparallelr (>= 0.2.3), cowplot,
+foreach, ggplot2 (>= 3.0), graphics, methods, ps (>= 1.4),
+Rcpp, rmio (>= 0.4), RSpectra, stats, tibble, utils	Rcpp, RcppArmadillo, rmio	bigmemory (>= 4.5.33), bigreadr (>= 0.2), covr, data.table,
+dplyr, glmnet, hexbin, memuse, ModelMetrics, plotly, ppcor,
+RhpcBLASctl, spelling (>= 1.2), testthat		GPL-3					yes	4.3.1
+bigutilsr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.3.4			bigassertr (>= 0.1.1), bigparallelr (>= 0.2.3), nabor, Rcpp,
+robustbase, RSpectra, stats	Rcpp	covr, Gmedian, mvtnorm, rrcov, spelling, testthat (>= 2.1.0)		GPL-3					yes	4.3.1
+Biobase	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.60.0		R (>= 2.10), BiocGenerics (>= 0.27.1), utils	methods		tools, tkWidgets, ALL, RUnit, golubEsets, BiocStyle, knitr		Artistic-2.0					yes	4.3.1
+BiocGenerics	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.46.0		R (>= 4.0.0), methods, utils, graphics, stats	methods, utils, graphics, stats		Biobase, S4Vectors, IRanges, GenomicRanges, DelayedArray,
+Biostrings, Rsamtools, AnnotationDbi, affy, affyPLM, DESeq2,
+flowClust, MSnbase, annotate, RUnit		Artistic-2.0					no	4.3.1
+BiocIO	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.10.0		R (>= 4.3.0)	BiocGenerics, S4Vectors, methods, tools		testthat, knitr, rmarkdown, BiocStyle		Artistic-2.0					no	4.3.1
+BiocManager	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.30.21.1			utils		BiocVersion, remotes, rmarkdown, testthat, withr, curl, knitr		Artistic-2.0					no	4.3.1
+BiocParallel	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.34.2		methods, R (>= 3.5.0)	stats, utils, futile.logger, parallel, snow, codetools	BH, cpp11	BiocGenerics, tools, foreach, BBmisc, doParallel,
+GenomicRanges, RNAseqData.HNRNPC.bam.chr14,
+TxDb.Hsapiens.UCSC.hg19.knownGene, VariantAnnotation,
+Rsamtools, GenomicAlignments, ShortRead, RUnit, BiocStyle,
+knitr, batchtools, data.table	Rmpi	GPL-2 | GPL-3					yes	4.3.1
+BiocVersion	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	3.17.1		R (>= 4.3.0)					Artistic-2.0					no	4.3.1
+Biostrings	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.68.1		R (>= 4.0.0), methods, BiocGenerics (>= 0.37.0), S4Vectors (>=
+0.27.12), IRanges (>= 2.31.2), XVector (>= 0.37.1),
+GenomeInfoDb	methods, utils, grDevices, graphics, stats, crayon	S4Vectors, IRanges, XVector	BSgenome (>= 1.13.14), BSgenome.Celegans.UCSC.ce2 (>=
+1.3.11), BSgenome.Dmelanogaster.UCSC.dm3 (>= 1.3.11),
+BSgenome.Hsapiens.UCSC.hg18, drosophila2probe, hgu95av2probe,
+hgu133aprobe, GenomicFeatures (>= 1.3.14), hgu95av2cdf, affy
+(>= 1.41.3), affydata (>= 1.11.5), RUnit	Rmpi	Artistic-2.0					yes	4.3.1
+bit	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	4.0.5		R (>= 2.9.2)			testthat (>= 0.11.0), roxygen2, knitr, rmarkdown,
+microbenchmark, bit64 (>= 4.0.0), ff (>= 4.0.0)		GPL-2 | GPL-3					yes	4.3.1
+bit64	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	4.0.5		R (>= 3.0.1), bit (>= 4.0.0), utils, methods, stats					GPL-2 | GPL-3					yes	4.3.1
+bitops	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.0-7							GPL (>= 2)					yes	4.2.3
+blob	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.2.4			methods, rlang, vctrs (>= 0.2.1)		covr, crayon, pillar (>= 1.2.1), testthat		MIT + file LICENSE					no	4.3.1
+boot	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.3-28.1	recommended	R (>= 3.0.0), graphics, stats			MASS, survival		Unlimited					no	4.3.0
+broom	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.0.5		R (>= 3.5)	backports, dplyr (>= 1.0.0), ellipsis, generics (>= 0.0.2),
+glue, lifecycle, purrr, rlang, stringr, tibble (>= 3.0.0),
+tidyr (>= 1.0.0)		AER, AUC, bbmle, betareg, biglm, binGroup, boot, btergm (>=
+1.10.6), car, carData, caret, cluster, cmprsk, coda, covr, drc,
+e1071, emmeans, epiR, ergm (>= 3.10.4), fixest (>= 0.9.0), gam
+(>= 1.15), gee, geepack, ggplot2, glmnet, glmnetUtils, gmm,
+Hmisc, irlba, interp, joineRML, Kendall, knitr, ks, Lahman,
+lavaan, leaps, lfe, lm.beta, lme4, lmodel2, lmtest (>= 0.9.38),
+lsmeans, maps, margins, MASS, mclust, mediation, metafor, mfx,
+mgcv, mlogit, modeldata, modeltests, muhaz, multcomp, network,
+nnet, orcutt (>= 2.2), ordinal, plm, poLCA, psych, quantreg,
+rmarkdown, robust, robustbase, rsample, sandwich, sp, spdep (>=
+1.1), spatialreg, speedglm, spelling, survey, survival,
+systemfit, testthat (>= 2.1.0), tseries, vars, zoo		MIT + file LICENSE					no	4.3.1
+bslib	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.5.0		R (>= 2.10)	base64enc, cachem, grDevices, htmltools (>= 0.5.4), jquerylib
+(>= 0.1.3), jsonlite, memoise (>= 2.0.1), mime, rlang, sass (>=
+0.4.0)		bsicons, curl, fontawesome, ggplot2, knitr, magrittr,
+rappdirs, rmarkdown (>= 2.7), shiny (>= 1.6.0), testthat,
+thematic, withr		MIT + file LICENSE					no	4.3.0
+cachem	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.0.8			rlang, fastmap (>= 1.1.1)		testthat		MIT + file LICENSE					yes	4.3.0
+callr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	3.7.3		R (>= 3.4)	processx (>= 3.6.1), R6, utils		asciicast, cli (>= 1.1.0), covr, mockery, ps, rprojroot,
+spelling, testthat (>= 3.0.0), withr (>= 2.3.0)		MIT + file LICENSE					no	4.3.1
+caret	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	6.0-94		ggplot2, lattice (>= 0.20), R (>= 3.2.0)	e1071, foreach, grDevices, methods, ModelMetrics (>= 1.2.2.2),
+nlme, plyr, pROC, recipes (>= 0.1.10), reshape2, stats, stats4,
+utils, withr (>= 2.0.0)		BradleyTerry2, covr, Cubist, dplyr, earth (>= 2.2-3),
+ellipse, fastICA, gam (>= 1.15), ipred, kernlab, klaR, knitr,
+MASS, Matrix, mda, mgcv, mlbench, MLmetrics, nnet, pamr, party
+(>= 0.9-99992), pls, proxy, randomForest, RANN, rmarkdown,
+rpart, spls, subselect, superpc, testthat (>= 0.9.1), themis
+(>= 0.1.3)		GPL (>= 2)					yes	4.3.0
+cellranger	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.1.0		R (>= 3.0.0)	rematch, tibble		covr, testthat (>= 1.0.0), knitr, rmarkdown		MIT + file LICENSE					no	4.3.1
+class	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	7.3-22	recommended	R (>= 3.0.0), stats, utils	MASS				GPL-2 | GPL-3					yes	4.3.0
+cli	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	3.6.1		R (>= 3.4)	utils		callr, covr, crayon, digest, glue (>= 1.6.0), grDevices,
+htmltools, htmlwidgets, knitr, methods, mockery, processx, ps
+(>= 1.3.4.9000), rlang (>= 1.0.2.9003), rmarkdown, rprojroot,
+rstudioapi, testthat, tibble, whoami, withr		MIT + file LICENSE					yes	4.3.0
+clipr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.8.0			utils		covr, knitr, rmarkdown, rstudioapi (>= 0.5), testthat (>=
+2.0.0)		GPL-3					no	4.3.1
+clock	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.7.0		R (>= 3.5.0)	cli (>= 3.6.1), lifecycle (>= 1.0.3), rlang (>= 1.1.0), tzdb
+(>= 0.4.0), vctrs (>= 0.6.1)	cpp11 (>= 0.4.3), tzdb (>= 0.4.0)	covr, knitr, magrittr, pillar, rmarkdown, slider (>= 0.3.0),
+testthat (>= 3.0.0), withr		MIT + file LICENSE					yes	4.3.0
+cluster	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.1.4	recommended	R (>= 3.5.0)	graphics, grDevices, stats, utils		MASS, Matrix		GPL (>= 2)					yes	4.3.0
+codetools	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.2-19	recommended	R (>= 2.1)					GPL					no	4.3.0
+colorspace	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.1-0		R (>= 3.0.0), methods	graphics, grDevices, stats		datasets, utils, KernSmooth, MASS, kernlab, mvtnorm, vcd,
+tcltk, shiny, shinyjs, ggplot2, dplyr, scales, grid, png, jpeg,
+knitr, rmarkdown, RColorBrewer, rcartocolor, scico, viridis,
+wesanderson		BSD_3_clause + file LICENSE					yes	4.3.0
+commonmark	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.9.0					curl, testthat, xml2		BSD_2_clause + file LICENSE					yes	4.3.0
+compiler	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	4.3.1	base						Part of R 4.3.1						4.3.1
+conflicted	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.2.0		R (>= 3.2)	cli (>= 3.4.0), memoise, rlang (>= 1.0.0)		callr, covr, dplyr, Matrix, methods, pkgload, testthat (>=
+3.0.0), withr		MIT + file LICENSE					no	4.3.1
+cowplot	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.1.2		R (>= 3.5.0)	ggplot2 (>= 3.4.0), grid, gtable, grDevices, methods, rlang,
+scales		Cairo, covr, dplyr, forcats, gridGraphics (>= 0.4-0), knitr,
+lattice, magick, maps, PASWR, patchwork, rmarkdown, ragg,
+testthat (>= 1.0.0), tidyr, vdiffr (>= 0.3.0), VennDiagram		GPL-2					no	4.3.1
+cpp11	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.4.5					bench, brio, callr, cli, covr, decor, desc, ggplot2, glue,
+knitr, lobstr, mockery, progress, rmarkdown, scales, Rcpp,
+testthat, tibble, utils, vctrs, withr		MIT + file LICENSE					no	4.3.1
+crayon	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.5.2			grDevices, methods, utils		mockery, rstudioapi, testthat, withr		MIT + file LICENSE					no	4.3.0
+crul	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.4.0			curl (>= 3.3), R6 (>= 2.2.0), urltools (>= 1.6.0), httpcode
+(>= 0.2.0), jsonlite, mime		testthat, roxygen2 (>= 7.1.1), fauxpas (>= 0.1.0), webmockr
+(>= 0.1.0), knitr, rmarkdown		MIT + file LICENSE					no	4.3.0
+curl	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	5.0.1		R (>= 3.0.0)			spelling, testthat (>= 1.0.0), knitr, jsonlite, rmarkdown,
+magrittr, httpuv (>= 1.4.4), webutils		MIT + file LICENSE					yes	4.3.0
+data.table	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.14.8		R (>= 3.1.0)	methods		bit64 (>= 4.0.0), bit (>= 4.0.4), curl, R.utils, xts,
+nanotime, zoo (>= 1.8-1), yaml, knitr, rmarkdown		MPL-2.0 | file LICENSE					yes	4.3.0
+datasets	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	4.3.1	base						Part of R 4.3.1						4.3.1
+DBI	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.1.3		methods, R (>= 3.0.0)			blob, covr, DBItest, dbplyr, downlit, dplyr, glue, hms,
+knitr, magrittr, RMariaDB, rmarkdown, rprojroot, RSQLite (>=
+1.1-2), testthat, xml2		LGPL (>= 2.1)					no	4.3.1
+dbplyr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.3.3		R (>= 3.1)	blob (>= 1.2.0), cli (>= 3.4.1), DBI (>= 1.0.0), dplyr (>=
+1.1.0), glue (>= 1.2.0), lifecycle (>= 1.0.3), magrittr,
+methods, pillar (>= 1.5.0), purrr (>= 1.0.1), R6 (>= 2.2.2),
+rlang (>= 1.0.6), tibble (>= 1.4.2), tidyr (>= 1.3.0),
+tidyselect (>= 1.2.0), utils, vctrs (>= 0.5.0), withr		bit64, covr, knitr, Lahman, nycflights13, odbc, RMariaDB (>=
+1.0.2), rmarkdown, RPostgres (>= 1.1.3), RPostgreSQL, RSQLite
+(>= 2.2.15), testthat (>= 3.0.2)		MIT + file LICENSE					no	4.3.1
+DelayedArray	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.26.6		R (>= 4.0.0), methods, stats4, Matrix, BiocGenerics (>=
+0.43.4), MatrixGenerics (>= 1.1.3), S4Vectors (>= 0.27.2),
+IRanges (>= 2.17.3), S4Arrays (>= 1.0.1)	stats	S4Vectors	BiocParallel, HDF5Array (>= 1.17.12), genefilter,
+SummarizedExperiment, airway, lobstr, DelayedMatrixStats,
+knitr, rmarkdown, BiocStyle, RUnit		Artistic-2.0					yes	4.3.1
+DEoptimR	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.1-3			stats			robustbase	GPL (>= 2)					no	4.3.1
+desc	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.4.3		R (>= 3.4)	cli, R6, utils		callr, covr, gh, spelling, testthat, whoami, withr		MIT + file LICENSE					no	4.3.1
+diagram	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.6.5		R (>= 2.01), shape	stats, graphics				GPL (>= 2)					no	4.3.0
+digest	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.6.33		R (>= 3.3.0)	utils		tinytest, simplermarkdown		GPL (>= 2)					yes	4.3.0
+doParallel	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.0.17		R (>= 2.14.0), foreach (>= 1.2.0), iterators (>= 1.0.0),
+parallel, utils			caret, mlbench, rpart, RUnit	compiler	GPL-2					no	4.2.3
+doRNG	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.8.6		R (>= 3.0.0), foreach, rngtools (>= 1.5)	stats, utils, iterators		doParallel, doMPI, doRedis, rbenchmark, devtools, knitr,
+rbibutils (>= 1.3), testthat, pkgmaker (>= 0.32.7), covr		GPL (>= 2)					no	4.3.1
+dplyr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.1.2		R (>= 3.5.0)	cli (>= 3.4.0), generics, glue (>= 1.3.2), lifecycle (>=
+1.0.3), magrittr (>= 1.5), methods, pillar (>= 1.9.0), R6,
+rlang (>= 1.1.0), tibble (>= 3.2.0), tidyselect (>= 1.2.0),
+utils, vctrs (>= 0.6.0)		bench, broom, callr, covr, DBI, dbplyr (>= 2.2.1), ggplot2,
+knitr, Lahman, lobstr, microbenchmark, nycflights13, purrr,
+rmarkdown, RMySQL, RPostgreSQL, RSQLite, stringi (>= 1.7.6),
+testthat (>= 3.1.5), tidyr (>= 1.3.0), withr		MIT + file LICENSE					yes	4.3.0
+dtplyr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.3.1		R (>= 3.3)	cli (>= 3.4.0), data.table (>= 1.13.0), dplyr (>= 1.1.0),
+glue, lifecycle, rlang (>= 1.0.4), tibble, tidyselect (>=
+1.2.0), vctrs (>= 0.4.1)		bench, covr, knitr, rmarkdown, testthat (>= 3.1.2), tidyr (>=
+1.1.0), waldo (>= 0.3.1)		MIT + file LICENSE					no	4.3.1
+e1071	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.7-13			graphics, grDevices, class, stats, methods, utils, proxy		cluster, mlbench, nnet, randomForest, rpart, SparseM, xtable,
+Matrix, MASS, slam		GPL-2 | GPL-3					yes	4.3.0
+ellipsis	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.3.2		R (>= 3.2)	rlang (>= 0.3.0)		covr, testthat		MIT + file LICENSE					yes	4.3.0
+evaluate	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.21		R (>= 3.0.2)	methods		covr, ggplot2, lattice, rlang, testthat (>= 3.0.0), withr		MIT + file LICENSE					no	4.3.0
+fansi	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.0.4		R (>= 3.1.0)	grDevices, utils		unitizer, knitr, rmarkdown		GPL-2 | GPL-3					yes	4.3.0
+farver	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.1.1					covr, testthat (>= 3.0.0)		MIT + file LICENSE					yes	4.3.0
+fastmap	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.1.1					testthat (>= 2.1.1)		MIT + file LICENSE					yes	4.3.0
+ff	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	4.0.12		R (>= 2.10.1), bit (>= 4.0.0), utils			biglm, testthat (>= 0.11.0)		GPL-2 | GPL-3 | file LICENSE					yes	4.3.1
+flock	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.7			Rcpp (>= 0.11.3), methods	Rcpp			Apache License 2.0					yes	4.3.1
+fontawesome	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.5.1		R (>= 3.3.0)	rlang (>= 1.0.6), htmltools (>= 0.5.1.1)		covr, dplyr (>= 1.0.8), knitr (>= 1.31), testthat (>= 3.0.0),
+rsvg		MIT + file LICENSE					no	4.3.0
+forcats	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.0.0		R (>= 3.4)	cli (>= 3.4.0), glue, lifecycle, magrittr, rlang (>= 1.0.0),
+tibble		covr, dplyr, ggplot2, knitr, readr, rmarkdown, testthat (>=
+3.0.0), withr		MIT + file LICENSE					no	4.3.1
+foreach	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.5.2		R (>= 2.5.0)	codetools, utils, iterators		randomForest, doMC, doParallel, testthat, knitr, rmarkdown		Apache License (== 2.0)					no	4.3.0
+foreign	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.8-84	recommended	R (>= 4.0.0)	methods, utils, stats				GPL (>= 2)					yes	4.3.0
+formatR	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.14		R (>= 3.2.3)			rstudioapi, shiny, testit, rmarkdown, knitr		GPL					no	4.3.1
+fs	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.6.3		R (>= 3.4)	methods		covr, crayon, knitr, pillar (>= 1.0.0), rmarkdown, spelling,
+testthat (>= 3.0.0), tibble (>= 1.1.0), vctrs (>= 0.3.0), withr		MIT + file LICENSE					yes	4.3.1
+futile.logger	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.4.3		R (>= 3.0.0)	utils, lambda.r (>= 1.1.0), futile.options		testthat, jsonlite		LGPL-3					no	4.3.1
+futile.options	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.0.1		R (>= 2.8.0)					LGPL-3					no	4.3.1
+future	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.33.0			digest, globals (>= 0.16.1), listenv (>= 0.8.0), parallel,
+parallelly (>= 1.34.0), utils		methods, RhpcBLASctl, R.rsp, markdown		LGPL (>= 2.1)					no	4.3.0
+future.apply	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.11.0		R (>= 3.2.0), future (>= 1.28.0)	globals (>= 0.16.1), parallel, utils		datasets, stats, tools, listenv (>= 0.8.0), R.rsp, markdown		GPL (>= 2)					no	4.3.0
+gargle	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.5.2		R (>= 3.6)	cli (>= 3.0.1), fs (>= 1.3.1), glue (>= 1.3.0), httr (>=
+1.4.5), jsonlite, lifecycle, openssl, rappdirs, rlang (>=
+1.1.0), stats, utils, withr		aws.ec2metadata, aws.signature, covr, httpuv, knitr,
+rmarkdown, sodium, spelling, testthat (>= 3.1.7)		MIT + file LICENSE					no	4.3.1
+generics	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.1.3		R (>= 3.2)	methods		covr, pkgload, testthat (>= 3.0.0), tibble, withr		MIT + file LICENSE					no	4.3.0
+GenomeInfoDb	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.36.1		R (>= 4.0.0), methods, BiocGenerics (>= 0.37.0), S4Vectors (>=
+0.25.12), IRanges (>= 2.13.12)	stats, stats4, utils, RCurl, GenomeInfoDbData		GenomicRanges, Rsamtools, GenomicAlignments, GenomicFeatures,
+TxDb.Dmelanogaster.UCSC.dm3.ensGene, BSgenome,
+BSgenome.Scerevisiae.UCSC.sacCer2, BSgenome.Celegans.UCSC.ce2,
+BSgenome.Hsapiens.NCBI.GRCh38, RUnit, BiocStyle, knitr		Artistic-2.0					no	4.3.1
+GenomeInfoDbData	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.2.10		R (>= 3.5.0)					Artistic-2.0					no	4.3.1
+GenomicAlignments	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.36.0		R (>= 4.0.0), methods, BiocGenerics (>= 0.37.0), S4Vectors (>=
+0.27.12), IRanges (>= 2.23.9), GenomeInfoDb (>= 1.13.1),
+GenomicRanges (>= 1.41.5), SummarizedExperiment (>= 1.9.13),
+Biostrings (>= 2.55.7), Rsamtools (>= 1.31.2)	methods, utils, stats, BiocGenerics, S4Vectors, IRanges,
+GenomicRanges, Biostrings, Rsamtools, BiocParallel	S4Vectors, IRanges	ShortRead, rtracklayer, BSgenome, GenomicFeatures,
+RNAseqData.HNRNPC.bam.chr14, pasillaBamSubset,
+TxDb.Hsapiens.UCSC.hg19.knownGene,
+TxDb.Dmelanogaster.UCSC.dm3.ensGene,
+BSgenome.Dmelanogaster.UCSC.dm3, BSgenome.Hsapiens.UCSC.hg19,
+DESeq2, edgeR, RUnit, BiocStyle		Artistic-2.0					yes	4.3.1
+GenomicRanges	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.52.0		R (>= 4.0.0), methods, stats4, BiocGenerics (>= 0.37.0),
+S4Vectors (>= 0.27.12), IRanges (>= 2.31.2), GenomeInfoDb (>=
+1.15.2)	utils, stats, XVector (>= 0.29.2)	S4Vectors, IRanges	Matrix, Biobase, AnnotationDbi, annotate, Biostrings (>=
+2.25.3), SummarizedExperiment (>= 0.1.5), Rsamtools (>=
+1.13.53), GenomicAlignments, rtracklayer, BSgenome,
+GenomicFeatures, Gviz, VariantAnnotation, AnnotationHub,
+DESeq2, DEXSeq, edgeR, KEGGgraph, RNAseqData.HNRNPC.bam.chr14,
+pasillaBamSubset, KEGGREST, hgu95av2.db, hgu95av2probe,
+BSgenome.Scerevisiae.UCSC.sacCer2, BSgenome.Hsapiens.UCSC.hg19,
+BSgenome.Mmusculus.UCSC.mm10,
+TxDb.Athaliana.BioMart.plantsmart22,
+TxDb.Dmelanogaster.UCSC.dm3.ensGene,
+TxDb.Hsapiens.UCSC.hg19.knownGene,
+TxDb.Mmusculus.UCSC.mm10.knownGene, RUnit, digest, knitr,
+rmarkdown, BiocStyle		Artistic-2.0					yes	4.3.1
+getopt	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.20.3			stats		covr, testthat		GPL (>= 2)					no	4.3.1
+ggplot2	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	3.4.4		R (>= 3.3)	cli, glue, grDevices, grid, gtable (>= 0.1.1), isoband,
+lifecycle (> 1.0.1), MASS, mgcv, rlang (>= 1.1.0), scales (>=
+1.2.0), stats, tibble, vctrs (>= 0.5.0), withr (>= 2.5.0)		covr, dplyr, ggplot2movies, hexbin, Hmisc, knitr, lattice,
+mapproj, maps, multcomp, munsell, nlme, profvis, quantreg,
+ragg, RColorBrewer, rmarkdown, rpart, sf (>= 0.7-3), svglite
+(>= 1.2.0.9001), testthat (>= 3.1.2), vdiffr (>= 1.0.0), xml2	sp	MIT + file LICENSE					no	4.3.1
+gistr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.9.0			jsonlite, crul, httr, magrittr, assertthat, knitr, rmarkdown,
+dplyr		git2r, testthat		MIT + file LICENSE					no	4.3.0
+glmnet	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	4.1-7		R (>= 3.6.0), Matrix (>= 1.0-6)	methods, utils, foreach, shape, survival, Rcpp	RcppEigen, Rcpp	knitr, lars, testthat, xfun, rmarkdown		GPL-2					yes	4.3.0
+globals	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.16.2		R (>= 3.1.2)	codetools				LGPL (>= 2.1)					no	4.3.0
+glue	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.6.2		R (>= 3.4)	methods		covr, crayon, DBI, dplyr, forcats, ggplot2, knitr, magrittr,
+microbenchmark, R.utils, rmarkdown, rprintf, RSQLite, stringr,
+testthat (>= 3.0.0), vctrs (>= 0.3.0), waldo (>= 0.3.0), withr		MIT + file LICENSE					yes	4.3.0
+googledrive	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.1.1		R (>= 3.6)	cli (>= 3.0.0), gargle (>= 1.5.0), glue (>= 1.4.2), httr,
+jsonlite, lifecycle, magrittr, pillar (>= 1.9.0), purrr (>=
+1.0.1), rlang (>= 1.0.2), tibble (>= 2.0.0), utils, uuid, vctrs
+(>= 0.3.0), withr		curl, dplyr (>= 1.0.0), knitr, mockr, rmarkdown, spelling,
+testthat (>= 3.1.3)		MIT + file LICENSE					no	4.3.1
+googlesheets4	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.1.1		R (>= 3.6)	cellranger, cli (>= 3.0.0), curl, gargle (>= 1.5.0), glue (>=
+1.3.0), googledrive (>= 2.1.0), httr, ids, lifecycle, magrittr,
+methods, purrr, rematch2, rlang (>= 1.0.2), tibble (>= 2.1.1),
+utils, vctrs (>= 0.2.3), withr		readr, rmarkdown, spelling, testthat (>= 3.1.7)		MIT + file LICENSE					no	4.3.1
+gower	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.0.1					tinytest (>= 0.9.3),		GPL-3					yes	4.3.0
+graphics	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	4.3.1	base		grDevices				Part of R 4.3.1					yes	4.3.1
+grDevices	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	4.3.1	base				KernSmooth		Part of R 4.3.1					yes	4.3.1
+grid	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	4.3.1	base		grDevices, utils				Part of R 4.3.1					yes	4.3.1
+gtable	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.3.4		R (>= 3.5)	cli, glue, grid, lifecycle, rlang (>= 1.1.0)		covr, ggplot2, knitr, profvis, rmarkdown, testthat (>= 3.0.0)		MIT + file LICENSE					no	4.3.1
+hardhat	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.3.0		R (>= 3.5.0)	cli (>= 3.6.0), glue (>= 1.6.2), rlang (>= 1.1.0), tibble (>=
+3.2.1), vctrs (>= 0.6.0)		covr, crayon, devtools, knitr, Matrix, modeldata (>= 0.0.2),
+recipes (>= 1.0.5), rmarkdown (>= 2.3), roxygen2, testthat (>=
+3.0.0), usethis (>= 2.1.5)		MIT + file LICENSE					no	4.3.0
+haven	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.5.3		R (>= 3.6)	cli (>= 3.0.0), forcats (>= 0.2.0), hms, lifecycle, methods,
+readr (>= 0.1.0), rlang (>= 0.4.0), tibble, tidyselect, vctrs
+(>= 0.3.0)	cpp11	covr, crayon, fs, knitr, pillar (>= 1.4.0), rmarkdown,
+testthat (>= 3.0.0), utf8		MIT + file LICENSE					yes	4.3.1
+hexbin	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.28.3		R (>= 2.0.1), methods	lattice, grid, graphics, grDevices, stats, utils		marray, affy, Biobase, limma, knitr		GPL-2					yes	4.3.0
+highr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.10		R (>= 3.3.0)	xfun (>= 0.18)		knitr, markdown, testit		GPL					no	4.3.0
+hms	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.1.3			lifecycle, methods, pkgconfig, rlang (>= 1.0.2), vctrs (>=
+0.3.8)		crayon, lubridate, pillar (>= 1.1.0), testthat (>= 3.0.0)		MIT + file LICENSE					no	4.3.1
+htmltools	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.5.5		R (>= 2.14.1)	utils, digest, grDevices, base64enc, rlang (>= 0.4.10),
+fastmap (>= 1.1.0), ellipsis		markdown, testthat, withr, Cairo, ragg, shiny	knitr	GPL (>= 2)					yes	4.3.0
+htmlwidgets	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.6.2			grDevices, htmltools (>= 0.5.4), jsonlite (>= 0.9.16), yaml,
+knitr (>= 1.8), rmarkdown		testthat	shiny (>= 1.1)	MIT + file LICENSE					no	4.3.0
+httpcode	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.3.0					testthat		MIT + file LICENSE					no	4.3.0
+httpgd	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.0.1		R (>= 3.2.0)	unigd	unigd, cpp11 (>= 0.2.4), AsioHeaders (>= 1.22.1)	testthat, xml2 (>= 1.0.0), knitr, rmarkdown, covr, future,
+httr, jsonlite		GPL (>= 2)					yes	4.3.1
+httpuv	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.6.11		R (>= 2.15.1)	Rcpp (>= 1.0.7), utils, R6, promises, later (>= 0.8.0)	Rcpp, later	testthat, callr, curl, websocket		GPL (>= 2) | file LICENSE					yes	4.3.0
+httr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.4.6		R (>= 3.5)	curl (>= 3.0.0), jsonlite, mime, openssl (>= 0.8), R6		covr, httpuv, jpeg, knitr, png, readr, rmarkdown, testthat
+(>= 0.8.0), xml2		MIT + file LICENSE					no	4.3.0
+ids	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.0.1			openssl, uuid		knitr, rcorpora, rmarkdown, testthat		MIT + file LICENSE					no	4.3.1
+ipred	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.9-14		R (>= 2.10)	rpart (>= 3.1-8), MASS, survival, nnet, class, prodlim		mvtnorm, mlbench, TH.data, randomForest, party		GPL (>= 2)					yes	4.3.0
+IRanges	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.34.1		R (>= 4.0.0), methods, utils, stats, BiocGenerics (>= 0.39.2),
+S4Vectors (>= 0.33.3)	stats4	S4Vectors	XVector, GenomicRanges, Rsamtools, GenomicAlignments,
+GenomicFeatures, BSgenome.Celegans.UCSC.ce2, pasillaBamSubset,
+RUnit, BiocStyle		Artistic-2.0					yes	4.3.1
+IRdisplay	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.1		R (>= 3.0.1)	methods,
+repr		testthat,
+withr		MIT + file LICENSE						4.3.0
+IRkernel	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.3.2		R (>= 3.2.0)	repr (>= 0.4.99), methods, evaluate (>= 0.10), IRdisplay (>=
+0.3.0.9999), pbdZMQ (>= 0.2-1), crayon, jsonlite (>= 0.9.6),
+uuid, digest		testthat, roxygen2		MIT + file LICENSE					no	4.3.0
+irlba	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.3.5.1		R (>= 3.6.2), Matrix	stats, methods	Matrix			GPL-3					yes	4.3.0
+isoband	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.2.7			grid, utils		covr, ggplot2, knitr, magick, microbenchmark, rmarkdown, sf,
+testthat, xml2		MIT + file LICENSE					yes	4.3.0
+iterators	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.0.14		R (>= 2.5.0), utils			RUnit, foreach		Apache License (== 2.0)					no	4.3.0
+jquerylib	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.1.4			htmltools		testthat		MIT + file LICENSE					no	4.3.0
+jsonlite	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.8.7		methods			httr, vctrs, testthat, knitr, rmarkdown, R.rsp, sf		MIT + file LICENSE					yes	4.3.0
+KernSmooth	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.23-22	recommended	R (>= 2.5.0), stats			MASS, carData		Unlimited					yes	4.3.0
+knitr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.43		R (>= 3.3.0)	evaluate (>= 0.15), highr, methods, tools, xfun (>= 0.39),
+yaml (>= 2.1.19)		bslib, codetools, DBI (>= 0.4-1), digest, formatR, gifski,
+gridSVG, htmlwidgets (>= 0.7), curl, jpeg, JuliaCall (>=
+0.11.1), magick, markdown (>= 1.3), png, ragg, reticulate (>=
+1.4), rgl (>= 0.95.1201), rlang, rmarkdown, sass, showtext,
+styler (>= 1.2.0), targets (>= 0.6.0), testit, tibble,
+tikzDevice (>= 0.10), tinytex, webshot, rstudioapi, xml2 (>=
+1.2.0)		GPL					no	4.3.0
+labeling	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.4.3			stats, graphics				MIT + file LICENSE | Unlimited					no	4.3.1
+lambda.r	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.2.4		R (>= 3.0.0)	formatR		testit		LGPL-3					no	4.3.1
+later	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.3.1			Rcpp (>= 0.12.9), rlang	Rcpp	knitr, rmarkdown, testthat (>= 2.1.0)		MIT + file LICENSE					yes	4.3.0
+lattice	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.21-8	recommended	R (>= 4.0.0)	grid, grDevices, graphics, stats, utils		KernSmooth, MASS, latticeExtra, colorspace	chron	GPL (>= 2)					yes	4.3.0
+lava	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.7.2.1		R (>= 3.0)	future.apply, grDevices, graphics, methods, numDeriv,
+progressr, stats, survival, SQUAREM, utils		KernSmooth, Matrix, Rgraphviz, data.table, ellipse, fields,
+geepack, graph, knitr, bookdown, rmarkdown, igraph (>= 0.6),
+lavaSearch2, lme4, mets (>= 1.1), nlme, optimx, polycor,
+quantreg, rgl, R.rsp (>= 0.40), targeted (>= 0.2), testthat (>=
+0.11), visNetwork, zoo		GPL-3					no	4.3.0
+lazyeval	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.2.2		R (>= 3.1.0)			knitr, rmarkdown (>= 0.2.65), testthat, covr		GPL-3					yes	4.3.0
+lifecycle	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.0.4		R (>= 3.6)	cli (>= 3.4.0), glue, rlang (>= 1.1.0)		covr, crayon, knitr, lintr, rmarkdown, testthat (>= 3.0.1),
+tibble, tidyverse, tools, vctrs, withr		MIT + file LICENSE					no	4.3.1
+listenv	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.9.0		R (>= 3.1.2)			R.utils, R.rsp, markdown		LGPL (>= 2.1)					no	4.3.0
+lobstr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.1.2		R (>= 3.2)	crayon, methods, prettyunits, rlang (>= 1.0.0)	cpp11 (>= 0.4.2)	covr, pillar, pkgdown, testthat (>= 3.0.0)		MIT + file LICENSE					yes	4.3.0
+lubridate	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.9.2		methods, R (>= 3.2)	generics, timechange (>= 0.1.1)		covr, knitr, rmarkdown, testthat (>= 2.1.0), vctrs (>= 0.5.0)	chron, data.table, timeDate, tis, zoo	GPL (>= 2)					yes	4.3.0
+magrittr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.0.3		R (>= 3.4.0)			covr, knitr, rlang, rmarkdown, testthat		MIT + file LICENSE					yes	4.3.0
+maps	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	3.4.1		R (>= 3.5.0)	graphics, utils		mapproj (>= 1.2-0), mapdata (>= 2.3.0), sp, rnaturalearth		GPL-2					yes	4.3.0
+MASS	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	7.3-60	recommended	R (>= 4.0), grDevices, graphics, stats, utils	methods		lattice, nlme, nnet, survival		GPL-2 | GPL-3					yes	4.3.0
+Matrix	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.6-0	recommended	R (>= 3.5.0), methods	grDevices, graphics, grid, lattice, stats, utils		MASS, datasets, sfsmisc	SparseM, graph	GPL (>= 2) | file LICENCE					yes	4.3.0
+MatrixGenerics	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.12.2		matrixStats (>= 1.0.0)	methods		Matrix, sparseMatrixStats, SparseArray, DelayedArray,
+DelayedMatrixStats, SummarizedExperiment, testthat (>= 2.1.0)		Artistic-2.0					no	4.3.1
+matrixStats	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.2.0		R (>= 2.12.0)			base64enc, ggplot2, knitr, markdown, microbenchmark,
+R.devices, R.rsp		Artistic-2.0					yes	4.3.2
+memoise	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.0.1			rlang (>= 0.4.10), cachem		digest, aws.s3, covr, googleAuthR, googleCloudStorageR, httr,
+testthat		MIT + file LICENSE					no	4.3.0
+methods	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	4.3.1	base		utils, stats		codetools		Part of R 4.3.1					yes	4.3.1
+mgcv	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.9-0	recommended	R (>= 3.6.0), nlme (>= 3.1-64)	methods, stats, graphics, Matrix, splines, utils		parallel, survival, MASS		GPL (>= 2)					yes	4.3.0
+mime	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.12			tools				GPL					yes	4.3.0
+mixsqp	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.3-54		R (>= 3.3.0)	utils, stats, irlba, Rcpp (>= 0.12.15)	Rcpp, RcppArmadillo	testthat, knitr, rmarkdown		MIT + file LICENSE					yes	4.3.2
+mlbench	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.1-3.1		R (>= 2.10)			lattice		GPL-2					yes	4.3.1
+ModelMetrics	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.2.2.2		R (>= 3.2.2)	Rcpp, data.table	Rcpp	testthat		GPL (>= 2)					yes	4.3.0
+modelr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.1.11		R (>= 3.2)	broom, magrittr, purrr (>= 0.2.2), rlang (>= 1.0.6), tibble,
+tidyr (>= 0.8.0), tidyselect, vctrs		compiler, covr, ggplot2, testthat (>= 3.0.0)		GPL-3					no	4.3.1
+munsell	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.5.0			colorspace, methods		ggplot2, testthat		MIT + file LICENSE					no	4.3.0
+nabor	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.5.0		R (>= 3.0.2)	Rcpp (>= 0.11.2), methods	Rcpp, RcppEigen (>= 0.3.2.2.0), BH (>= 1.54.0-4)	testthat, RANN		BSD_3_clause + file LICENSE					yes	4.3.1
+nlme	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	3.1-162	recommended	R (>= 3.5.0)	graphics, stats, utils, lattice		Hmisc, MASS, SASmixed		GPL (>= 2)					yes	4.3.0
+nnet	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	7.3-19	recommended	R (>= 3.0.0), stats, utils			MASS		GPL-2 | GPL-3					yes	4.3.0
+numDeriv	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2016.8-1.1		R (>= 2.11.1)					GPL-2					no	4.3.0
+openssl	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.1.0			askpass		curl, testthat (>= 2.1.0), digest, knitr, rmarkdown,
+jsonlite, jose, sodium		MIT + file LICENSE					yes	4.3.1
+optparse	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.7.3		R (>= 3.6.0)	methods, getopt (>= 1.20.2)		knitr (>= 1.15.19), stringr, testthat		GPL (>= 2)					no	4.3.1
+parallel	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	4.3.1	base		tools, compiler		methods	snow, Rmpi	Part of R 4.3.1					yes	4.3.1
+parallelly	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.36.0			parallel, tools, utils				LGPL (>= 2.1)					no	4.3.0
+pbdZMQ	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.3-9		R (>= 3.5.0)					GPL-3					yes	4.3.0
+philentropy	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.8.0		R (>= 3.1.2)	Rcpp, KernSmooth, poorman	Rcpp	testthat, knitr, rmarkdown, microbenchmark		GPL-2					yes	4.3.1
+pillar	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.9.0			cli (>= 2.3.0), fansi, glue, lifecycle, rlang (>= 1.0.2), utf8
+(>= 1.1.0), utils, vctrs (>= 0.5.0)		bit64, DBI, debugme, DiagrammeR, dplyr, formattable, ggplot2,
+knitr, lubridate, nanotime, nycflights13, palmerpenguins,
+rmarkdown, scales, stringi, survival, testthat (>= 3.1.1),
+tibble, units (>= 0.7.2), vdiffr, withr		MIT + file LICENSE					no	4.3.0
+pkgbuild	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.4.3		R (>= 3.5)	callr (>= 3.2.0), cli (>= 3.4.0), desc, processx, R6		covr, cpp11, knitr, mockery, Rcpp, rmarkdown, testthat (>=
+3.0.0), withr (>= 2.3.0)		MIT + file LICENSE					no	4.3.1
+pkgconfig	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.0.3			utils		covr, testthat, disposables (>= 1.0.3)		MIT + file LICENSE					no	4.3.0
+pkgload	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.3.4		R (>= 3.4.0)	cli (>= 3.3.0), crayon, desc, fs, glue, methods, pkgbuild,
+rlang (>= 1.1.1), rprojroot, utils, withr (>= 2.4.3)		bitops, covr, mathjaxr, mockr, pak, Rcpp, remotes,
+rstudioapi, testthat (>= 3.1.0)		GPL-3					no	4.3.1
+plyr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.8.8		R (>= 3.1.0)	Rcpp (>= 0.11.0)	Rcpp	abind, covr, doParallel, foreach, iterators, itertools,
+tcltk, testthat		MIT + file LICENSE					yes	4.3.0
+plyranges	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.20.0		R (>= 3.5), BiocGenerics, IRanges (>= 2.12.0), GenomicRanges
+(>= 1.28.4)	methods, dplyr, rlang (>= 0.2.0), magrittr, tidyselect (>=
+1.0.0), rtracklayer, GenomicAlignments, GenomeInfoDb,
+Rsamtools, S4Vectors (>= 0.23.10), utils		knitr, BiocStyle, rmarkdown, testthat (>= 2.1.0),
+HelloRanges, HelloRangesData, BSgenome.Hsapiens.UCSC.hg19,
+pasillaBamSubset, covr, ggplot2		Artistic-2.0					no	4.3.1
+poorman	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.2.7		R (>= 3.3)			knitr, rmarkdown, roxygen2, tinytest		MIT + file LICENSE					no	4.3.1
+praise	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.0.0					testthat		MIT + file LICENSE					no	4.3.1
+prettyunits	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.1.1					codetools, covr, testthat		MIT + file LICENSE					no	4.3.0
+pROC	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.18.4		R (>= 2.14)	methods, plyr, Rcpp (>= 0.11.1)	Rcpp	microbenchmark, tcltk, MASS, logcondens, doParallel,
+testthat, vdiffr, ggplot2, rlang		GPL (>= 3)					yes	4.3.0
+processx	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	3.8.2		R (>= 3.4.0)	ps (>= 1.2.0), R6, utils		callr (>= 3.7.3), cli (>= 3.3.0), codetools, covr, curl,
+debugme, parallel, rlang (>= 1.0.2), testthat (>= 3.0.0),
+webfakes, withr		MIT + file LICENSE					yes	4.3.1
+prodlim	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2023.03.31		R (>= 2.9.0)	Rcpp (>= 0.11.5), stats, data.table, grDevices, graphics,
+diagram, survival, KernSmooth, lava	Rcpp			GPL (>= 2)					yes	4.3.0
+progress	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.2.2			hms, prettyunits, R6, crayon		Rcpp, testthat, withr		MIT + file LICENSE					no	4.3.1
+progressr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.13.0		R (>= 3.5.0)	digest, utils		graphics, tcltk, beepr, cli, crayon, pbmcapply, progress,
+purrr, foreach, plyr, doFuture, future, future.apply, furrr,
+RPushbullet, rstudioapi, shiny, commonmark, base64enc, tools		GPL (>= 3)					no	4.3.0
+promises	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.2.0.1			R6, Rcpp, later, rlang, stats, magrittr	later, Rcpp	testthat, future (>= 1.21.0), fastmap (>= 1.1.0), purrr,
+knitr, rmarkdown, vembedr, spelling		MIT + file LICENSE					yes	4.3.0
+proxy	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.4-27		R (>= 3.4.0)	stats, utils		cba		GPL-2					yes	4.3.0
+pryr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.1.6		R (>= 3.1.0)	codetools, lobstr, methods, Rcpp (>= 0.11.0), stringr	Rcpp	testthat (>= 0.8.0)		GPL-2					yes	4.3.0
+ps	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.7.5		R (>= 3.4)	utils		callr, covr, curl, pillar, pingr, processx (>= 3.1.0), R6,
+rlang, testthat (>= 3.0.0), webfakes		MIT + file LICENSE					yes	4.3.1
+purrr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.0.1		R (>= 3.4.0)	cli (>= 3.4.0), lifecycle (>= 1.0.3), magrittr (>= 1.5.0),
+rlang (>= 0.4.10), vctrs (>= 0.5.0)	cli	covr, dplyr (>= 0.7.8), httr, knitr, lubridate, rmarkdown,
+testthat (>= 3.0.0), tibble, tidyselect		MIT + file LICENSE					yes	4.3.0
+quantmod	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.4.24		R (>= 3.2.0), xts(>= 0.9-0), zoo, TTR(>= 0.2), methods	curl, jsonlite(>= 1.1)		DBI,RMySQL,RSQLite,timeSeries,xml2,downloader		GPL-3					no	4.3.1
+qvalue	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.34.0		R(>= 2.10)	splines, ggplot2, grid, reshape2		knitr		LGPL					no	4.3.2
+R.methodsS3	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.8.2		R (>= 2.13.0)	utils		codetools		LGPL (>= 2.1)					no	4.2.3
+R.oo	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.25.0		R (>= 2.13.0), R.methodsS3 (>= 1.8.1)	methods, utils		tools		LGPL (>= 2.1)					no	4.2.3
+R.utils	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.12.2		R (>= 2.14.0), R.oo	methods, utils, tools, R.methodsS3		datasets, digest (>= 0.6.10)		LGPL (>= 2.1)					no	4.2.3
+R6	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.5.1		R (>= 3.0)			testthat, pryr		MIT + file LICENSE					no	4.3.0
+ragg	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.2.5			systemfonts (>= 1.0.3), textshaping (>= 0.3.0)	systemfonts, textshaping	covr, graphics, grid, testthat		MIT + file LICENSE					yes	4.3.1
+randomForest	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	4.7-1.1		R (>= 4.1.0), stats			RColorBrewer, MASS		GPL (>= 2)					yes	4.3.0
+rappdirs	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.3.3		R (>= 3.2)			roxygen2, testthat (>= 3.0.0), covr, withr		MIT + file LICENSE					yes	4.3.0
+rbokeh	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.5.2			htmlwidgets (>= 0.5), maps, methods, jsonlite, digest, hexbin,
+lazyeval, pryr, magrittr, scales, gistr		testthat, data.table, lattice, lintr, roxygen2 (>= 5.0.0),
+latticeExtra, knitr, rmarkdown, markdown	shiny (>= 0.12)	MIT + file LICENSE					no	4.3.0
+RColorBrewer	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.1-3		R (>= 2.0.0)					Apache License 2.0					no	4.3.0
+Rcpp	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.0.11			methods, utils		tinytest, inline, rbenchmark, pkgKitten (>= 0.1.2)		GPL (>= 2)					yes	4.3.0
+RcppArmadillo	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.12.6.4.0		R (>= 3.3.0)	Rcpp (>= 0.11.0), stats, utils, methods	Rcpp	tinytest, Matrix (>= 1.3.0), pkgKitten, reticulate, slam		GPL (>= 2)					yes	4.3.1
+RcppEigen	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.3.3.9.3		R (>= 3.6.0)	Matrix (>= 1.1-0), Rcpp (>= 0.11.0), stats, utils	Rcpp	inline, tinytest, pkgKitten, microbenchmark		GPL (>= 2) | file LICENSE					yes	4.3.0
+RcppGSL	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.3.13			Rcpp (>= 0.11.0), stats	Rcpp	tinytest		GPL (>= 2)					yes	4.3.1
+RcppParallel	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	5.1.7		R (>= 3.0.2)			Rcpp, RUnit, knitr, rmarkdown		GPL (>= 3)					yes	4.3.1
+RcppZiggurat	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.1.6		R (>= 3.0.0)	Rcpp, parallel, graphics, stats, utils	Rcpp, RcppGSL	rbenchmark, microbenchmark, lattice, knitr, rmarkdown, pinp		GPL (>= 2)					yes	4.3.1
+RCurl	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.98-1.12		R (>= 3.4.0), methods	bitops		XML		BSD_3_clause + file LICENSE					yes	4.2.3
+readr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.1.4		R (>= 3.5)	cli (>= 3.2.0), clipr, crayon, hms (>= 0.4.1), lifecycle (>=
+0.2.0), methods, R6, rlang, tibble, utils, vroom (>= 1.6.0)	cpp11, tzdb (>= 0.1.1)	covr, curl, datasets, knitr, rmarkdown, spelling, stringi,
+testthat (>= 3.1.2), tzdb (>= 0.1.1), waldo, withr, xml2		MIT + file LICENSE					yes	4.3.1
+readxl	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.4.3		R (>= 3.6)	cellranger, tibble (>= 2.0.1), utils	cpp11 (>= 0.4.0), progress	covr, knitr, rmarkdown, testthat (>= 3.1.6), withr		MIT + file LICENSE					yes	4.3.1
+recipes	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.0.6		dplyr (>= 1.1.0), R (>= 3.4)	cli, clock (>= 0.6.1), ellipsis, generics (>= 0.1.2), glue,
+gower, hardhat (>= 1.3.0), ipred (>= 0.9-12), lifecycle (>=
+1.0.3), lubridate (>= 1.8.0), magrittr, Matrix, purrr (>=
+1.0.0), rlang (>= 1.0.3), stats, tibble, tidyr (>= 1.0.0),
+tidyselect (>= 1.2.0), timeDate, utils, vctrs (>= 0.5.0), withr		covr, ddalpha, dials (>= 1.2.0), ggplot2, igraph, kernlab,
+knitr, modeldata (>= 0.1.1), parsnip (>= 0.1.7), RANN,
+RcppRoll, rmarkdown, rpart, rsample, RSpectra, splines2,
+testthat (>= 3.0.0), workflows, xml2		MIT + file LICENSE					no	4.3.0
+rematch	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.0.1					covr, testthat		MIT + file LICENSE					no	4.3.1
+rematch2	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.1.2			tibble		covr, testthat		MIT + file LICENSE					no	4.3.1
+remotes	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.4.2.1		R (>= 3.0.0)	methods, stats, tools, utils		brew, callr, codetools, curl, covr, git2r (>= 0.23.0), knitr,
+mockery, pkgbuild (>= 1.0.1), pingr, rmarkdown, rprojroot,
+testthat, webfakes, withr		MIT + file LICENSE					no	4.3.1
+repr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.1.6		R (>= 3.0.1)	utils, grDevices, htmltools, jsonlite, pillar (>= 1.4.0),
+base64enc		methods, highr, Cairo, stringr, testthat (>= 3.0.0), leaflet	data.table, tibble, htmlwidgets, vegalite, plotly, geojsonio	GPL (>= 3)					no	4.3.0
+reprex	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.0.2		R (>= 3.4)	callr (>= 3.6.0), cli (>= 3.2.0), clipr (>= 0.4.0), fs, glue,
+knitr (>= 1.23), lifecycle, rlang (>= 1.0.0), rmarkdown,
+rstudioapi, utils, withr (>= 2.3.0)		covr, fortunes, miniUI, mockr, rprojroot, sessioninfo, shiny,
+spelling, styler (>= 1.2.0), testthat (>= 3.0.2)		MIT + file LICENSE					no	4.3.1
+reshape	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.8.9		R (>= 2.6.1)	plyr				MIT + file LICENSE					yes	4.3.0
+reshape2	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.4.4		R (>= 3.1)	plyr (>= 1.8.1), Rcpp, stringr	Rcpp	covr, lattice, testthat (>= 0.8.0)		MIT + file LICENSE					yes	4.3.0
+restfulr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.0.15		R (>= 3.4.0), methods	XML, RCurl, rjson, S4Vectors (>= 0.13.15), yaml		getPass, rsolr, RUnit		Artistic-2.0					yes	4.3.1
+Rfast	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.1.0		R (>= 3.5.0), Rcpp (>= 0.12.3), RcppZiggurat, RcppParallel		Rcpp (>= 0.12.3), RcppArmadillo, RcppParallel	philentropy		GPL (>= 2.0)					yes	4.3.1
+RhpcBLASctl	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.23-42							AGPL-3					yes	4.3.1
+Rhtslib	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.2.0			zlibbioc	zlibbioc	knitr, rmarkdown, BiocStyle		LGPL (>= 2)					yes	4.3.1
+rjson	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.2.21		R (>= 4.0.0)					GPL-2					yes	4.3.1
+rlang	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.1.1		R (>= 3.5.0)	utils		cli (>= 3.1.0), covr, crayon, fs, glue, knitr, magrittr,
+methods, pillar, rmarkdown, stats, testthat (>= 3.0.0), tibble,
+usethis, vctrs (>= 0.2.3), withr	winch	MIT + file LICENSE					yes	4.3.0
+rmarkdown	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.23		R (>= 3.0)	bslib (>= 0.2.5.1), evaluate (>= 0.13), fontawesome (>=
+0.5.0), htmltools (>= 0.5.1), jquerylib, jsonlite, knitr (>=
+1.22), methods, stringr (>= 1.2.0), tinytex (>= 0.31), tools,
+utils, xfun (>= 0.36), yaml (>= 2.1.19)		digest, dygraphs, fs, rsconnect, downlit (>= 0.4.0), katex
+(>= 1.4.0), sass (>= 0.4.0), shiny (>= 1.6.0), testthat (>=
+3.0.3), tibble, vctrs, cleanrmd, withr (>= 2.4.2)		GPL-3					no	4.3.0
+rmio	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.4.0			bigassertr, ff		testthat (>= 3.0.0)		GPL-3					no	4.3.1
+rngtools	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.5.2		R (>= 3.2.0), methods	digest, utils, stats, parallel		covr, RUnit, testthat		GPL-3					no	4.3.1
+robustbase	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.99-2		R (>= 3.5.0)	stats, graphics, utils, methods, DEoptimR		grid, MASS, lattice, boot, cluster, Matrix, robust,
+fit.models, MPV, xtable, ggplot2, GGally, RColorBrewer,
+reshape2, sfsmisc, catdata, doParallel, foreach, skewt	robustX, rrcov, matrixStats, quantreg, Hmisc	GPL (>= 2)					yes	4.3.1
+roptim	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.1.6			Rcpp (>= 0.12.14)	Rcpp, RcppArmadillo	R.rsp, testthat (>= 3.0.0)		GPL (>= 2)					yes	4.3.1
+rpart	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	4.1.19	recommended	R (>= 2.15.0), graphics, stats, grDevices			survival		GPL-2 | GPL-3					yes	4.3.0
+rprojroot	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.0.4		R (>= 3.0.0)			covr, knitr, lifecycle, mockr, rlang, rmarkdown, testthat (>=
+3.0.0), withr		MIT + file LICENSE					no	4.3.1
+Rsamtools	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.16.0		methods, GenomeInfoDb (>= 1.1.3), GenomicRanges (>= 1.31.8),
+Biostrings (>= 2.47.6), R (>= 3.5.0)	utils, BiocGenerics (>= 0.25.1), S4Vectors (>= 0.17.25),
+IRanges (>= 2.13.12), XVector (>= 0.19.7), zlibbioc, bitops,
+BiocParallel, stats	Rhtslib (>= 1.99.3), S4Vectors, IRanges, XVector, Biostrings	GenomicAlignments, ShortRead (>= 1.19.10), GenomicFeatures,
+TxDb.Dmelanogaster.UCSC.dm3.ensGene,
+TxDb.Hsapiens.UCSC.hg18.knownGene, RNAseqData.HNRNPC.bam.chr14,
+BSgenome.Hsapiens.UCSC.hg19, RUnit, BiocStyle, knitr		Artistic-2.0 | file LICENSE					yes	4.3.1
+RSpectra	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.16-1		R (>= 3.0.2)	Matrix (>= 1.1-0), Rcpp (>= 0.11.5)	Rcpp, RcppEigen (>= 0.3.3.3.0)	knitr, rmarkdown, prettydoc		MPL (>= 2)					yes	4.3.1
+rstudioapi	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.15.0					testthat, knitr, rmarkdown, clipr, covr		MIT + file LICENSE					no	4.3.1
+rtracklayer	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.60.0		R (>= 3.5.0), methods, GenomicRanges (>= 1.37.2)	XML (>= 1.98-0), BiocGenerics (>= 0.35.3), S4Vectors (>=
+0.23.18), IRanges (>= 2.13.13), XVector (>= 0.19.7),
+GenomeInfoDb (>= 1.15.2), Biostrings (>= 2.47.6), zlibbioc,
+RCurl (>= 1.4-2), Rsamtools (>= 1.31.2), GenomicAlignments (>=
+1.15.6), BiocIO, tools, restfulr (>= 0.0.13)	S4Vectors, IRanges, XVector	BSgenome (>= 1.33.4), humanStemCell, microRNA (>= 1.1.1),
+genefilter, limma, org.Hs.eg.db, hgu133plus2.db,
+GenomicFeatures, BSgenome.Hsapiens.UCSC.hg19,
+TxDb.Hsapiens.UCSC.hg19.knownGene, RUnit		Artistic-2.0 + file LICENSE					yes	4.3.1
+RUnit	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.4.32		R (>= 2.5.0), utils (>= 2.5.0), methods (>= 2.5.0), graphics
+(>= 2.5.0)			XML (>= 3.1.0)		GPL-2					no	4.2.3
+runonce	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.2.3			bigassertr, urltools		testthat (>= 2.1.0), covr		GPL-3					no	4.3.1
+rvest	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.0.3		R (>= 3.2)	glue, cli, httr (>= 0.5), lifecycle (>= 1.0.0), magrittr,
+rlang (>= 1.0.0), selectr, tibble, xml2 (>= 1.3), withr		covr, knitr, readr, repurrrsive, rmarkdown, spelling, stringi
+(>= 0.3.1), testthat (>= 3.0.2), webfakes		MIT + file LICENSE					no	4.3.1
+S4Arrays	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.0.5		R (>= 4.3.0), methods, Matrix, abind, BiocGenerics (>=
+0.45.2), S4Vectors, IRanges	stats, crayon	S4Vectors	BiocParallel, SparseArray (>= 0.0.4), DelayedArray, testthat,
+knitr, rmarkdown, BiocStyle		Artistic-2.0					yes	4.3.1
+S4Vectors	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.38.1		R (>= 4.0.0), methods, utils, stats, stats4, BiocGenerics (>=
+0.37.0)			IRanges, GenomicRanges, SummarizedExperiment, Matrix,
+DelayedArray, ShortRead, graph, data.table, RUnit, BiocStyle,
+knitr		Artistic-2.0					yes	4.3.1
+sass	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.4.7			fs (>= 1.2.4), rlang (>= 0.4.10), htmltools (>= 0.5.1), R6,
+rappdirs		testthat, knitr, rmarkdown, withr, shiny, curl		MIT + file LICENSE					yes	4.3.1
+scales	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.3.0		R (>= 3.6)	cli, farver (>= 2.0.3), glue, labeling, lifecycle, munsell (>=
+0.5), R6, RColorBrewer, rlang (>= 1.0.0), viridisLite		bit64, covr, dichromat, ggplot2, hms (>= 0.5.0), stringi,
+testthat (>= 3.0.0)		MIT + file LICENSE					yes	4.3.1
+selectr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.4-2		R (>= 3.0)	methods, stringr, R6		testthat, XML, xml2		BSD_3_clause + file LICENCE					no	4.3.1
+shape	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.4.6		R (>= 2.01)	stats, graphics, grDevices				GPL (>= 3)					no	4.3.0
+shiny	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.7.4.1		R (>= 3.0.2), methods	utils, grDevices, httpuv (>= 1.5.2), mime (>= 0.3), jsonlite
+(>= 0.9.16), xtable, fontawesome (>= 0.4.0), htmltools (>=
+0.5.4), R6 (>= 2.0), sourcetools, later (>= 1.0.0), promises
+(>= 1.1.0), tools, crayon, rlang (>= 0.4.10), fastmap (>=
+1.1.0), withr, commonmark (>= 1.7), glue (>= 1.3.2), bslib (>=
+0.3.0), cachem, ellipsis, lifecycle (>= 0.2.0)		datasets, Cairo (>= 1.5-5), testthat (>= 3.0.0), knitr (>=
+1.6), markdown, rmarkdown, ggplot2, reactlog (>= 1.0.0),
+magrittr, yaml, future, dygraphs, ragg, showtext, sass		GPL-3 | file LICENSE					no	4.3.0
+snow	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.4-4		R (>= 2.13.1), utils			rlecuyer	Rmpi	GPL					no	4.3.1
+sourcetools	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.1.7-1		R (>= 3.0.2)			testthat		MIT + file LICENSE					yes	4.3.0
+spatial	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	7.3-17	recommended	R (>= 3.0.0), graphics, stats, utils			MASS		GPL-2 | GPL-3					yes	4.3.1
+splines	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	4.3.1	base		graphics, stats		Matrix, methods		Part of R 4.3.1					yes	4.3.1
+SQUAREM	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2021.1		R (>= 3.0)			setRNG		GPL (>= 2)					no	4.3.0
+stats	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	4.3.1	base		utils, grDevices, graphics		MASS, Matrix, SuppDists, methods, stats4		Part of R 4.3.1					yes	4.3.1
+stats4	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	4.3.1	base		graphics, methods, stats				Part of R 4.3.1						4.3.1
+stringi	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.7.12		R (>= 3.1)	tools, utils, stats				file LICENSE	yes				yes	4.3.0
+stringr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.5.0		R (>= 3.3)	cli, glue (>= 1.6.1), lifecycle (>= 1.0.3), magrittr, rlang
+(>= 1.0.0), stringi (>= 1.5.3), vctrs		covr, htmltools, htmlwidgets, knitr, rmarkdown, testthat (>=
+3.0.0)		MIT + file LICENSE					no	4.3.0
+SummarizedExperiment	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.30.2		R (>= 4.0.0), methods, MatrixGenerics (>= 1.1.3),
+GenomicRanges (>= 1.41.5), Biobase	utils, stats, tools, Matrix, BiocGenerics (>= 0.37.0),
+S4Vectors (>= 0.33.7), IRanges (>= 2.23.9), GenomeInfoDb (>=
+1.13.1), S4Arrays (>= 1.0.1), DelayedArray (>= 0.26.3)		HDF5Array (>= 1.7.5), annotate, AnnotationDbi, hgu95av2.db,
+GenomicFeatures, TxDb.Hsapiens.UCSC.hg19.knownGene, jsonlite,
+rhdf5, airway (>= 1.15.1), BiocStyle, knitr, rmarkdown, RUnit,
+testthat, digest		Artistic-2.0					no	4.3.1
+survival	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	3.5-5	recommended	R (>= 3.5.0)	graphics, Matrix, methods, splines, stats, utils				LGPL (>= 2)					yes	4.3.0
+susieR	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.12.35		R (>= 3.0.0)	methods, graphics, grDevices, stats, Matrix, matrixStats,
+mixsqp, reshape, crayon, ggplot2		curl, testthat, microbenchmark, knitr, rmarkdown, Rfast,
+cowplot		BSD_3_clause + file LICENSE					no	4.3.0
+sys	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	3.4.2					unix (>= 1.4), spelling, testthat		MIT + file LICENSE					yes	4.3.0
+systemfonts	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.0.4		R (>= 3.2.0)		cpp11 (>= 0.2.1)	testthat (>= 2.1.0), covr, knitr, rmarkdown, tools		MIT + file LICENSE					yes	4.3.1
+tcltk	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	4.3.1	base		utils				Part of R 4.3.1					yes	4.3.1
+textshaping	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.3.6		R (>= 3.2.0)	systemfonts (>= 1.0.0)	cpp11 (>= 0.2.1), systemfonts (>= 1.0.0)	covr, knitr, rmarkdown		MIT + file LICENSE					yes	4.3.1
+tibble	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	3.2.1		R (>= 3.4.0)	fansi (>= 0.4.0), lifecycle (>= 1.0.0), magrittr, methods,
+pillar (>= 1.8.1), pkgconfig, rlang (>= 1.0.2), utils, vctrs
+(>= 0.4.2)		bench, bit64, blob, brio, callr, cli, covr, crayon (>=
+1.3.4), DiagrammeR, dplyr, evaluate, formattable, ggplot2,
+here, hms, htmltools, knitr, lubridate, mockr, nycflights13,
+pkgbuild, pkgload, purrr, rmarkdown, stringi, testthat (>=
+3.0.2), tidyr, withr		MIT + file LICENSE					yes	4.3.0
+tidyr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.3.0		R (>= 3.4.0)	cli (>= 3.4.1), dplyr (>= 1.0.10), glue, lifecycle (>= 1.0.3),
+magrittr, purrr (>= 1.0.1), rlang (>= 1.0.4), stringr (>=
+1.5.0), tibble (>= 2.1.1), tidyselect (>= 1.2.0), utils, vctrs
+(>= 0.5.2)	cpp11 (>= 0.4.0)	covr, data.table, knitr, readr, repurrrsive (>= 1.1.0),
+rmarkdown, testthat (>= 3.0.0)		MIT + file LICENSE					yes	4.3.0
+tidyselect	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.2.0		R (>= 3.4)	cli (>= 3.3.0), glue (>= 1.3.0), lifecycle (>= 1.0.3), rlang
+(>= 1.0.4), vctrs (>= 0.4.1), withr		covr, crayon, dplyr, knitr, magrittr, rmarkdown, stringr,
+testthat (>= 3.1.1), tibble (>= 2.1.3)		MIT + file LICENSE					no	4.3.0
+tidyverse	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.0.0		R (>= 3.3)	broom (>= 1.0.3), conflicted (>= 1.2.0), cli (>= 3.6.0),
+dbplyr (>= 2.3.0), dplyr (>= 1.1.0), dtplyr (>= 1.2.2), forcats
+(>= 1.0.0), ggplot2 (>= 3.4.1), googledrive (>= 2.0.0),
+googlesheets4 (>= 1.0.1), haven (>= 2.5.1), hms (>= 1.1.2),
+httr (>= 1.4.4), jsonlite (>= 1.8.4), lubridate (>= 1.9.2),
+magrittr (>= 2.0.3), modelr (>= 0.1.10), pillar (>= 1.8.1),
+purrr (>= 1.0.1), ragg (>= 1.2.5), readr (>= 2.1.4), readxl (>=
+1.4.2), reprex (>= 2.0.2), rlang (>= 1.0.6), rstudioapi (>=
+0.14), rvest (>= 1.0.3), stringr (>= 1.5.0), tibble (>= 3.1.8),
+tidyr (>= 1.3.0), xml2 (>= 1.3.3)		covr (>= 3.6.1), feather (>= 0.3.5), glue (>= 1.6.2), mockr
+(>= 0.2.0), knitr (>= 1.41), rmarkdown (>= 2.20), testthat (>=
+3.1.6)		MIT + file LICENSE					no	4.3.1
+timechange	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.2.0		R (>= 3.3)		cpp11 (>= 0.2.7)	testthat (>= 0.7.1.99), knitr		GPL-3					yes	4.3.0
+timeDate	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	4022.108		R (>= 3.6.0)	graphics, utils, stats, methods		RUnit		GPL (>= 2)					no	4.3.0
+tinytex	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.45			xfun (>= 0.29)		testit, rstudioapi		MIT + file LICENSE					no	4.3.0
+tools	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	4.3.1	base				codetools, methods, xml2, curl, commonmark, knitr, xfun,
+mathjaxr, V8		Part of R 4.3.1					yes	4.3.1
+triebeard	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.4.1			Rcpp	Rcpp	knitr, rmarkdown, testthat		MIT + file LICENSE					yes	4.3.0
+TTR	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.24.3			xts (>= 0.10-0), zoo, curl	xts	RUnit	quantmod	GPL (>= 2)					yes	4.3.0
+tzdb	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.4.0		R (>= 3.5.0)		cpp11 (>= 0.4.2)	covr, testthat (>= 3.0.0)		MIT + file LICENSE					yes	4.3.0
+unigd	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.1.1		R (>= 3.2.0)	systemfonts (>= 1.0.0)	cpp11 (>= 0.2.4), systemfonts	testthat (>= 3.0.0), xml2 (>= 1.0.0), fontquiver (>= 0.2.0),
+covr, knitr, rmarkdown		GPL (>= 2)					yes	4.3.1
+urltools	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.7.3		R (>= 2.10)	Rcpp, methods, triebeard	Rcpp	testthat, knitr		MIT + file LICENSE					yes	4.3.0
+utf8	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.2.3		R (>= 2.10)			cli, covr, knitr, rlang, rmarkdown, testthat (>= 3.0.0),
+withr		Apache License (== 2.0) | file LICENSE					yes	4.3.0
+utils	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	4.3.1	base				methods, xml2, commonmark, knitr		Part of R 4.3.1					yes	4.3.1
+uuid	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.1-0		R (>= 2.9.0)					MIT + file LICENSE					yes	4.3.0
+vctrs	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.6.5		R (>= 3.5.0)	cli (>= 3.4.0), glue, lifecycle (>= 1.0.3), rlang (>= 1.1.0)		bit64, covr, crayon, dplyr (>= 0.8.5), generics, knitr,
+pillar (>= 1.4.4), pkgdown (>= 2.0.1), rmarkdown, testthat (>=
+3.0.0), tibble (>= 3.1.3), waldo (>= 0.2.0), withr, xml2,
+zeallot		MIT + file LICENSE					yes	4.3.3
+viridisLite	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.4.2		R (>= 2.10)			hexbin (>= 1.27.0), ggplot2 (>= 1.0.1), testthat, covr		MIT + file LICENSE					no	4.3.0
+vroom	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.6.3		R (>= 3.4)	bit64, cli (>= 3.2.0), crayon, glue, hms, lifecycle (>=
+1.0.3), methods, rlang (>= 0.4.2), stats, tibble (>= 2.0.0),
+tidyselect, tzdb (>= 0.1.1), vctrs (>= 0.2.0), withr	cpp11 (>= 0.2.0), progress (>= 1.2.1), tzdb (>= 0.1.1)	archive, bench (>= 1.1.0), covr, curl, dplyr, forcats, fs,
+ggplot2, knitr, patchwork, prettyunits, purrr, rmarkdown,
+rstudioapi, scales, spelling, testthat (>= 2.1.0), tidyr,
+utils, waldo, xml2		MIT + file LICENSE					yes	4.3.1
+withr	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	3.0.0		R (>= 3.5.0)	graphics, grDevices,		callr, covr, DBI, knitr, lattice, methods, rlang, rmarkdown
+(>= 2.12), RSQLite, testthat (>= 3.0.0)		MIT + file LICENSE					no	4.3.1
+xfun	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.39			stats, tools		testit, parallel, codetools, rstudioapi, tinytex (>= 0.30),
+mime, markdown (>= 1.5), knitr (>= 1.42), htmltools, remotes,
+pak, rhub, renv, curl, jsonlite, magick, yaml, rmarkdown		MIT + file LICENSE					yes	4.3.0
+XML	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	3.99-0.14		R (>= 4.0.0), methods, utils			bitops, RCurl		BSD_3_clause + file LICENSE					yes	4.3.1
+xml2	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.3.5		R (>= 3.1.0)	methods		covr, curl, httr, knitr, magrittr, mockery, rmarkdown,
+testthat (>= 2.1.0)		MIT + file LICENSE					yes	4.3.1
+xtable	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.8-4		R (>= 2.10.0)	stats, utils		knitr, plm, zoo, survival		GPL (>= 2)					no	4.3.0
+xts	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.13.1		R (>= 3.6.0), zoo (>= 1.7-12)	methods	zoo	timeSeries, timeDate, tseries, chron, tinytest		GPL (>= 2)					yes	4.3.0
+XVector	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	0.40.0		R (>= 4.0.0), methods, BiocGenerics (>= 0.37.0), S4Vectors (>=
+0.27.12), IRanges (>= 2.23.9)	methods, utils, tools, zlibbioc, BiocGenerics, S4Vectors,
+IRanges	S4Vectors, IRanges	Biostrings, drosophila2probe, RUnit		Artistic-2.0					yes	4.3.1
+yaml	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	2.3.7					RUnit		BSD_3_clause + file LICENSE					yes	4.3.0
+zlibbioc	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.46.0					BiocStyle		Artistic-2.0 + file LICENSE					yes	4.3.1
+zoo	/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib/R/library	1.8-12		R (>= 3.1.0), stats	utils, graphics, grDevices, lattice (>= 0.20-27)		AER, coda, chron, ggplot2 (>= 3.0.0), mondate, scales,
+stinepack, strucchange, timeDate, timeSeries, tis, tseries, xts		GPL-2 | GPL-3					yes	4.3.0

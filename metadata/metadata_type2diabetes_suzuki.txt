@@ -1,0 +1,2 @@
+phenotype,sumstat
+t2d_suzuki,type_2_diabetes.suzuki.gwas_sumstats.hg38.processed.txt.gz

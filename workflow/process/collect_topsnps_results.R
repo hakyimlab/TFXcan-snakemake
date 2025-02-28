@@ -35,7 +35,7 @@ dir.create(dirname(opt$enformer_loci), recursive = T, showWarnings = F)
 
 finemapped_pattern <- file.path(opt$selection_dir, glue::glue('{opt$phenotype}.chr{chrom_filter}.filteredGWAS.topSNPs.txt'))
 
-lapply(finemapped_pattern, function(each_file){
+fg <- lapply(finemapped_pattern, function(each_file){
     if(file.exists(each_file)){
         dt <- data.table::fread(each_file)
         return(dt)
@@ -43,13 +43,22 @@ lapply(finemapped_pattern, function(each_file){
 }) %>%
     Filter(Negate(is.null), .) %>%
     do.call('rbind', .) %>%
-    as.data.frame() %>%
-    data.table::fwrite(., file=opt$filtered_sumstats, compress='gzip', quote=F, row.names=F, sep = '\t')
+    as.data.frame()
+
+data.table::fwrite(fg, file=opt$filtered_sumstats, compress='gzip', quote=F, row.names=F, sep = '\t')
+
+if(nrow(fg) > 100){
+    subfg <- fg %>%
+        dplyr::arrange(pval) %>%
+        dplyr::slice(1:100)
+} else {
+    subfg <- as.data.frame(fg)
+}
 
 
 finemapped_pattern <- file.path(opt$selection_dir, glue::glue('{opt$phenotype}.chr{chrom_filter}.EnformerLoci.topSNPs.txt'))
 
-lapply(finemapped_pattern, function(each_file){
+lg <- lapply(finemapped_pattern, function(each_file){
     if(file.exists(each_file)){
         dt <- data.table::fread(each_file, header=F)
         return(dt)
@@ -57,5 +66,9 @@ lapply(finemapped_pattern, function(each_file){
 }) %>%
     Filter(Negate(is.null), .) %>%
     do.call('rbind', .) %>%
-    as.data.frame() %>%
+    as.data.frame() 
+
+loci_subfg <- paste0('chr', subfg$chr, '_', subfg$pos, '_', subfg$pos + 1)
+
+lg %>% dplyr::filter(V1 %in% loci_subfg) %>%
     data.table::fwrite(., file=opt$enformer_loci, quote=F, row.names=F, sep = '\t', col.names=F)

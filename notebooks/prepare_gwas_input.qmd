@@ -497,3 +497,86 @@ hist(t2d_females_ss$pval)
 ```{r}
 max(t2d_females_ss$pval)
 ```
+
+## T2D suzuki
+
+
+```{r}
+# chrom   pos     alt     ref     variant_id      beta    se      pval    zscore
+t2d_suzuki_ss <- data.table::fread('/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/sumstats/type_2_diabetes.suzuki.gwas_sumstats.tsv.gz') %>%
+    dplyr::rename(chrom = Chromsome, pos = Position, ref = NonEffectAllele, alt = EffectAllele, beta = Beta, se = SE, pval = Pval) %>% 
+    dplyr::filter(nchar(alt) == 1 & nchar(ref) == 1) %>%
+    dplyr::mutate(zscore = beta/se, variant_id = paste(chrom, pos, ref, alt, sep = '_'))
+```
+
+```{r}
+# library(bigsnpr)
+```
+
+```{r}
+
+# bx <- t2d_suzuki_ss[1:100, ] %>% dplyr::mutate(chr = paste('chr', chr, sep = ''))
+# xx <- snp_modifyBuild(
+#   bx,
+#   '/project2/haky/Data/liftover/liftOver2',
+#   from = "hg19",
+#   to = "hg38",
+#   check_reverse = TRUE,
+#   local_chain = '/project2/haky/Data/liftover/ucsc_chainfiles/hg19ToHg38.over.chain.gz',
+#   #base_url = "https://hgdownload.soe.ucsc.edu/goldenPath/"
+# )
+```
+
+
+```{r}
+t2d_suzuki_ss %>% 
+    data.table::fwrite('/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/sumstats/type_2_diabetes.suzuki.gwas_sumstats.processed.txt.gz', col.names = T, row.names = F, sep = '\t', quote = F, compress = 'gzip')
+```
+
+```{r}
+# liftover
+
+chainObject <- rtracklayer::import.chain('/project2/haky/Data/liftover/ucsc_chainfiles/hg19ToHg38.over.chain')
+
+```
+
+```{r}
+grObject <- GenomicRanges::GRanges(seqnames = t2d_suzuki_ss$chrom, ranges = IRanges(start = t2d_suzuki_ss$pos, end = t2d_suzuki_ss$pos))
+
+mcols(grObject) <- t2d_suzuki_ss[, c('variant_id', 'ref', 'alt', 'zscore', 'pval', 'se', 'beta', 'pos', 'chrom')]
+
+seqlevelsStyle(grObject) <- "UCSC"
+results <- as.data.frame(rtracklayer::liftOver(grObject, chainObject))
+```
+
+```{r}
+head(results)
+```
+
+```{r}
+results %>%
+    dplyr::mutate(variant_id = paste(chrom, start, ref, alt, sep = '_'), pos = start) %>%
+    dplyr::select(chrom, pos, variant_id, ref = ref, alt = alt, zscore = zscore, pval = pval, se = se, beta = beta) %>% 
+    data.table::fwrite('/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/sumstats/type_2_diabetes.suzuki.gwas_sumstats.hg38.processed.txt.gz', col.names = T, row.names = F, sep = '\t', quote = F, compress = 'gzip')
+```
+
+```{r}
+data.table::fread('/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/sumstats/type_2_diabetes.suzuki.gwas_sumstats.hg38.processed.txt.gz') %>%
+    dplyr::filter(chrom %in% c(1:3)) %>%
+    data.table::fwrite('/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/sumstats/type_2_diabetes.suzuki.mini.gwas_sumstats.hg38.processed.txt.gz', col.names = T, row.names = F, sep = '\t', quote = F, compress = 'gzip')
+
+```
+
+
+
+```{r}
+rt <- data.table::fread('/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/T2D_2025-01-24/collection/t2d_suzuki.filteredGWAS.topSNPs.txt.gz')
+
+et <- data.table::fread('/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/T2D_2025-01-24/collection/t2d_suzuki.EnformerLoci.topSNPs.txt', header = F)
+```
+
+
+```{r}
+rt %>% dplyr::arrange(pval) %>%
+        dplyr::slice(1:100)
+```

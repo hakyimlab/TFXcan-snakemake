@@ -1,9 +1,9 @@
 
 ---
 pipeline_dir: '/beagle3/haky/users/temi/projects/TFXcan-snakemake'
-runname: 'type2diabetes' # change this variable name 
-date: "2025-01-15" #"2024-06-07" "2024-09-23"
-metadata: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/metadata_type2diabetes.txt"
+runname: 'T2D' # change this variable name 
+date: "2025-01-24" #"2024-06-07" "2024-09-23"
+metadata: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/metadata_type2diabetes_suzuki.txt"
 scratch_dir: "/scratch/midway3/temi"
 delete_enformer_outputs: False # should you delete enformer predictions after aggregating them? Saves disk space
 personalized_predictions: True # should you run personalized predictions?

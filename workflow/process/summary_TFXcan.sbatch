@@ -18,7 +18,6 @@ echo "INFO - Jobid is $SLURM_JOBID"
 echo "INFO - Running on host `hostname`"
 
 source ~/.bashrc
-conda activate /beagle3/haky/users/temi/software/conda_envs/imlabtools 
 
 # variables
 phenotype=${1}
@@ -27,12 +26,13 @@ outputfile=${3}
 gwas_folder=${4}
 gwas_pattern=${5}
 covariances=${6}
+exec_file=${7}
+conda_environment=${8}
+
+conda activate ${conda_environment} 
 
 printf "INFO - Running S-TFXcan for %s\n" ${phenotype}
 
-exec_file=/beagle3/haky/users/temi/software/MetaXcan/software/SPrediXcan.py
-
-# note that the ...
 python3 ${exec_file} \
     --model_db_path ${model_db} \
     --model_db_snp_key varID \

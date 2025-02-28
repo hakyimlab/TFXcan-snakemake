@@ -9,28 +9,25 @@ delete_enformer_outputs: False # should you delete enformer predictions after ag
 personalized_predictions: True # should you run personalized predictions?
 runSusie: False
 
-enpact_models:
-  # directory: '/project/haky/users/temi/data/enpact_models'
-  # metadata: "metadata/models.enpact.txt" 
-  directory: '/beagle3/haky/users/temi/projects/TFPred-snakemake'
-  metadata: "metadata/models734.prostate.txt" #models734.prostate.txt" #"metadata/models.enpact.185.txt"
+enpact:
+  weights: /beagle3/haky/users/temi/projects/Enpact/files/ENPACT_734_2024-07-26.compiled_weights.lambda.1se.txt.gz
 
 genome:
   fasta: "/project2/haky/Data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta"
 
 rscript: "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript"
 
-finemapping:
-  # genotypes: "/project2/haky/Data/1000G/formatted_geno/all_chrs.geno.txt.gz"
-  # snp_annot: '/project2/haky/Data/1000G/formatted_geno/all_chrs.snp_annot.txt.gz'
-  # samples: "/project2/haky/Data/1000G/formatted_geno/samples.text_dosages.txt"
+processing:
   LD_blocks: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/EUR_LDBlocks.hg38.updated.bed"
-  genotypes_dosages_pattern: '/project2/haky/Data/1000G/population_data/EUR/bfiles/ALL.chr{}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.geno.txt.gz'
+  reference_annotations: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt
 
+# necessities for predictdb
 predictdb:
   blacklist_regions: /beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/HLA_blocks.txt
   conda_environment: /beagle3/haky/users/temi/software/conda_envs/predictdb_env
-  nextflow_main_executable: /beagle3/haky/users/temi/projects/TFXcan-snakemake/workflow/PredictDb-nextflow/main.nf
+  nextflow_executable: /beagle3/haky/users/temi/projects/TFXcan-snakemake/workflow/PredictDb-nextflow/main.nf
+  reference_genotypes: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.geno.txt
+  reference_annotations: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt
 
 summaryTFXcan:
   conda_environment: /beagle3/haky/users/temi/software/conda_envs/imlabtools

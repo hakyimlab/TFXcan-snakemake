@@ -35,6 +35,6 @@ snakemake -s snakefile.smk --configfile config/pipeline_pcrisk.yaml --profile pr
 snakemake -s snakefile.smk --configfile config/pipeline_pcrisk.yaml --resources load=45 --profile profiles/simple/ -np > dryrun.out
 
 
-snakemake -s snakefile.smk --configfile config/pipeline_standing_height.yaml --profile profiles/simple/ --resources load=45
+snakemake -s snakefile.smk --configfile config/pipeline_type2diabetes_suzuki.yaml --profile profiles/simple/ --resources load=45
 
 snakemake -s snakefile.smk --configfile config/pipeline_type2diabetes.yaml --profile profiles/simple/ --resources load=180
