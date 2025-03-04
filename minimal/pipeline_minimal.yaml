@@ -11,7 +11,9 @@ runSusie: False # by default, we do not run SuSiE but this will be changed in th
 
 enpact_weights: /beagle3/haky/users/temi/projects/Enpact/files/ENPACT_734_2024-07-26.compiled_weights.lambda.1se.txt.gz # the weights file for Enpact
 
-rscript: "/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript" # not necessary (dependency will be removed)
+input:
+  directory: "/project2/haky/Data/GWAS/pcrisk" # where is the GWAS summary statistics file?
+
 
 # genome file
 genome:
@@ -20,7 +22,7 @@ genome:
 # files needed to process the input GWAS and select SNPs 
 processing:
   LD_blocks: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/EUR_LDBlocks.hg38.updated.bed"
-  reference_annotations: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt
+  reference_annotations: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt # same as the one below; used to match the snps in the summary statistics file
 
 # necessities for predictdb
 predictdb:
