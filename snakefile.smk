@@ -128,13 +128,13 @@ onstart:
 
 rule all:
     input:
-        #[os.path.join(INPUT_SUMSTATS, f'{sumstat}') for sumstat in run_list.values()],
-        #expand(os.path.join(PROCESSED_SUMSTATS, '{phenotype}'), phenotype = run_list.keys()),
-        # expand(os.path.join(ENFORMER_PARAMETERS, f'enformer_parameters_{runname}_{{phenotype}}.yaml'), phenotype = run_list.keys()),
-        # expand(os.path.join(ENFORMER_PARAMETERS, f'aggregation_config_{runname}_{{phenotype}}.yaml'), phenotype = run_list.keys()),
-        # expand(os.path.join(AGGREGATED_PREDICTIONS, f'{{phenotype}}.{runmeta}.h5'), phenotype = run_list.keys()),
-        # expand(os.path.join(AGGREGATED_PREDICTIONS, f'{{phenotype}}.{runmeta}.processed.metadata.tsv'), phenotype = run_list.keys()),
-        # expand(os.path.join(AGGREGATED_PREDICTIONS, f'{{phenotype}}.{runmeta}.processed.matrix.h5.gz'), phenotype = run_list.keys()),
+        [os.path.join(INPUT_SUMSTATS, f'{sumstat}') for sumstat in run_list.values()],
+        expand(os.path.join(PROCESSED_SUMSTATS, '{phenotype}'), phenotype = run_list.keys()),
+        expand(os.path.join(ENFORMER_PARAMETERS, f'enformer_parameters_{runname}_{{phenotype}}.yaml'), phenotype = run_list.keys()),
+        expand(os.path.join(ENFORMER_PARAMETERS, f'aggregation_config_{runname}_{{phenotype}}.yaml'), phenotype = run_list.keys()),
+        expand(os.path.join(AGGREGATED_PREDICTIONS, f'{{phenotype}}.{runmeta}.h5'), phenotype = run_list.keys()),
+        expand(os.path.join(AGGREGATED_PREDICTIONS, f'{{phenotype}}.{runmeta}.processed.metadata.tsv'), phenotype = run_list.keys()),
+        expand(os.path.join(AGGREGATED_PREDICTIONS, f'{{phenotype}}.{runmeta}.processed.matrix.h5.gz'), phenotype = run_list.keys()),
         expand(os.path.join(PREDICTDB_DATA, "{phenotype}", '{phenotype}.{model}.enpact_scores.txt'), phenotype = run_list.keys(), model = enpact_models_list),
         expand(os.path.join(PREDICTDB_DATA, "{phenotype}", '{phenotype}.{model}.annotation.txt'), phenotype = run_list.keys(), model = enpact_models_list),
         expand(os.path.join(LENPACT_DIR, '{phenotype}', "{model}", 'models/filtered_db/predict_db_{phenotype}_filtered.db'), phenotype = run_list.keys(), model = enpact_models_list),
