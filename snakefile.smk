@@ -23,7 +23,7 @@ runname = config['runname']
 runmeta = f"{runname}_{rundate}"
 
 # directories
-INPUT_SUMSTATS = os.path.join('data', 'sumstats')
+INPUT_SUMSTATS = config['input']['directory'] #os.path.join('data', 'sumstats')
 DATA_DIR = os.path.join('data', f"{runname}_{rundate}")
 PROCESSED_SUMSTATS = os.path.join(DATA_DIR, 'processed_sumstats')
 FILTERING_DIR = os.path.join(DATA_DIR, 'filtering')

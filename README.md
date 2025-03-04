@@ -49,11 +49,15 @@ The output of the pipeline is the association results of the GWAS trait with the
 
 * GWAS summary stats with the following headers (others headers are allowed but will be ignored): 
 
+    |chrom|pos|variant_id|ref|alt|pval|zscore|
+    |---|---|---|---|---|---|---|
+    |1|134|1_134_A_G|A|G|0.0001|0.1|
+
     - chrom: 1,2,3, e.t.c (No chromosomes X, Y, or M e.t.c)
 
     - pos: 134 (bp coordinates)
 
-    - variant_id: 1_345_A_G i.e. chrom_pos_ref_alt
+    - variant_id: chrom_pos_ref_alt
 
     - pval: GWAS pvalues
 
@@ -63,6 +67,15 @@ The output of the pipeline is the association results of the GWAS trait with the
 
 
 ## Updates:
+
+[X] To predict TF/tissue binding, the pipeline takes in a dataframe of weights. 
+
+|feature|TF/tissue1|TF/tissue2|...|TF/tissueN|
+|---|---|---|---|---|
+|f1|0.1|0.2|...|0.1|
+|f2|0.1|0.2|...|0.1|
+|...|...|...|...|...|
+f5313|0.1|0.2|...|0.1|
 
 [X] The pipeline now matches SNPs with the reference panel and uses the matched SNPs for the PredictDB training. This is to ensure that the SNPs used for the PredictDB training are the same as the SNPs used for the GWAS.
 
