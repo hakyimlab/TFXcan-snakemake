@@ -14,8 +14,7 @@ cluster:
 default-resources:
   - partition=caslake # beagle3 for gpus #bigmem   #- mem_mb=50000
   - time="01:00:00"
-  - tmpdir="/scratch/midway3/temi"
-  - account="pi-haky"
+  - account="hgen47100" #"pi-haky"
   - nodes=1
   - gpu=0
   - mem_cpu=4

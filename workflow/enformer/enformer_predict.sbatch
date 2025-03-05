@@ -6,8 +6,8 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --time=24:00:00
 #SBATCH --mem-per-cpu=8G
-#SBATCH --error=/beagle3/haky/users/temi/projects/TFXcan-snakemake/slurm_logs/enformer_predict.err
-#SBATCH --output=/beagle3/haky/users/temi/projects/TFXcan-snakemake/slurm_logs/enformer_predict.out
+#SBATCH --error=slurm_logs/enformer_predict.err
+#SBATCH --output=slurm_logs/enformer_predict.out
 #SBATCH --account=pi-haky
 
 date

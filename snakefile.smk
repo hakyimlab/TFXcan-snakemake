@@ -46,7 +46,7 @@ def read_metadata(mtdt_file):
 
 run_list = read_metadata(config["metadata"])
 # read in the list of models
-enpact_models_list = pd.read_table(config["enpact"]["weights"]).columns[1:].tolist() #.model.tolist()#[0:5]
+enpact_models_list = pd.read_table(config["enpact_weights"]).columns[1:].tolist() #.model.tolist()#[0:5]
 
 # ensure that there is the reference panel annotation file
 if 'processing' in config.keys() and 'reference_annotations' in config['processing'].keys(): 

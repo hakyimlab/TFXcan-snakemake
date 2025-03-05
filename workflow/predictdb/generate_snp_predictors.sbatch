@@ -6,8 +6,8 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --time=36:00:00
 #SBATCH --mem-per-cpu=1G
-#SBATCH --error=/beagle3/haky/users/temi/projects/TFXcan-snakemake/slurm_logs/lEnpact_training.err
-#SBATCH --output=/beagle3/haky/users/temi/projects/TFXcan-snakemake/slurm_logs/lEnpact_training.log
+#SBATCH --error=slurm_logs/lEnpact_training.err
+#SBATCH --output=slurm_logs/lEnpact_training.log
 #SBATCH --account=pi-haky
 
 date

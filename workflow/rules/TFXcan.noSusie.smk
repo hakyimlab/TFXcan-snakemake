@@ -168,7 +168,7 @@ checkpoint prepare_files_for_predictDB:
         jobname = '{phenotype}',
         blacklist = config['predictdb']['blacklist_regions'],
         output_basename = os.path.join(PREDICTDB_DATA, '{phenotype}', '{phenotype}'),
-        enpact_weights = config['enpact']['weights'],
+        enpact_weights = config['enpact_weights'],
         loci_subset = rules.collect_top_snps_results.output.enformer_loci
     resources:
         partition="caslake",
@@ -198,7 +198,7 @@ rule generate_lEnpact_models:
         generate_sbatch = os.path.abspath("workflow/predictdb/generate_snp_predictors.sbatch"),
         reference_genotypes = os.path.abspath(config['predictdb']['reference_genotypes']),
         reference_annotations = os.path.abspath(REFERENCE_ANNOTATIONS),
-        nextflow_executable = os.path.abspath(config['predictdb']['nextflow_executable'])
+        nextflow_executable = os.path.abspath(config['predictdb']['nextflow_main_executable'])
     resources:
         partition="caslake",
         time="36:00:00",
