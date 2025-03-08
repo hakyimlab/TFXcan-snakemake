@@ -21,7 +21,6 @@ library(data.table)
 library(tidyverse)
 library(glue)
 library(bigsnpr)
-library(qvalue)
 
 print(opt)
 
@@ -58,7 +57,7 @@ dt <- dt %>%
         .default = as.character(chrom)
     )) %>%
     dplyr::filter(chrom %in% chrom_filter) %>%
-    dplyr::mutate(SNP = paste(chrom, pos, ref, alt, sep='_'), qval = 0.01) %>% #qvalue::qvalue(pval)$qvalue
+    dplyr::mutate(SNP = paste(chrom, pos, ref, alt, sep='_')) %>% 
     dplyr::filter(nchar(ref) == 1 & nchar(alt) == 1) %>% # still need to properly resolve this
     dplyr::mutate(gwas_significant=ifelse(pval <= opt$pvalue_threshold, 'YES', 'NO'), chrom = as.numeric(chrom))
     
@@ -118,7 +117,7 @@ matched_stats <- purrr::map(nn, function(ch){
     # match snps
     ms <- tryCatch({
         mm <- bigsnpr::snp_match(x, annot, return_flip_and_rev = TRUE, match.min.prop = 0) |> data.table::setDT() %>% 
-            dplyr::select(chrom=chr, pos, ref=a0, alt=a1, rsid, varID, beta, se, zscore, pval, qval, gwas_significant)
+            dplyr::select(chrom=chr, pos, ref=a0, alt=a1, rsid, varID, beta, se, zscore, pval, gwas_significant)
         mm
     }, error = function(e){
         print(glue('WARNING - Not enough variants have been matched for chromosome {ch}.'))
