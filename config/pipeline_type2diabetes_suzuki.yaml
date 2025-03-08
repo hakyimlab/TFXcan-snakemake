@@ -12,8 +12,7 @@ runSusie: False
 input: 
   directory: "/project2/haky/Data/GWAS/type2diabetes_suzuki" # where is the GWAS summary statistics file?
 
-enpact:
-  weights: /beagle3/haky/users/temi/projects/Enpact/files/ENPACT_734_2024-07-26.compiled_weights.lambda.1se.txt.gz
+enpact_weights: /beagle3/haky/users/temi/projects/Enpact/files/ENPACT_734_2024-07-26.compiled_weights.lambda.1se.txt.gz
 
 genome:
   fasta: "/project2/haky/Data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta"
@@ -28,7 +27,7 @@ processing:
 predictdb:
   blacklist_regions: /beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/HLA_blocks.txt
   conda_environment: /beagle3/haky/users/temi/software/conda_envs/predictdb_env
-  nextflow_executable: /beagle3/haky/users/temi/projects/TFXcan-snakemake/workflow/PredictDb-nextflow/main.nf
+  nextflow_main_executable: /beagle3/haky/users/temi/projects/TFXcan-snakemake/workflow/PredictDb-nextflow/main.nf
   reference_genotypes: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.geno.txt
   reference_annotations: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt
 

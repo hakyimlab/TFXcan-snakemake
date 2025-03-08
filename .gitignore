@@ -9,7 +9,6 @@ misc/**
 archives/**
 run/**
 snakefile.predictDB.smk
-workflow/PredictDb-nextflow/**
 workflow/src/archives/**
 archives/**
 slurm_logs/**

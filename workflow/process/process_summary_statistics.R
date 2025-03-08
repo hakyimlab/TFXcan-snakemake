@@ -58,7 +58,7 @@ dt <- dt %>%
         .default = as.character(chrom)
     )) %>%
     dplyr::filter(chrom %in% chrom_filter) %>%
-    dplyr::mutate(SNP = paste(chrom, pos, ref, alt, sep='_'), qval = qvalue::qvalue(pval)$qvalue) %>%
+    dplyr::mutate(SNP = paste(chrom, pos, ref, alt, sep='_'), qval = 0.01) %>% #qvalue::qvalue(pval)$qvalue
     dplyr::filter(nchar(ref) == 1 & nchar(alt) == 1) %>% # still need to properly resolve this
     dplyr::mutate(gwas_significant=ifelse(pval <= opt$pvalue_threshold, 'YES', 'NO'), chrom = as.numeric(chrom))
     

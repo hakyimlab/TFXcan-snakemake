@@ -41,29 +41,32 @@ In general, the pipeline expects:
 1. A yaml config or parameters file. Details are [here](./minimal/pipeline_minimal.yaml)
 2. A metadata sheet of the GWAS summary statistics. Details are [here](./minimal/minimal_gwas.txt)
 
+The GWAS summary statistics file should have the following columns
+(others headers are allowed but will be ignored): 
+
+    |chrom|pos|variant_id|ref|alt|pval|zscore|beta|se|
+    |---|---|---|---|---|---|---|---|---|
+    |1|134|1_134_A_G|A|G|0.0001|0.1|0.7|0.1|
+
+    - chrom: (character or string) 1,2,3, e.t.c (No chromosomes X, Y, or M e.t.c)
+
+    - pos: (numeric) 134 (bp coordinates)
+
+    - variant_id: chrom_pos_ref_alt
+
+    - pval: (numeric) GWAS pvalues
+
+    - zscore: GWAS zscores; you can pre-calculate this from the beta and standard errors (beta/se)
+
+* The framework assumes that genomic coordinates are in hg38 coordinates
+
 ## Output:
 The output of the pipeline is the association results of the GWAS trait with the TF binding, and it can be found in the `data/.../output` folder. The output is a summary ***.TFXcan.csv file of the association results file with the following columns:
 
 
 #### Notes: 
 
-* GWAS summary stats with the following headers (others headers are allowed but will be ignored): 
-
-    |chrom|pos|variant_id|ref|alt|pval|zscore|beta|se|
-    |---|---|---|---|---|---|---|---|---|
-    |1|134|1_134_A_G|A|G|0.0001|0.1|0.7|0.1|
-
-    - chrom: 1,2,3, e.t.c (No chromosomes X, Y, or M e.t.c)
-
-    - pos: 134 (bp coordinates)
-
-    - variant_id: chrom_pos_ref_alt
-
-    - pval: GWAS pvalues
-
-    - zscore: GWAS zscores; you can pre-calculate this from the beta and standard errors (beta/se)
-
-* The framework assumes that genomic coordinates are in hg38 coordinates
+* GWAS summary stats with the following headers 
 
 
 ## Updates:
