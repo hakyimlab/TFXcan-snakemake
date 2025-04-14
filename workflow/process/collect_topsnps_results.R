@@ -8,7 +8,8 @@ option_list <- list(
     make_option("--selection_dir", help='A list of files to combine'),
     make_option("--filtered_sumstats", help='reference panel correlation matrix'),
     make_option("--enformer_loci", help='reference panel correlation matrix'),
-    make_option("--phenotype", help='summary statistics sample size')
+    make_option("--phenotype", help='summary statistics sample size'),
+    make_option("--limit_number_of_loci", default = NULL, help='', type='')
 )
 
 opt <- parse_args(OptionParser(option_list=option_list))  
@@ -47,10 +48,10 @@ fg <- lapply(finemapped_pattern, function(each_file){
 
 data.table::fwrite(fg, file=opt$filtered_sumstats, compress='gzip', quote=F, row.names=F, sep = '\t')
 
-if(nrow(fg) > 100){
+if(!is.null(opt$limit_number_of_loci)){
     subfg <- fg %>%
         dplyr::arrange(pval) %>%
-        dplyr::slice(1:100)
+        dplyr::slice(1:opt$limit_number_of_loci)
 } else {
     subfg <- as.data.frame(fg)
 }

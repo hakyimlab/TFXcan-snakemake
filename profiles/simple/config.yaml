@@ -14,7 +14,7 @@ cluster:
 default-resources:
   - partition=caslake # beagle3 for gpus #bigmem   #- mem_mb=50000
   - time="01:00:00"
-  - account="hgen47100" #"pi-haky"
+  - account="pi-haky" #"pi-haky" beagle3-exusers for beagle3 jobs
   - nodes=1
   - gpu=0
   - mem_cpu=4
@@ -24,7 +24,7 @@ restart-times: 0
 max-jobs-per-second: 10
 max-status-checks-per-second: 1
 local-cores: 1
-latency-wait: 43200
+latency-wait: 129600
 jobs: 100
 keep-going: True
 rerun-incomplete: True

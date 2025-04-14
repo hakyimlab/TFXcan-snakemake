@@ -66,8 +66,6 @@ The output of the pipeline is the association results of the GWAS trait with the
 
 #### Notes: 
 
-* GWAS summary stats with the following headers 
-
 
 ## Updates:
 
@@ -78,7 +76,7 @@ The output of the pipeline is the association results of the GWAS trait with the
 |f1|0.1|0.2|...|0.1|
 |f2|0.1|0.2|...|0.1|
 |...|...|...|...|...|
-f5313|0.1|0.2|...|0.1|
+|f5313|0.1|0.2|...|0.1|
 
 [X] The pipeline now matches SNPs with the reference panel and uses the matched SNPs for the PredictDB training. This is to ensure that the SNPs used for the PredictDB training are the same as the SNPs used for the GWAS.
 

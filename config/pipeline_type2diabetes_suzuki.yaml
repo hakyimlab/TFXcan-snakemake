@@ -10,7 +10,7 @@ personalized_predictions: True # should you run personalized predictions?
 runSusie: False
 
 input: 
-  directory: "/project2/haky/Data/GWAS/type2diabetes_suzuki" # where is the GWAS summary statistics file?
+  directory: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/sumstats" # where is the GWAS summary statistics file?
 
 enpact_weights: /beagle3/haky/users/temi/projects/Enpact/files/ENPACT_734_2024-07-26.compiled_weights.lambda.1se.txt.gz
 

@@ -93,7 +93,7 @@ rule predict_with_enformer:
         os.path.join(ENFORMER_PARAMETERS, f'aggregation_config_{runname}_{{phenotype}}.yaml')
     resources:
         partition="caslake",
-        time = "24:00:00",
+        time = "36:00:00",
         mem_cpu=4,
         cpu_task=4
     params:
@@ -118,9 +118,9 @@ rule aggregate_predictions:
         "working on {wildcards}"
     resources:
         partition="caslake",
-        mem_cpu=8,
+        mem_cpu=12,
         #mem_mb=24000,
-        time = "02:00:00"
+        time = "04:00:00"
     params:
         jobname = '{phenotype}',
         runmeta = runmeta,
@@ -143,9 +143,9 @@ rule process_predictions:
         "working on {wildcards}"
     resources:
         partition="caslake",
-        mem_cpu=8,
+        mem_cpu=12,
         #mem_mb=24000,
-        time = "02:00:00"
+        time = "04:00:00"
     params:
         jobname = '{phenotype}',
         runmeta = runmeta,
@@ -172,9 +172,9 @@ checkpoint prepare_files_for_predictDB:
         loci_subset = rules.collect_top_snps_results.output.enformer_loci
     resources:
         partition="caslake",
-        mem_cpu=8,
+        mem_cpu=12,
         #mem_mb=24000,
-        time = "02:00:00"
+        time = "04:00:00"
     benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.prepare_files_for_predictDB.tsv")
     shell: 
         """
