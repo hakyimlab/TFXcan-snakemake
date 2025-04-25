@@ -9,8 +9,7 @@ delete_enformer_outputs: False # should you delete enformer predictions after ag
 personalized_predictions: True # should you run personalized predictions?
 runSusie: False
 
-enpact:
-  weights: /beagle3/haky/users/temi/projects/TFPred-snakemake/data/ENPACT_734_2025-04-24/statistics/ENPACT_734_2025-04-24.compiled_weights.lambda.1se.txt.gz #/beagle3/haky/users/temi/projects/Enpact/files/ENPACT_734_2024-07-26.compiled_weights.lambda.1se.temp.txt.gz
+enpact_weights: /beagle3/haky/users/temi/projects/TFPred-snakemake/data/ENPACT_734_2025-04-24/statistics/ENPACT_734_2025-04-24.compiled_weights.lambda.1se.txt.gz #/beagle3/haky/users/temi/projects/Enpact/files/ENPACT_734_2024-07-26.compiled_weights.lambda.1se.temp.txt.gz
 
 genome:
   fasta: "/project2/haky/Data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta"
@@ -25,7 +24,7 @@ processing:
 predictdb:
   blacklist_regions: /beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/HLA_blocks.txt
   conda_environment: /beagle3/haky/users/temi/software/conda_envs/predictdb_env
-  nextflow_executable: /beagle3/haky/users/temi/projects/TFXcan-snakemake/workflow/PredictDb-nextflow/main.nf
+  nextflow_main_executable: /beagle3/haky/users/temi/projects/TFXcan-snakemake/workflow/PredictDb-nextflow/main.nf
   reference_genotypes: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.geno.txt
   reference_annotations: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt
 

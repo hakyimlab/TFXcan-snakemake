@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #SBATCH --job-name=lEnpact_training
 #SBATCH --partition=caslake
 #SBATCH --nodes=1

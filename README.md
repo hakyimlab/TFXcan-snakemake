@@ -58,13 +58,17 @@ The GWAS summary statistics file should have the following columns
 
     - zscore: GWAS zscores; you can pre-calculate this from the beta and standard errors (beta/se)
 
-* The framework assumes that genomic coordinates are in hg38 coordinates
+- The framework assumes that genomic coordinates are in hg38 coordinates
+
+- Weights file: You will need this in the config yaml file (see `enpact_weights`). The weights file is a dataframe of TF binding predictors. You can find and use examples from [here](./weights/).
 
 ## Output:
 The output of the pipeline is the association results of the GWAS trait with the TF binding, and it can be found in the `data/.../output` folder. The output is a summary ***.TFXcan.csv file of the association results file with the following columns:
 
+    |tfbs|zscore|effect_size|pvalue|var_g|pred_perf_r2|pred_perf_pval|pred_perf_qval|n_snps_used|n_snps_in_cov|n_snps_in_model|
 
-#### Notes: 
+
+#### Notes:
 
 
 ## Updates:
