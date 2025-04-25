@@ -1,0 +1,9 @@
+phenotype,sumstat,trait_test
+meta1bigair,meta1bigair.gwas_sumstats.hg38.processed.txt.gz,BIGTT-AIR
+meta1cir,meta1cir.gwas_sumstats.hg38.processed.txt.gz,CIR
+meta1stumvoll,meta1stumvoll.gwas_sumstats.hg38.processed.txt.gz,Stumvoll
+meta1xinsdG30,meta1xinsdG30.gwas_sumstats.hg38.processed.txt.gz,xinsdG30
+meta1xinsG30,meta1xinsG30.gwas_sumstats.hg38.processed.txt.gz,xinsG30
+meta1di,meta1di.gwas_sumstats.hg38.processed.txt.gz,DI
+meta1dibig,meta1dibig.gwas_sumstats.hg38.processed.txt.gz,DIBIG
+meta1homab,meta1homab.gwas_sumstats.hg38.processed.txt.gz,HOMA-β

@@ -6,6 +6,8 @@
 library(data.table)
 library(tidyverse)
 library(glue)
+
+library(IRanges)
 ```
 
 ```{r}
@@ -579,4 +581,101 @@ et <- data.table::fread('/beagle3/haky/users/temi/projects/TFXcan-snakemake/data
 ```{r}
 rt %>% dplyr::arrange(pval) %>%
         dplyr::slice(1:100)
+```
+
+## Pancreatic beta cell function
+
+Source:
+Here: wget https://api.kpndataregistry.org/api/d/ChTEgN -O pancreatic_beta_cell_function.zip
+
+Then: unzip pancreatic_beta_cell_function.zip -d pancreatic_beta_cell_function
+
+Details:
+
+1. Genome build is hg37. So, you need to liftover to hg38.
+2. There are 8 metabolic traits here. I have to process them individually.
+
+```{r}
+pbcf_directory <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/sumstats/pancreatic_beta_cell_function'
+pbcf_files <- list.files(pbcf_directory, pattern = '.*', full.names = T)
+
+# I need the names from the file names 
+pbcf_names <- basename(pbcf_files) %>%
+    gsub('.filthetmafn.rsid.selectedcolumns', '', .)
+names(pbcf_files) <- pbcf_names
+```
+```{r}
+# chrom   pos     alt     ref     variant_id      beta    se      pval    zscore
+pbcf_sumstats <- purrr::map(names(pbcf_files), function(nm){
+    dt <- data.table::fread(pbcf_files[nm])
+    # using tidyr::separate was too slow
+    sp <- stringi::stri_split_fixed(dt$MarkerName, pattern = ':') %>% 
+        do.call('rbind', .) %>% as.data.table()
+    colnames(sp) <- c('chrom', 'pos')
+
+    dt %>%
+        dplyr::rename(alt = Allele1, ref = Allele2, beta = Effect, se = StdErr, pval = `P-value`) %>% 
+        dplyr::filter(nchar(alt) == 1 & nchar(ref) == 1) %>%
+        dplyr::bind_cols(sp) %>%
+        dplyr::mutate(alt = toupper(alt), ref = toupper(ref), zscore = beta/se, variant_id = paste(chrom, pos, ref, alt, sep = '_'), pos = as.numeric(pos))
+}, .progress = TRUE)
+
+names(pbcf_sumstats) <- pbcf_names
+```
+
+
+```{r}
+# liftover
+chainObject <- rtracklayer::import.chain('/project2/haky/Data/liftover/ucsc_chainfiles/hg19ToHg38.over.chain')
+```
+
+```{r}
+
+purrr::map(names(pbcf_sumstats), function(nm){
+    pbcf_ss <- pbcf_sumstats[[nm]]
+    grObject <- GenomicRanges::GRanges(seqnames = pbcf_ss$chrom, ranges = IRanges(start = pbcf_ss$pos, end = pbcf_ss$pos))
+
+    mcols(grObject) <- pbcf_ss[, c('variant_id', 'ref', 'alt', 'zscore', 'pval', 'se', 'beta', 'pos', 'chrom')]
+
+    ensembldb::seqlevelsStyle(grObject) <- "UCSC"
+    results <- as.data.frame(rtracklayer::liftOver(grObject, chainObject))
+    
+    results %>%
+        dplyr::mutate(variant_id = paste(chrom, start, ref, alt, sep = '_'), pos = start) %>%
+        dplyr::select(chrom, pos, variant_id, ref = ref, alt = alt, zscore = zscore, pval = pval, se = se, beta = beta) %>% 
+        data.table::fwrite(glue('{pbcf_directory}/{nm}.gwas_sumstats.hg38.processed.txt.gz'), col.names = T, row.names = F, sep = '\t', quote = F, compress = 'gzip')
+}, .progress = TRUE)
+
+```
+
+```{r}
+# how many GWAS loci per LD block
+ld_blocks <- data.table::fread('/beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/EUR_LDBlocks.hg38.updated.bed') %>% setNames(c('ld_chrom', 'ld_start', 'ld_stop'))
+
+ld_splits <- ld_blocks %>%
+    dplyr::group_split(ld_chrom, ld_start, ld_stop) 
+```
+
+```{r}
+# how many top GWAS loci per LD block
+pbcf_loci <- purrr::map(names(pbcf_sumstats), function(nm){
+    pbcf_ss <- pbcf_sumstats[[nm]] %>%
+        dplyr::filter(pval < 5e-8) %>%
+        dplyr::mutate(chrom = paste('chr', chrom, sep = ''))
+
+    xd_splits <- lapply(ld_splits, function(each_split){
+        xd <- dplyr::filter(pbcf_ss, chrom == each_split$ld_chrom[1], pos >= each_split$ld_start[1] & pos <= each_split$ld_stop[1])
+        if(nrow(xd) == 0){
+            return(NULL)
+        } else {
+            return(xd)
+        }
+    })
+
+    xd_splits <- Filter(Negate(is.null), xd_splits)
+}, .progress = TRUE)
+```
+
+```{r}
+sapply(pbcf_loci, length) |> sum()
 ```

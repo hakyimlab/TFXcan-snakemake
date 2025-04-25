@@ -8,7 +8,7 @@
 #SBATCH --mem-per-cpu=8G
 #SBATCH --error=slurm_logs/enformer_predict.err
 #SBATCH --output=slurm_logs/enformer_predict.out
-#SBATCH --account=pi-haky
+#SBATCH --account=beagle3-exusers
 
 date
 

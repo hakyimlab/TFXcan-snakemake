@@ -24,7 +24,7 @@ enformer:
       max_num_blocks: 4
       max_workers_per_node: 4
       queue:
-      account: "pi-haky"
+      account: "beagle3-exusers" # beagle3-exusers for beagle3 jobs
       hpc: "beagle3"
       provider: "local"
       worker_init: "date; source ~/.bashrc; conda activate /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/; export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib; echo `hostname`; nvidia-smi"

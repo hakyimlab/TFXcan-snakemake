@@ -4,13 +4,13 @@ pipeline_dir: '/beagle3/haky/users/temi/projects/TFXcan-snakemake'
 runname: 'prostate_cancer_risk' # change this variable name 
 date: "2024-09-30" #"2024-06-07" "2024-09-23"
 metadata: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/metadata_pcrisk.txt"
-scratch_dir: "/scratch/midway3/temi"
+scratch_dir: "/scratch/beagle3/temi"
 delete_enformer_outputs: False # should you delete enformer predictions after aggregating them? Saves disk space
 personalized_predictions: True # should you run personalized predictions?
 runSusie: False
 
 enpact:
-  weights: /beagle3/haky/users/temi/projects/Enpact/files/ENPACT_734_2024-07-26.compiled_weights.lambda.1se.temp.txt.gz
+  weights: /beagle3/haky/users/temi/projects/TFPred-snakemake/data/ENPACT_734_2025-04-24/statistics/ENPACT_734_2025-04-24.compiled_weights.lambda.1se.txt.gz #/beagle3/haky/users/temi/projects/Enpact/files/ENPACT_734_2024-07-26.compiled_weights.lambda.1se.temp.txt.gz
 
 genome:
   fasta: "/project2/haky/Data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta"
