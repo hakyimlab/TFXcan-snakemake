@@ -46,8 +46,9 @@ def get_fastaExtractor(fasta_file):
     fasta_extractor = FastaStringExtractor(fasta_file)
     return fasta_extractor
 
-def generate_random_sequence_inputs(size=393216):
+def generate_random_sequence_inputs(size=393216, use_seed = 1):
     import numpy as np
+    np.random.seed(use_seed)
     r_seq_list = np.random.choice(['A', 'G', 'T', 'C'], size)
     return(''.join(r_seq_list))
   

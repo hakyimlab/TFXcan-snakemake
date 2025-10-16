@@ -234,8 +234,7 @@ checkpoint summary_TFXcan:
         gwas_pattern = '.*.sumstats.txt.gz',
         executable = config['summaryTFXcan']['summaryXcan_executable'],
         environment = config['summaryTFXcan']['conda_environment']
-        #inp = os.path.join(LENPACT_DIR, "{model}", '{phenotype}', 'models/filtered_db/predict_db_{phenotype}_filtered.db'),
-        #outp = os.path.abspath(os.path.join(SUMMARYTFXCAN_DIR, "{phenotype}", '{model}", "{phenotype}.enpactScores.spredixcan.csv'))
+
     resources:
         partition="caslake",
         mem_cpu=4,
@@ -246,16 +245,6 @@ checkpoint summary_TFXcan:
 rule collect_summaryTFXcan_results:
     input: 
         lambda wildcards: expand(os.path.join(SUMMARYTFXCAN_DIR, f"{wildcards.phenotype}", f"{{model}}-{wildcards.phenotype}.enpactScores.spredixcan.csv"), model = enpact_models_list)
-    
-    
-    #collect_completed_summary_tfxcan #checkpoints.summary_TFXcan.get(model = enpact_models_list[0], **wildcards).output[0]
-        #lambda wildcards: collect_completed_summary_tfxcan(wildcards)
-        #collect_completed_summary_tfxcan
-        #lambda wildcards: expand(os.path.join(SUMMARYTFXCAN_DIR, wildcards.phenotype, f'{{model}}-{wildcards.phenotype}.enpactScores.spredixcan.csv'), model = enpact_models_list)
-        # expand(os.path.join(SUMMARYTFXCAN_DIR, "{phenotype}", '{model}-{phenotype}.enpactScores.spredixcan.csv'), model = enpact_models_list, phenotype = run_list.keys())
-        #collect_completed_summary_tfxcan, os.path.join(SUMMARYTFXCAN_DIR, "{phenotype}", "{phenotype}", '{phenotype}.enpactScores.spredixcan.csv'
-        # lambda wildcards: expand(rules.summary_TFXcan.output.summary_tfxcan, zip, model = enpact_models_list, phenotype=wildcards.phenotype)
-        #lambda wildcards: collect_completed_summary_tfxcan(wildcards)
     output:
         summary_tfxcan = os.path.join(SUMMARY_OUTPUT, f'{{phenotype}}.enpactScores.{rundate}.spredixcan.txt')
     message: "working on {wildcards}"
@@ -275,16 +264,26 @@ rule collect_summaryTFXcan_results:
 
 
 
+#         inp = os.path.join(LENPACT_DIR, "{model}", '{phenotype}', 'models/filtered_db/predict_db_{phenotype}_filtered.db'),
+#         outp = os.path.abspath(os.path.join(SUMMARYTFXCAN_DIR, "{phenotype}", '{model}", "{phenotype}.enpactScores.spredixcan.csv'))
+
+
+#  collect_completed_summary_tfxcan #checkpoints.summary_TFXcan.get(model = enpact_models_list[0], **wildcards).output[0]
+#         lambda wildcards: collect_completed_summary_tfxcan(wildcards)
+#         collect_completed_summary_tfxcan
+#         lambda wildcards: expand(os.path.join(SUMMARYTFXCAN_DIR, wildcards.phenotype, f'{{model}}-{wildcards.phenotype}.enpactScores.spredixcan.csv'), model = enpact_models_list)
+#         expand(os.path.join(SUMMARYTFXCAN_DIR, "{phenotype}", '{model}-{phenotype}.enpactScores.spredixcan.csv'), model = enpact_models_list, phenotype = run_list.keys())
+#         collect_completed_summary_tfxcan, os.path.join(SUMMARYTFXCAN_DIR, "{phenotype}", "{phenotype}", '{phenotype}.enpactScores.spredixcan.csv'
+#         lambda wildcards: expand(rules.summary_TFXcan.output.summary_tfxcan, zip, model = enpact_models_list, phenotype=wildcards.phenotype)
+#         lambda wildcards: collect_completed_summary_tfxcan(wildcards)
 
 
 
-
-
-    # run:
-    #     if params.delete_enformer_outputs == True:
-    #         shell("mkdir -p {params.output_dir} && python3 {params.aggregation_script} --metadata_file {params.aggregation_config} --agg_types {params.aggtype} --output_directory {params.output_dir} --hpc {params.hpc} --parsl_executor {params.parsl_executor} --delete_enformer_outputs")
-    #     elif params.delete_enformer_outputs == False: # don't delete the outputs
-    #         shell("mkdir -p {params.output_dir} && python3 {params.aggregation_script} --metadata_file {params.aggregation_config} --agg_types {params.aggtype} --output_directory {params.output_dir} --hpc {params.hpc} --parsl_executor {params.parsl_executor}")
+#     run:
+#         if params.delete_enformer_outputs == True:
+#             shell("mkdir -p {params.output_dir} && python3 {params.aggregation_script} --metadata_file {params.aggregation_config} --agg_types {params.aggtype} --output_directory {params.output_dir} --hpc {params.hpc} --parsl_executor {params.parsl_executor} --delete_enformer_outputs")
+#         elif params.delete_enformer_outputs == False: # don't delete the outputs
+#             shell("mkdir -p {params.output_dir} && python3 {params.aggregation_script} --metadata_file {params.aggregation_config} --agg_types {params.aggtype} --output_directory {params.output_dir} --hpc {params.hpc} --parsl_executor {params.parsl_executor}")
 
 
 # rule calculate_enpact_scores:

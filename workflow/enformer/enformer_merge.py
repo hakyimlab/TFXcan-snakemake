@@ -36,8 +36,6 @@ if args.config is not None and os.path.exists(args.config):
     args = parser.set_defaults(**parameters)
     args, unknown = parser.parse_known_args()
 
-print(args)
-
 # merge the hdf5 files
 nps = pd.read_csv(args.predictions_logfile, sep='\t').shape[0]
 xshape = (nps, args.expected_shape[0], args.expected_shape[1])
@@ -46,7 +44,6 @@ print(f'INFO - Expected shape of combined hdf5 file is: {xshape}')
 
 # list the files in the directory
 output_files_list = glob.glob(os.path.join(args.predictions_directory, '*.h5'))
-print(f'INFO - Found {len(output_files_list)} files in the directory')
 
 # create the output directory
 if not os.path.exists(args.output_directory):
@@ -55,6 +52,8 @@ if not os.path.exists(args.output_directory):
 ofile = os.path.join(args.output_directory, args.output_filename)
 
 # print(ofile)
+
+print(f'INFO - Merging {len(output_files_list)} files into {ofile}')
 
 out = mergeUtils.merge_hdf5_files(output_files_list, xshape = xshape, output_file = ofile)
 print(f"INFO - Combined HDF5 is at {out}")

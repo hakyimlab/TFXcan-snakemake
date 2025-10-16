@@ -24,10 +24,15 @@ def merge_hdf5_files(h5files: list, xshape: tuple, output_file: str, overwrite =
                 continue
             else:
                 #print(f'INFO - Processing {h5name}...')
-                h5fr = h5py.File(h5name, 'r') 
+                try:
+                    h5fr = h5py.File(h5name, 'r') 
                 # dset1 = list(h5fr.keys())
+                except:
+                    print(f"ERROR - Error opening file {h5name}; skipping...")
+                    continue
                 arr_metadata = h5fr['metadata'][:]
                 arr_data = h5fr['predictions'][:]
+                print(f'INFO - {h5name} has shape {arr_data.shape} and metadata {arr_metadata}')
                 h5fr.close()
                 meta.append(arr_metadata)
                 if row0 == 0:

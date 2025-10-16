@@ -38,3 +38,12 @@ snakemake -s snakefile.smk --configfile config/pipeline_pcrisk.yaml --resources 
 snakemake -s snakefile.smk --configfile config/pipeline_type2diabetes_suzuki.yaml --profile profiles/simple/ --resources load=45
 
 snakemake -s snakefile.smk --configfile config/pipeline_type2diabetes.yaml --profile profiles/simple/ --resources load=180
+
+
+snakemake -s snakefile.smk --configfile config/pipeline.yaml --profile profiles/simple/ >> run.txt 2>&1  
+
+
+screen
+conda activate /beagle3/haky/users/shared_software/TFXcan-pipeline-tools
+cd /beagle3/haky/users/temi/projects/dgtex/pipeline/linearize-snakemake
+snakemake -s snakefile.smk --configfile ./configs/pipeline_GTEx.yaml --profile profiles/simple/ --resources load=60 -np 

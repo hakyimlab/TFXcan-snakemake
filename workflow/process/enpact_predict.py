@@ -20,13 +20,20 @@ args = parser.parse_args()
 
 # '/beagle3/haky/users/temi/projects/Enpact/files/ENPACT_734_2024-07-26.compiled_weights.lambda.1se.txt.gz'
 # enpact weights
-dt_weights = pd.read_table(args.weights).drop(columns = ['feature'])
-mnames = dt_weights.columns.tolist()
-weights = dt_weights.to_numpy()
+dt_weights = pd.read_table(args.weights).drop(columns = ['feature']) #pd.read_table("/beagle3/haky/users/temi/projects/Enpact/data/enpact/weights/ENPACT_734_2025-04-24.compiled_weights.with_intercept.lambda.1se.txt.gz").drop(columns = ['feature']) #
+
+intercept_matrix = dt_weights.iloc[0, :].to_numpy()
+weights_matrix = dt_weights.iloc[dt_weights.index != 0] 
+# predict
+mnames = weights_matrix.columns.tolist()
+weights_matrix = weights_matrix.to_numpy()
 
 # xt = pd.read_table(args.matrix)
 xt = pd.read_hdf(args.matrix).to_numpy()
-enpact_predictions = np.matmul(xt, weights)
+# multiply and add the intercept
+# x_predictions = np.matmul(xt, weights_matrix)
+enpact_predictions = intercept_matrix + np.matmul(xt, weights_matrix) # b0 + b1x1 + b2x2 + ... + bnxn 
+# np.allclose(diff, intercept_matrix)
 enpact_predictions = pd.DataFrame(enpact_predictions)
 enpact_predictions.columns = mnames
 
@@ -77,3 +84,14 @@ if args.split:
 
     #     df_tf_tissue.to_csv(f'{args.output_basename}.{tf_tissue}.enpact_scores.txt', sep = '\t', index = False)
     #     mdt.to_csv(f'{args.output_basename}.{tf_tissue}.annotation.txt', sep = '\t', index = False)
+
+
+
+# import h5py
+
+# h5file = pd.read_hdf('/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/T2D_2025-01-24/aggregated_predictions/t2d_suzuki.T2D_2025-01-24.processed.matrix.h5.gz').to_numpy()
+
+
+# h5file.shape
+
+# h5file[1:5, 1:5]
