@@ -12,3 +12,6 @@ snakefile.predictDB.smk
 workflow/src/archives/**
 archives/**
 slurm_logs/**
+files/**
+tfxcan_files.tar.gz
+minimal/data/**

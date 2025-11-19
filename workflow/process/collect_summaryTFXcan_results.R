@@ -19,8 +19,8 @@ library(tidyverse)
 library(glue)
 
 # opt <- list()
-# opt$input_files_pattern <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/T2D_2025-01-24/summaryTFXcan/t2d_suzuki/.*-t2d_suzuki.enpactScores.spredixcan.csv'
-# opt$phenotype <- 't2d_suzuki'
+# opt$input_files_pattern <- "/scratch/beagle3/temi/summary_tfxcan/prostate_cancer_risk/*.prostate_cancer_risk.summaryTFXcan.csv"
+# opt$phenotype <- "prostate_cancer_risk"
 
 # grep
 sFiles <- list.files(path = dirname(opt$input_files_pattern), pattern = basename(opt$input_files_pattern), full.names = T)
@@ -45,12 +45,19 @@ dFiles <- purrr::map(.x=sFiles, .f=function(each_file){
     } else {
         return(NULL)
     }
-})
+}, .progress = TRUE)
+
+# bn <- lapply(dFiles, ncol) |> unlist(); which(bn != 12)
 # remove the NULLs
 dFiles <- Filter(Negate(is.null), dFiles)
+# print(head(dFiles[[3]]))
 # bind the rows
-dt <- dplyr::bind_rows(dFiles)
+dt_summary <- dplyr::bind_rows(dFiles)
 # rename the columns
-dt <- dt %>% dplyr::select(-c(gene_name)) %>% dplyr::rename(tfbs = gene)
+# print(head(dFiles[[1]]))
+# print(head(dt))
+dt_summary <- dt_summary %>% dplyr::select(-gene_name) %>% dplyr::rename(tfbs = gene)
+#colnames(dt)[colnames(dt) == 'gene'] <- 'tfbs'
+print(head(dt_summary))
 # write the file
-data.table::fwrite(dt, opt$output_file, sep = "\t", quote = F, row.names = F)
+data.table::fwrite(dt_summary, opt$output_file, sep = "\t", quote = F, row.names = F)
