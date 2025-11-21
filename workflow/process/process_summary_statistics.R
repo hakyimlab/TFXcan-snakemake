@@ -9,7 +9,7 @@ option_list <- list(
     make_option("--summary_stats_file", help='A GWAS summary statistics file; should be a tsv file with columns: chrom, pos, ref, alt, pval, beta, se, zscore'),
     make_option("--output_folder", help='the output folder'),
     make_option("--annotation_file", help = 'a GWAS phenotype'),
-    make_option("--pvalue_threshold", default=5e-8, type='numeric', help = 'the pvalue threshold for significance; default is 5e-8'),
+    make_option("--pvalue_threshold", default=0.05, type='numeric', help = 'the pvalue threshold for significance; default is 5e-8'),
     make_option('--diagnostics_file', type='character', default=NULL, help='A file to write diagnostics to; default is NULL i.e no diagnostics file will be written')
 )
 

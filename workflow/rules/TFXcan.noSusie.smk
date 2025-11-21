@@ -10,6 +10,7 @@ checkpoint process_summary_statistics:
         diag_file = os.path.join(DATA_DIR, 'diagnostics', f'{{phenotype}}.gwas_diagnostics.summary'),
         reference_annotations = REFERENCE_ANNOTATIONS,
         input_sumstats = lambda wildcards: os.path.join(INPUT_SUMSTATS, run_list[wildcards.phenotype]),
+        pthreshold = config['processing']['GWAS_pvalue_threshold']
         #output_directory = os.path.join(PROCESSED_SUMSTATS, '{phenotype}')
     message: "working on {wildcards}" 
     resources:
@@ -17,7 +18,7 @@ checkpoint process_summary_statistics:
         cpu_task=8
     shell:
         """
-        Rscript workflow/process/process_summary_statistics.R --summary_stats_file {params.input_sumstats} --output_folder {output} --annotation_file {params.reference_annotations} --diagnostics_file {params.diag_file}
+        Rscript workflow/process/process_summary_statistics.R --summary_stats_file {params.input_sumstats} --output_folder {output} --annotation_file {params.reference_annotations} --diagnostics_file {params.diag_file} --pvalue_threshold {params.pthreshold}
         """
 
 checkpoint select_top_snps: 
