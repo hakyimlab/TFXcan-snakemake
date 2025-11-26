@@ -24,6 +24,8 @@ processing:
   LD_blocks: "files/EUR_LDBlocks.hg38.updated.bed"
   reference_annotations: files/EUR.snp_annot.txt # same as the one below; used to match the snps in the summary statistics file
   GWAS_pvalue_threshold: 5e-8
+  selection_method: "topSNPs" # the other option is linkage which will use the ld block information
+  select_n_snps: 20
 
 # necessities for predictdb
 predictdb:

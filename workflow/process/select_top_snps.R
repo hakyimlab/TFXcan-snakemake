@@ -11,7 +11,10 @@ option_list <- list(
     make_option("--LDBlocks_info", help='A file for the LD blocks of where to run SuSie'),
     make_option("--output_folder", help='The folder to put SuSie results in'),
     make_option("--phenotype", help='A GWAS phenotype'),
-    make_option('--diagnostics_file', type='character', default=NULL, help='A file to write diagnostics to; default is NULL i.e no diagnostics file will be written')
+    make_option('--diagnostics_file', type='character', default=NULL, help='A file to write diagnostics to; default is NULL i.e no diagnostics file will be written'),
+    make_option("--selection_method", default = "linkage", help='How should the top SNPs be selected? Options are: linkage or topSNPs'),
+    make_option("--select_n_snps", default = 20, help='How many top SNPs should be selected?')
+    
 )
 
 opt <- parse_args(OptionParser(option_list=option_list))  
@@ -70,7 +73,7 @@ if(!is.null(opt$diagnostics_file)){
 
 findTopSNPPerLDBlock <- function(ld_window, summary_stats, diagnostics_file=NULL){
     # get the LD block
-    ft <- sumstats %>%
+    ft <- summary_stats %>%
         dplyr::filter(dplyr::between(pos, ld_window$start, ld_window$stop)) 
     if(nrow(ft) == 0){
         return(NULL)
@@ -79,20 +82,39 @@ findTopSNPPerLDBlock <- function(ld_window, summary_stats, diagnostics_file=NULL
     }
 }
 
+findTopSNPPerByTop <- function(summary_stats, nSNPs, diagnostics_file=NULL){
+    # get the LD block
+    ft <- summary_stats %>% dplyr::arrange(pval) %>% dplyr::slice_head(n=nSNPs) 
+    if(nrow(ft) == 0){
+        return(NULL)
+    } else {
+        return(ft[which.min(ft$pval),])
+    }
+}
+
+
+
 # for each LD block, run find top SNP
 
 LD_block_split <- base::split(LD_block, LD_block$split)
 
-topsnps <- base::lapply(LD_block_split, findTopSNPPerLDBlock, sumstats, opt$diagnostics_file)
+if(opt$selection_method == 'linkage'){
+    print(glue("INFO - Selecting SNPs using linkage..."))
+    topsnps <- base::lapply(LD_block_split, findTopSNPPerLDBlock, sumstats, opt$diagnostics_file)
+    topsnps <- dplyr::bind_rows(topsnps) %>%
+        dplyr::mutate(phenotype = opt$phenotype) %>%
+        dplyr::select(chr, pos, a0, a1, pval, beta, se, zscore, phenotype)
+} else if(opt$selection_method == 'topSNPs'){
+    print(glue("INFO - Selecting the top {opt$select_n_snps} SNPs"))
+    topsnps <- findTopSNPPerByTop(sumstats, opt$select_n_snps, opt$diagnostics_file)
+}
+
 
 # close the connection if necessary
 if(!is.null(opt$diagnostics_file)){
     close(diagfile)
 }
 
-topsnps <- dplyr::bind_rows(topsnps) %>%
-    dplyr::mutate(phenotype = opt$phenotype) %>%
-    dplyr::select(chr, pos, a0, a1, pval, beta, se, zscore, phenotype)
 topsnps %>%
     data.table::fwrite(glue("{opt$output_folder}/{opt$phenotype}.chr{opt$chromosome}.filteredGWAS.topSNPs.txt"), sep='\t', quote=FALSE, row.names=FALSE)
 

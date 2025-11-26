@@ -36,7 +36,9 @@ checkpoint select_top_snps:
         #input_sumstats = lambda wildcards, input: os.path.join(input, f'chr{{}}.sumstats.txt.gz'),
         ld_blocks = config['processing']['LD_blocks'],
         chroms = collect_chromosomes,
-        diag_file = os.path.join(DATA_DIR, 'diagnostics', f'{{phenotype}}.chr{{}}.topSNPs_diagnostics.summary')
+        diag_file = os.path.join(DATA_DIR, 'diagnostics', f'{{phenotype}}.chr{{}}.topSNPs_diagnostics.summary'),
+        selection_method = config['processing']['selection_method'],
+        select_n_snps = config['processing']['select_n_snps']
     message: "working on {wildcards}"
     resources:
         partition="caslake",
@@ -44,7 +46,7 @@ checkpoint select_top_snps:
     shell:
         """
         module load parallel;
-        printf "%s\\n" {params.chroms} | parallel -j 12 "Rscript workflow/process/select_top_snps.R --chromosome {{}} --sumstats {params.input_sumstats} --LDBlocks_info {params.ld_blocks} --output_folder {output} --phenotype {wildcards.phenotype} --diagnostics_file {params.diag_file}"
+        printf "%s\\n" {params.chroms} | parallel -j 12 "Rscript workflow/process/select_top_snps.R --chromosome {{}} --sumstats {params.input_sumstats} --LDBlocks_info {params.ld_blocks} --output_folder {output} --phenotype {wildcards.phenotype} --diagnostics_file {params.diag_file} --selection_method {params.selection_method} --select_n_snps {params.select_n_snps}"
         """
 
 rule collect_top_snps_results:
