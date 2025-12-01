@@ -88,7 +88,7 @@ findTopSNPPerByTop <- function(summary_stats, nSNPs, diagnostics_file=NULL){
     if(nrow(ft) == 0){
         return(NULL)
     } else {
-        return(ft[which.min(ft$pval),])
+        return(ft)
     }
 }
 
