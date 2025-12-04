@@ -81,38 +81,11 @@ def collect_chromosomes(wildcards):
 #     return(m)
 
 def collect_completed_summary_tfxcan(wc):
-    # for m in enpact_models_list:
-    #     checkpoint_output = checkpoints.summary_TFXcan.get(model = m, **wc).output[0]
     checkpoint_output = checkpoints.summary_TFXcan.get(model = m, **wc).output[0]
-    #checkpoint_output = os.path.dirname(checkpoints.summary_TFXcan.get(phenotype = wc.phenotype).output[0])
-    #exp = expand(os.path.join(SUMMARYTFXCAN_DIR, f'{wc.phenotype}', f'{{model}}-{wc.phenotype}.enpactScores.spredixcan.csv'), model = enpact_models_list)
-
     sxcan_files = glob_wildcards(os.path.join(SUMMARYTFXCAN_DIR, f"{wc.phenotype}", '{sxcan}')).sxcan
     exp = [os.path.join(SUMMARYTFXCAN_DIR, f"{wc.phenotype}", f"{sxcan}") for sxcan in sxcan_files]
-
-    print(exp)
+    #print(exp)
     return(exp)
-
-    #lambda wildcards: checkpoints.summary_TFXcan.get(model = enpact_models_list[0], **wildcards).output[0]
-
-    # checkpoint_output = checkpoints.summary_TFXcan.get(**wildcards).output[0]
-    # print(checkpoint_output)
-    # #sxcan_files = glob_wildcards(os.path.join(SUMMARYTFXCAN_DIR, f"{wc.phenotype}", '{sxcan}')).sxcan
-
-    # expand(os.path.join(SUMMARYTFXCAN_DIR, '{phenotype}', '{model}-{phenotype}.enpactScores.spredixcan.csv'), phenotype = run_list.keys(), model = enpact_models_list)
-
-    # print(sxcan_files)
-
-    # data/T2D_2025-01-24/summaryTFXcan/t2d_suzuki/AR_Breast-t2d_suzuki.enpactScores.spredixcan.csv
-    # checkpoint_output = checkpoints.summary_TFXcan.get(**wildcards).output[0]
-    # mm, ph, _ = glob_wildcards(checkpoint_output)
-    # return(os.path.join(SUMMARYTF`CAN_DIR, "{mm}", "{ph}", '{pp}.enpactScores.spredixcan.csv'))
-    #print(f"Wildcards: {wildcards}")
-    # checkpoint_output = checkpoints.summary_TFXcan.get(**wildcards).output[0]
-    # print(**wildcards)
-    #exp = expand(os.path.join(SUMMARYTFXCAN_DIR, '{phenotype}', '{model}-{phenotype}.enpactScores.spredixcan.csv'), zip, model=mm, phenotype=ph)
-    #exp = [os.path.join(SUMMARYTFXCAN_DIR, f"{wc.phenotype}", f"{sxcan}") for sxcan in sxcan_files]
-    # return(exp)
 
 print(f"INFO - Found {len(run_list)} phenotypes for TFXcan analysis.")
 print(run_list)

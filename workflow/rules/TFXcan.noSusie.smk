@@ -1,8 +1,12 @@
+
+
+
+
+
+
+
+# input summary statistic -> split by chromosomes
 checkpoint process_summary_statistics:
-    #input: lambda wildcards: os.path.join(INPUT_SUMSTATS, f'{run_list[wildcards.phenotype]}')
-    # input: 
-    #     #os.path.join(INPUT_SUMSTATS, '{phenotype}.gwas_sumstats.processed.txt.gz')
-    #     lambda wildcards: expand(os.path.join(INPUT_SUMSTATS, "{sumstat}"), sumstat=run_list[wildcards.phenotype])
     output: directory(os.path.join(PROCESSED_SUMSTATS, '{phenotype}'))
     params:
         runmeta = runmeta,
@@ -11,7 +15,6 @@ checkpoint process_summary_statistics:
         reference_annotations = REFERENCE_ANNOTATIONS,
         input_sumstats = lambda wildcards: os.path.join(INPUT_SUMSTATS, run_list[wildcards.phenotype]),
         pthreshold = config['processing']['GWAS_pvalue_threshold']
-        #output_directory = os.path.join(PROCESSED_SUMSTATS, '{phenotype}')
     message: "working on {wildcards}" 
     resources:
         mem_cpu=8,
@@ -21,19 +24,15 @@ checkpoint process_summary_statistics:
         Rscript workflow/process/process_summary_statistics.R --summary_stats_file {params.input_sumstats} --output_folder {output} --annotation_file {params.reference_annotations} --diagnostics_file {params.diag_file} --pvalue_threshold {params.pthreshold}
         """
 
+# select either the top n snps or the most significant snp per LD region
 checkpoint select_top_snps: 
     input: lambda wildcards: checkpoints.process_summary_statistics.get(phenotype = wildcards.phenotype).output[0]
-        #collect_chromosomes
-        #rules.process_summary_statistics.output,
-        #lambda wildcards: collect_processed_summary_statistics(wildcards)
-        #collect_processed_summary_statistics
     output:
         directory(os.path.join(FILTERING_DIR, '{phenotype}'))
     params:
         runmeta = runmeta,
         jobname = '{phenotype}',
         input_sumstats = lambda wildcards: os.path.join(PROCESSED_SUMSTATS, wildcards.phenotype, f'chr{{}}.sumstats.txt.gz'),
-        #input_sumstats = lambda wildcards, input: os.path.join(input, f'chr{{}}.sumstats.txt.gz'),
         ld_blocks = config['processing']['LD_blocks'],
         chroms = collect_chromosomes,
         diag_file = os.path.join(DATA_DIR, 'diagnostics', f'{{phenotype}}.chr{{}}.topSNPs_diagnostics.summary'),
@@ -49,6 +48,7 @@ checkpoint select_top_snps:
         printf "%s\\n" {params.chroms} | parallel -j 12 "Rscript workflow/process/select_top_snps.R --chromosome {{}} --sumstats {params.input_sumstats} --LDBlocks_info {params.ld_blocks} --output_folder {output} --phenotype {wildcards.phenotype} --diagnostics_file {params.diag_file} --selection_method {params.selection_method} --select_n_snps {params.select_n_snps}"
         """
 
+# collect the result above into one data
 rule collect_top_snps_results:
     input: lambda wildcards: checkpoints.select_top_snps.get(**wildcards).output[0]
     output:
@@ -65,6 +65,7 @@ rule collect_top_snps_results:
         Rscript workflow/process/collect_topsnps_results.R --selection_dir {input} --phenotype {wildcards.phenotype} --filtered_sumstats {output.filtered_sumstats} --enformer_loci {output.enformer_loci}
         """
 
+# create configuration file for enformer to run
 rule create_enformer_configuration:
     input: rules.collect_top_snps_results.output.enformer_loci
     output: os.path.join(ENFORMER_PARAMETERS, f'enformer_parameters_{runname}_{{phenotype}}.yaml')
@@ -89,6 +90,7 @@ rule create_enformer_configuration:
         elif params.personalized_predictions == False:
             shell("Rscript workflow/process/create_enformer_config.R --runname {params.dset} --phenotype {wildcards.phenotype} --base_directives {params.bdirectives} --project_directory {params.pdir} --predictors_file {input} --model {params.model} --fasta_file {params.fasta_file} --parameters_file {output} --date {params.ddate} --copy_aggregation_config {params.cp_aggregation}")
 
+# predict with enformer
 rule predict_with_enformer:
     input:
         rules.create_enformer_configuration.output
@@ -110,12 +112,11 @@ rule predict_with_enformer:
         sbatch workflow/enformer/enformer_predict.sbatch {params.enformer_predict_script} {input}
         """
 
+# collect the predictions into one database file
 rule aggregate_predictions:
     input:
         rules.predict_with_enformer.output
     output:
-        #touch(os.path.join(CHECKPOINTS_DIR, '{phenotype}.checkpoint')),
-        #directory(os.path.join(AGGREGATED_PREDICTIONS, '{phenotype}'))
         os.path.join(AGGREGATED_PREDICTIONS, f'{{phenotype}}.{runmeta}.h5')
     message: 
         "working on {wildcards}"
@@ -136,6 +137,7 @@ rule aggregate_predictions:
         python3 workflow/enformer/enformer_merge.py --config {input} --output_directory {params.output_dir} --output_filename {params.output_filename}
         """
 
+# process the predictions (sum haplotypes)
 rule process_predictions:
     input:
         rules.aggregate_predictions.output
@@ -158,12 +160,12 @@ rule process_predictions:
         python3 workflow/enformer/enformer_process.py --merged_h5_file {input} --process_by_haplotype --process_function 'sum' --output_basename {params.basename}
         """
 
+# prepare for snp-enpact training
 checkpoint prepare_files_for_predictDB:
     input: 
         matrix = rules.process_predictions.output.matrix,
         metadata = rules.process_predictions.output.metadata
     output: 
-        #directory(os.path.join(PREDICTDB_DATA, '{phenotype}'))
         enpact_scores = expand(os.path.join(PREDICTDB_DATA, "{{phenotype}}", "{{phenotype}}.{model}.enpact_scores.txt"), model = enpact_models_list),
         annotations = expand(os.path.join(PREDICTDB_DATA, "{{phenotype}}", "{{phenotype}}.{model}.annotation.txt"), model = enpact_models_list)
     params:
@@ -184,6 +186,7 @@ checkpoint prepare_files_for_predictDB:
         python3 workflow/process/enpact_predict.py --matrix {input.matrix} --weights {params.enpact_weights} --metadata {input.metadata} --split --output_basename {params.output_basename} --subset_of_loci {params.loci_subset}
         """
 
+# linearize or train snps
 rule generate_lEnpact_models:
     input:
         enpact_scores = os.path.join(PREDICTDB_DATA, "{phenotype}", "{phenotype}.{model}.enpact_scores.txt"),
@@ -197,7 +200,6 @@ rule generate_lEnpact_models:
         output_dir = os.path.abspath(os.path.join(LENPACT_DIR, '{phenotype}', "{model}")),
         annot_file = lambda wildcards, input: os.path.abspath(input.annot_file),
         enpact_scores = lambda wildcards, input: os.path.abspath(input.enpact_scores),
-        #lEnpact_directory = os.path.join(LENPACT_DIR, "{model}", '{phenotype}'),
         generate_sbatch = os.path.abspath("workflow/predictdb/generate_snp_predictors.sbatch"),
         reference_genotypes = os.path.abspath(config['predictdb']['reference_genotypes']),
         reference_annotations = os.path.abspath(REFERENCE_ANNOTATIONS),
@@ -209,6 +211,7 @@ rule generate_lEnpact_models:
     benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.{{model}}.generate_lEnpact_models.tsv")
     shell: "cd {params.output_dir} && {params.generate_sbatch} {wildcards.phenotype} {params.output_dir} {params.annot_file} {params.enpact_scores} {params.reference_genotypes} {params.reference_annotations} {params.nextflow_executable}"
 
+# process covariances
 rule format_covariances:
     input:
         covariances = rules.generate_lEnpact_models.output.covariances_model
@@ -223,9 +226,9 @@ rule format_covariances:
     benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.{{model}}.format_covariances.tsv")
     shell: "workflow/src/format_covariances.sbatch {input.covariances} {output.formatted_covariances}"
 
+# run summary TFXcan
 checkpoint summary_TFXcan:
     input:
-        #model=os.path.join(LENPACT_DIR, '{phenotype}', 'models/filtered_db/predict_db_{phenotype}_filtered.db'), #rules.generate_lEnpact_models.output.lEnpact_model,
         snp_model = rules.generate_lEnpact_models.output.lEnpact_model,
         cov = rules.format_covariances.output.formatted_covariances
     output:
@@ -242,12 +245,13 @@ checkpoint summary_TFXcan:
         mem_cpu=4,
         cpu_task=8
     benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.{{model}}.summary_TFXcan.tsv")
-    shell: "workflow/process/summary_TFXcan.sbatch {wildcards.phenotype} {input.snp_model} {output.summary_tfxcan} {params.gwas_folder} {params.gwas_pattern} {input.cov} {params.executable} {params.environment}" #"workflow/src/summary_TFXcan.sbatch {wildcards.phenotype} {params.inp} {params.outp} {params.gwas_folder} {params.gwas_pattern} {params.covariances}"
+    shell: "workflow/process/summary_TFXcan.sbatch {wildcards.phenotype} {input.snp_model} {output.summary_tfxcan} {params.gwas_folder} {params.gwas_pattern} {input.cov} {params.executable} {params.environment}" 
 
+# prepare to collect summary TFXcan
 checkpoint prepare_to_collect_summaryTFXcan_results:
     input: 
         lambda wildcards: expand(os.path.join(SUMMARYTFXCAN_DIR, f"{wildcards.phenotype}", f"{{model}}-{wildcards.phenotype}.enpactScores.spredixcan.csv"), model = enpact_models_list)
-    output: os.path.join(COLLECTION_DIR, '{phenotype}.summaryTFXcan.paths.txt') #os.path.join(SUMMARY_OUTPUT, f'{{phenotype}}.enpactScores.{rundate}.spredixcan.txt')
+    output: os.path.join(COLLECTION_DIR, '{phenotype}.summaryTFXcan.paths.txt')
     message: "working on {wildcards}"
     params:
         jobname = runmeta,
@@ -262,20 +266,16 @@ checkpoint prepare_to_collect_summaryTFXcan_results:
         with open(output[0], 'w') as outfile:
             for fname in input:
                 outfile.write(fname + "\n")
-    #shell: "Rscript workflow/process/collect_summaryTFXcan_results.R --input_files_pattern {params.sFiles_pattern} --phenotype {wildcards.phenotype} --output_file {output.summary_tfxcan}"
 
-
-rule collect_summaryTFXcan_results: # lambda wildcards: checkpoints.process_summary_statistics.get(phenotype = wildcards.phenotype).output[0]
+# collect summary TFXcan into one file
+rule collect_summaryTFXcan_results:
     input: lambda wildcards: checkpoints.prepare_to_collect_summaryTFXcan_results.get(phenotype = wildcards.phenotype).output[0]
-        #lambda wildcards: expand(os.path.join(SUMMARYTFXCAN_DIR, f"{wildcards.phenotype}", f"{{model}}-{wildcards.phenotype}.enpactScores.spredixcan.csv"), model = enpact_models_list)
     output:
         summary_tfxcan = os.path.join(SUMMARY_OUTPUT, f'{{phenotype}}.enpactScores.{rundate}.spredixcan.txt')
     message: "working on {wildcards}"
     params:
         jobname = runmeta,
-        runmeta = runmeta,
-        #sFiles_pattern = lambda wildcards, input: os.path.join(SUMMARYTFXCAN_DIR, f"{wildcards.phenotype}", f".*-{wildcards.phenotype}.enpactScores.spredixcan.csv") #",".join(input), #lambda wildcards: ",".join(collect_completed_summary_tfxcan(wildcards))
-        #lambda wildcards: collect_completed_summary_tfxcan(wildcards) #lambda wildcards: collect_completed_summary_tfxcan(wildcards)
+        runmeta = runmeta
     resources:
         partition="caslake",
         time="00:30:00",
@@ -283,93 +283,3 @@ rule collect_summaryTFXcan_results: # lambda wildcards: checkpoints.process_summ
         cpu_task=8
     benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.{rundate}.collect_summaryTFXcan_results.tsv")
     shell: "Rscript workflow/process/collect_summaryTFXcan_results.R --input_files_pattern {input} --phenotype {wildcards.phenotype} --output_file {output.summary_tfxcan}"
-
-
-#         os.path.join(HOMERFILES_DIR, '{tf}', 'merged_motif_file.txt')
-#     message: "working on {input}" 
-#     params:
-#         jobname = '{tf}',
-#         run = run,
-#     resources:
-#         mem_mb = 10000
-#     run:
-#         with open(output[0], 'w') as outfile:
-#             for fname in input:
-#                 with open(fname) as infile:
-#                     for i, line in enumerate(infile):
-#                         outfile.write(line)
-
-
-
-
-#         inp = os.path.join(LENPACT_DIR, "{model}", '{phenotype}', 'models/filtered_db/predict_db_{phenotype}_filtered.db'),
-#         outp = os.path.abspath(os.path.join(SUMMARYTFXCAN_DIR, "{phenotype}", '{model}", "{phenotype}.enpactScores.spredixcan.csv'))
-
-
-#  collect_completed_summary_tfxcan #checkpoints.summary_TFXcan.get(model = enpact_models_list[0], **wildcards).output[0]
-#         lambda wildcards: collect_completed_summary_tfxcan(wildcards)
-#         collect_completed_summary_tfxcan
-#         lambda wildcards: expand(os.path.join(SUMMARYTFXCAN_DIR, wildcards.phenotype, f'{{model}}-{wildcards.phenotype}.enpactScores.spredixcan.csv'), model = enpact_models_list)
-#         expand(os.path.join(SUMMARYTFXCAN_DIR, "{phenotype}", '{model}-{phenotype}.enpactScores.spredixcan.csv'), model = enpact_models_list, phenotype = run_list.keys())
-#         collect_completed_summary_tfxcan, os.path.join(SUMMARYTFXCAN_DIR, "{phenotype}", "{phenotype}", '{phenotype}.enpactScores.spredixcan.csv'
-#         lambda wildcards: expand(rules.summary_TFXcan.output.summary_tfxcan, zip, model = enpact_models_list, phenotype=wildcards.phenotype)
-#         lambda wildcards: collect_completed_summary_tfxcan(wildcards)
-
-
-
-#     run:
-#         if params.delete_enformer_outputs == True:
-#             shell("mkdir -p {params.output_dir} && python3 {params.aggregation_script} --metadata_file {params.aggregation_config} --agg_types {params.aggtype} --output_directory {params.output_dir} --hpc {params.hpc} --parsl_executor {params.parsl_executor} --delete_enformer_outputs")
-#         elif params.delete_enformer_outputs == False: # don't delete the outputs
-#             shell("mkdir -p {params.output_dir} && python3 {params.aggregation_script} --metadata_file {params.aggregation_config} --agg_types {params.aggtype} --output_directory {params.output_dir} --hpc {params.hpc} --parsl_executor {params.parsl_executor}")
-
-
-# rule calculate_enpact_scores:
-#     input: os.path.join(AGGREGATED_PREDICTIONS, '{phenotype}') #rules.aggregate_predictions.output 
-#     output: directory(os.path.join(ENPACT_PREDICTIONS, '{phenotype}'))
-#     params:
-#         rscript = config['rscript'],
-#         runmeta = runmeta,
-#         individuals = lambda wildcards: collect_aggregated_individuals(),
-#         input_file = lambda wildcards, input: os.path.join(AGGREGATED_PREDICTIONS, wildcards.phenotype, f'{{}}_{config["enformer"]["aggtype"]}_{wildcards.phenotype}.csv.gz'),
-#         output_file = lambda wildcards, output: os.path.join(ENPACT_PREDICTIONS, wildcards.phenotype, f'{{}}.{wildcards.phenotype}.{config["enformer"]["aggtype"]}.{rundate}.csv.gz'),
-#         models_directory = config['enpact_models']['directory'],
-#         models_metadata = config['enpact_models']['metadata'],
-#         jobname = '{phenotype}'
-#     message: 
-#         "working on {params.jobname}"
-#     resources:
-#         partition="caslake",
-#         mem_cpu=16,
-#         cpu_task=8,
-#         time = "02:00:00",
-#     benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.calculate_enpact_scores.tsv")
-#     shell:
-#         """
-#         module load parallel;
-#         mkdir -p {output};
-#         printf "%s\\n" {params.individuals} | parallel -j 20 'Rscript workflow/src/calculate_enpact_scores.R --input_file {params.input_file} --output_file {params.output_file} --enpact_models_directory {params.models_directory} --enpact_models_metadata {params.models_metadata}'
-#         """
-
-# rule create_enpact_scores_database:
-#     input: rules.calculate_enpact_scores.output
-#     output: 
-#         f1 = os.path.join(ENPACT_DB, "{phenotype}.enpact_scores.array.rds.gz"),
-#         f2 = os.path.join(ENPACT_DB, "{phenotype}.enpact_scores.txt.gz")
-#     message: "working on {wildcards.phenotype}"
-#     resources:
-#         partition="caslake"
-#     benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.create_enpact_scores_database.tsv")
-#     params:
-#         rscript = config['rscript'],
-#         runmeta = runmeta,
-#         jobname = '{phenotype}',
-#         input_pattern = os.path.join(ENPACT_PREDICTIONS, '{phenotype}', f'{{}}.{{phenotype}}.{config["enformer"]["aggtype"]}.{rundate}.csv.gz'),
-#         individuals = lambda wildcards: ','.join(collect_enpact_individuals())
-#     shell:
-#         """
-#             Rscript workflow/src/create_enpact_scores_database.R --input_files {params.input_pattern} --output_file {output.f2} --output_db {output.f1} --individuals {params.individuals}
-#         """
-
-
-
