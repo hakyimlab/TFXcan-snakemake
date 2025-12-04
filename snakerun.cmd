@@ -47,3 +47,7 @@ screen
 conda activate /beagle3/haky/users/shared_software/TFXcan-pipeline-tools
 cd /beagle3/haky/users/temi/projects/dgtex/pipeline/linearize-snakemake
 snakemake -s snakefile.smk --configfile ./configs/pipeline_GTEx.yaml --profile profiles/simple/ --resources load=60 -np 
+
+
+
+snakemake -s snakefile.smk --configfile config/pipeline.asthma.children.yaml --profile profiles/simple/ --resources load=60 -np

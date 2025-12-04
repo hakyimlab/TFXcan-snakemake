@@ -237,7 +237,6 @@ checkpoint summary_TFXcan:
         gwas_pattern = '.*.sumstats.txt.gz',
         executable = config['summaryTFXcan']['summaryXcan_executable'],
         environment = config['summaryTFXcan']['conda_environment']
-
     resources:
         partition="caslake",
         mem_cpu=4,
@@ -245,16 +244,37 @@ checkpoint summary_TFXcan:
     benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.{{model}}.summary_TFXcan.tsv")
     shell: "workflow/process/summary_TFXcan.sbatch {wildcards.phenotype} {input.snp_model} {output.summary_tfxcan} {params.gwas_folder} {params.gwas_pattern} {input.cov} {params.executable} {params.environment}" #"workflow/src/summary_TFXcan.sbatch {wildcards.phenotype} {params.inp} {params.outp} {params.gwas_folder} {params.gwas_pattern} {params.covariances}"
 
-rule collect_summaryTFXcan_results:
+checkpoint prepare_to_collect_summaryTFXcan_results:
     input: 
         lambda wildcards: expand(os.path.join(SUMMARYTFXCAN_DIR, f"{wildcards.phenotype}", f"{{model}}-{wildcards.phenotype}.enpactScores.spredixcan.csv"), model = enpact_models_list)
+    output: os.path.join(COLLECTION_DIR, '{phenotype}.summaryTFXcan.paths.txt') #os.path.join(SUMMARY_OUTPUT, f'{{phenotype}}.enpactScores.{rundate}.spredixcan.txt')
+    message: "working on {wildcards}"
+    params:
+        jobname = runmeta,
+        runmeta = runmeta
+    resources:
+        partition="caslake",
+        time="00:30:00",
+        mem_cpu=4,
+        cpu_task=4
+    benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.{rundate}.prepare_to_collect_summaryTFXcan_results.tsv")
+    run:
+        with open(output[0], 'w') as outfile:
+            for fname in input:
+                outfile.write(fname + "\n")
+    #shell: "Rscript workflow/process/collect_summaryTFXcan_results.R --input_files_pattern {params.sFiles_pattern} --phenotype {wildcards.phenotype} --output_file {output.summary_tfxcan}"
+
+
+rule collect_summaryTFXcan_results: # lambda wildcards: checkpoints.process_summary_statistics.get(phenotype = wildcards.phenotype).output[0]
+    input: lambda wildcards: checkpoints.prepare_to_collect_summaryTFXcan_results.get(phenotype = wildcards.phenotype).output[0]
+        #lambda wildcards: expand(os.path.join(SUMMARYTFXCAN_DIR, f"{wildcards.phenotype}", f"{{model}}-{wildcards.phenotype}.enpactScores.spredixcan.csv"), model = enpact_models_list)
     output:
         summary_tfxcan = os.path.join(SUMMARY_OUTPUT, f'{{phenotype}}.enpactScores.{rundate}.spredixcan.txt')
     message: "working on {wildcards}"
     params:
         jobname = runmeta,
         runmeta = runmeta,
-        sFiles_pattern = lambda wildcards, input: os.path.join(SUMMARYTFXCAN_DIR, f"{wildcards.phenotype}", f".*-{wildcards.phenotype}.enpactScores.spredixcan.csv") #",".join(input), #lambda wildcards: ",".join(collect_completed_summary_tfxcan(wildcards))
+        #sFiles_pattern = lambda wildcards, input: os.path.join(SUMMARYTFXCAN_DIR, f"{wildcards.phenotype}", f".*-{wildcards.phenotype}.enpactScores.spredixcan.csv") #",".join(input), #lambda wildcards: ",".join(collect_completed_summary_tfxcan(wildcards))
         #lambda wildcards: collect_completed_summary_tfxcan(wildcards) #lambda wildcards: collect_completed_summary_tfxcan(wildcards)
     resources:
         partition="caslake",
@@ -262,7 +282,22 @@ rule collect_summaryTFXcan_results:
         mem_cpu=4,
         cpu_task=8
     benchmark: os.path.join(f"{BENCHMARK_DIR}/{{phenotype}}.{rundate}.collect_summaryTFXcan_results.tsv")
-    shell: "Rscript workflow/process/collect_summaryTFXcan_results.R --input_files_pattern {params.sFiles_pattern} --phenotype {wildcards.phenotype} --output_file {output.summary_tfxcan}"
+    shell: "Rscript workflow/process/collect_summaryTFXcan_results.R --input_files_pattern {input} --phenotype {wildcards.phenotype} --output_file {output.summary_tfxcan}"
+
+
+#         os.path.join(HOMERFILES_DIR, '{tf}', 'merged_motif_file.txt')
+#     message: "working on {input}" 
+#     params:
+#         jobname = '{tf}',
+#         run = run,
+#     resources:
+#         mem_mb = 10000
+#     run:
+#         with open(output[0], 'w') as outfile:
+#             for fname in input:
+#                 with open(fname) as infile:
+#                     for i, line in enumerate(infile):
+#                         outfile.write(line)
 
 
 

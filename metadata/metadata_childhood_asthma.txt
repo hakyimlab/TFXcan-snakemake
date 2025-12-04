@@ -1,0 +1,2 @@
+phenotype,sumstat
+childhood_asthma,asthma_children_hg38_chr17_41743558_43694719_Format.tsv.gz

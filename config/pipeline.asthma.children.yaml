@@ -1,0 +1,53 @@
+
+---
+pipeline_dir: '/beagle3/haky/users/temi/projects/TFXcan-snakemake'
+runname: 'childhood_asthma' # change this to the name of your project
+date: "2025-12-03" # if not provided will be set to the current date
+metadata: "metadata/metadata_childhood_asthma.txt" # the metadata file for the project
+scratch_dir: "/scratch/midway2/temi" # a folder that will be used to save large and temporary files
+delete_enformer_outputs: False # should you delete enformer predictions after aggregating them? Saves disk space
+personalized_predictions: True # should you run personalized predictions?
+runSusie: False # by default, we do not run SuSiE but this will be changed in the future
+
+enpact_weights: weights/ENPACT_734_2025-04-24.compiled_weights.with_intercept.lambda.1se.txt.gz # the weights file for Enpact
+
+input:
+  directory: "/beagle3/haky/users/shared_data/from_david" # where is the GWAS summary statistics file?
+
+# genome file
+genome:
+  #fasta: "files/Homo_sapiens_assembly38.fasta"
+  fasta: "/beagle3/haky/data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta"
+
+# files needed to process the input GWAS and select SNPs 
+processing:
+  LD_blocks: "metadata/EUR_LDBlocks.hg38.updated.bed"
+  reference_annotations: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt # same as the one below; used to match the snps in the summary statistics file
+  GWAS_pvalue_threshold: 5e-4
+  selection_method: "topSNPs" # the other option is linkage which will use the ld block information
+  select_n_snps: 20
+
+# necessities for predictdb
+predictdb:
+  blacklist_regions: metadata/HLA_blocks.txt
+  conda_environment: /beagle3/haky/users/temi/software/conda_envs/predictdb_env
+  nextflow_main_executable: /beagle3/haky/users/temi/projects/TFXcan-snakemake/workflow/PredictDb-nextflow/main.nf
+  reference_genotypes: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.geno.txt
+  reference_annotations: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt
+
+# necessities for summary-TFXcan
+summaryTFXcan:
+  conda_environment: /beagle3/haky/users/temi/software/conda_envs/imlabtools
+  summaryXcan_executable: /beagle3/haky/users/temi/software/MetaXcan/software/SPrediXcan.py # this is the SPrediXcan.py script
+
+# necessities for Enformer
+enformer: 
+  base_directives: "config/enformer_base.yaml"
+  personalized_directives: "config/personalized_base.yaml"
+  model: "/project2/haky/Data/enformer/raw"
+  predict: "workflow/enformer/enformer_predict.py"
+  aggregate: "workflow/src/aggregate.py"
+  aggtype: "aggByCollect"
+...
+
+# "/beagle3/haky/users/shared_pipelines/enformer_pipeline_aggregate/scripts/enformer_predict.py"

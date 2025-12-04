@@ -23,8 +23,8 @@ library(glue)
 # opt$phenotype <- "prostate_cancer_risk"
 
 # grep
-sFiles <- list.files(path = dirname(opt$input_files_pattern), pattern = basename(opt$input_files_pattern), full.names = T)
-
+#sFiles <- list.files(path = dirname(opt$input_files_pattern), pattern = basename(opt$input_files_pattern), full.names = T)
+sFiles <- data.table::fread(opt$input_files_pattern, header = FALSE)$V1
 if(length(sFiles) == 0){
     message('ERROR - No summary TFXcan files found.')
     quit(-1)
@@ -41,6 +41,9 @@ if(is.null(opt$phenotype)){
 dFiles <- purrr::map(.x=sFiles, .f=function(each_file){
     if(file.exists(each_file)){
         dt <- data.table::fread(each_file)
+        if(nrow(dt) == 0){
+            return(NULL)
+        }
         return(dt)
     } else {
         return(NULL)
