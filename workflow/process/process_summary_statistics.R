@@ -24,6 +24,12 @@ library(bigsnpr)
 
 print(opt)
 
+# opt <- list()
+# opt$summary_stats_file <- "/beagle3/haky/users/shared_data/from_david/asthma_children_hg38_chr17_35000000_45000000_Format.tsv.gz"
+# opt$annotation_file <- '/project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt'
+# opt$pvalue_threshold <- 5e-18
+# opt$diagnostics_file <- NULL
+
 
 # setwd('/beagle3/haky/users/temi/projects/TFXcan-snakemake')
 # opt <- list()
@@ -84,6 +90,47 @@ annotation <- data.table::fread(opt$annotation_file) %>%
 
 nn <- names(split_dt)
 
+
+
+
+
+# x <- split_dt[['17']]
+# x <- x %>% dplyr::rename(chr=chrom, a0=ref, a1=alt)
+# annot <- annotation %>% dplyr::filter(chr == 17) #%>% dplyr::mutate(chr = as.numeric(chr))
+# # match snps
+# mm <- bigsnpr::snp_match(x, annot, return_flip_and_rev = TRUE, match.min.prop = 0) %>% 
+#     data.table::setDT() %>% 
+#     dplyr::select(chrom=chr, pos, ref=a0, alt=a1, rsid, varID, beta, se, zscore, pval, gwas_significant)
+
+# head(mm)
+
+matched_stats <- purrr::map(nn, function(ch){
+    x <- split_dt[[ch]]
+    x <- x %>% dplyr::rename(chr=chrom, a0=ref, a1=alt)
+    annot <- annotation %>% dplyr::filter(chr == as.numeric(ch)) #%>% dplyr::mutate(chr = as.numeric(chr))
+    # match snps
+    ms <- tryCatch({
+        mm <- bigsnpr::snp_match(x, annot, return_flip_and_rev = TRUE, match.min.prop = 0) |> data.table::setDT() %>% 
+            dplyr::select(chrom=chr, pos, ref=a0, alt=a1, rsid, varID, beta, se, zscore, pval, gwas_significant)
+        return(mm)
+    }, error = function(e){
+        print(glue('WARNING - Not enough variants have been matched for chromosome {ch}.'))
+        return(NULL)
+    })
+    return(ms)
+}, .progress = TRUE)
+
+names(matched_stats) <- nn
+matched_stats <- Filter(Negate(is.null), matched_stats) 
+
+purrr::map(seq_along(matched_stats), function(i){
+    data.table::fwrite(split_dt[[i]], file=glue('{opt$output_folder}/chr{nn[i]}.sumstats.txt.gz'), 
+        quote=F, col.names=T, row.names=F, sep='\t', compress='gzip')
+}, .progress = TRUE)
+
+
+
+
 # x <- split_dt[['1']]
 # x <- x %>% dplyr::rename(chr=chrom, a0=ref, a1=alt)
 # annot <- annotation %>% dplyr::filter(chr == '1') #%>% dplyr::mutate(chr = as.numeric(chr))
@@ -108,28 +155,4 @@ nn <- names(split_dt)
 #   base_url = "https://hgdownload.soe.ucsc.edu/goldenPath/"
 # )
 
-# nn <- names(split_dt)[1:3]
-
-matched_stats <- purrr::map(nn, function(ch){
-    x <- split_dt[[ch]]
-    x <- x %>% dplyr::rename(chr=chrom, a0=ref, a1=alt)
-    annot <- annotation %>% dplyr::filter(chr == ch) #%>% dplyr::mutate(chr = as.numeric(chr))
-    # match snps
-    ms <- tryCatch({
-        mm <- bigsnpr::snp_match(x, annot, return_flip_and_rev = TRUE, match.min.prop = 0) |> data.table::setDT() %>% 
-            dplyr::select(chrom=chr, pos, ref=a0, alt=a1, rsid, varID, beta, se, zscore, pval, gwas_significant)
-        mm
-    }, error = function(e){
-        print(glue('WARNING - Not enough variants have been matched for chromosome {ch}.'))
-        return(NULL)
-    })
-    return(ms)
-}, .progress = TRUE)
-
-names(matched_stats) <- nn
-matched_stats <- Filter(Negate(is.null), matched_stats) 
-
-purrr::map(seq_along(matched_stats), function(i){
-    data.table::fwrite(split_dt[[i]], file=glue('{opt$output_folder}/chr{nn[i]}.sumstats.txt.gz'), 
-        quote=F, col.names=T, row.names=F, sep='\t', compress='gzip')
-}, .progress = TRUE)
+# nn <- names(split_dt)[1:3
