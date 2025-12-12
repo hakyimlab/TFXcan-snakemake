@@ -78,49 +78,37 @@ if(!'zscore' %in% colnames(dt)){
 }
 
 # dt <- dt %>% dplyr::mutate(chrom = as.numeric(chrom))
-
-# split and match the snps 
-split_dt <- dt %>%
-    base::split(f=.$chrom)
-
 ## use purrr to match snps
 annotation <- data.table::fread(opt$annotation_file) %>% 
     data.table::setDT() %>%
     dplyr::rename(a0=ref_vcf, a1=alt_vcf)
 
-nn <- names(split_dt)
+# split and match the snps 
+split_dt <- dt %>%
+    base::split(f=.$chrom)
+sumstat_chroms <- names(split_dt)
 
+# split and match the snps 
+split_annot <- annotation %>%
+    base::split(f=.$chr)
+annot_chroms <- names(split_annot)
 
-
-
-
-# x <- split_dt[['17']]
-# x <- x %>% dplyr::rename(chr=chrom, a0=ref, a1=alt)
-# annot <- annotation %>% dplyr::filter(chr == 17) #%>% dplyr::mutate(chr = as.numeric(chr))
-# # match snps
-# mm <- bigsnpr::snp_match(x, annot, return_flip_and_rev = TRUE, match.min.prop = 0) %>% 
-#     data.table::setDT() %>% 
-#     dplyr::select(chrom=chr, pos, ref=a0, alt=a1, rsid, varID, beta, se, zscore, pval, gwas_significant)
-
-# head(mm)
-
-matched_stats <- purrr::map(nn, function(ch){
-    x <- split_dt[[ch]]
-    x <- x %>% dplyr::rename(chr=chrom, a0=ref, a1=alt)
-    annot <- annotation %>% dplyr::filter(chr == as.numeric(ch)) #%>% dplyr::mutate(chr = as.numeric(chr))
+matched_stats <- purrr::map(sumstat_chroms, function(ch){
+    x <- split_dt[[ch]] %>% dplyr::rename(chr=chrom, a0=ref, a1=alt)
+    annot <- split_annot[[ch]]
     # match snps
-    ms <- tryCatch({
-        mm <- bigsnpr::snp_match(x, annot, return_flip_and_rev = TRUE, match.min.prop = 0) |> data.table::setDT() %>% 
+    dt.matched_stats <- tryCatch({
+        bigsnpr::snp_match(x, annot, return_flip_and_rev = TRUE, match.min.prop = 0) |> data.table::setDT() %>% 
             dplyr::select(chrom=chr, pos, ref=a0, alt=a1, rsid, varID, beta, se, zscore, pval, gwas_significant)
-        return(mm)
     }, error = function(e){
-        print(glue('WARNING - Not enough variants have been matched for chromosome {ch}.'))
+        message(glue('WARNING - Not enough variants have been matched for chromosome {ch}.'))
+        print(e)
         return(NULL)
     })
-    return(ms)
+    return(dt.matched_stats)
 }, .progress = TRUE)
 
-names(matched_stats) <- nn
+names(matched_stats) <- sumstat_chroms
 matched_stats <- Filter(Negate(is.null), matched_stats) 
 
 purrr::map(seq_along(matched_stats), function(i){
@@ -156,3 +144,17 @@ purrr::map(seq_along(matched_stats), function(i){
 # )
 
 # nn <- names(split_dt)[1:3
+
+
+
+
+
+# x <- split_dt[['17']]
+# x <- x %>% dplyr::rename(chr=chrom, a0=ref, a1=alt)
+# annot <- annotation %>% dplyr::filter(chr == 17) #%>% dplyr::mutate(chr = as.numeric(chr))
+# # match snps
+# mm <- bigsnpr::snp_match(x, annot, return_flip_and_rev = TRUE, match.min.prop = 0) %>% 
+#     data.table::setDT() %>% 
+#     dplyr::select(chrom=chr, pos, ref=a0, alt=a1, rsid, varID, beta, se, zscore, pval, gwas_significant)
+
+# head(mm)
