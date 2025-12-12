@@ -111,8 +111,10 @@ matched_stats <- purrr::map(sumstat_chroms, function(ch){
 names(matched_stats) <- sumstat_chroms
 matched_stats <- Filter(Negate(is.null), matched_stats) 
 
-purrr::map(seq_along(matched_stats), function(i){
-    data.table::fwrite(split_dt[[i]], file=glue('{opt$output_folder}/chr{sumstat_chroms[i]}.sumstats.txt.gz'), 
+# print(names(matched_stats))
+
+purrr::map(names(matched_stats), function(ns){
+    data.table::fwrite(matched_stats[[ns]], file=glue('{opt$output_folder}/chr{ns}.sumstats.txt.gz'), 
         quote=F, col.names=T, row.names=F, sep='\t', compress='gzip')
 }, .progress = TRUE)
 

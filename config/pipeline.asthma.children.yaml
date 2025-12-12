@@ -2,7 +2,7 @@
 ---
 pipeline_dir: '/beagle3/haky/users/temi/projects/TFXcan-snakemake'
 runname: 'childhood_asthma' # change this to the name of your project
-date: "2025-12-03" # if not provided will be set to the current date
+date: "2025-12-12" # if not provided will be set to the current date
 metadata: "metadata/metadata_childhood_asthma.txt" # the metadata file for the project
 scratch_dir: "/scratch/midway2/temi" # a folder that will be used to save large and temporary files
 delete_enformer_outputs: False # should you delete enformer predictions after aggregating them? Saves disk space
