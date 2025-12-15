@@ -40,7 +40,7 @@ python3 ${exec_file} \
     --gwas_folder ${gwas_folder} \
     --gwas_file_pattern ${gwas_pattern} \
     --chromosome_column chrom \
-    --snp_column SNP \
+    --snp_column varID \
     --effect_allele_column alt \
     --non_effect_allele_column ref \
     --zscore_column zscore \
