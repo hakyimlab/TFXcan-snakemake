@@ -40,6 +40,19 @@ SUMMARYTFXCAN_DIR = os.path.join(DATA_DIR, 'summaryTFXcan')
 SUMMARY_OUTPUT = os.path.join(DATA_DIR, 'output')
 BENCHMARK_DIR = os.path.join(DATA_DIR, 'benchmark')
 
+# make log directory
+import os
+
+slurm_logs_path = 'logs/slurm_logs'
+
+if os.path.isdir(slurm_logs_path):
+    print(f"INFO - The directory '{slurm_logs_path}' exists.")
+else:
+    print(f"INFO - The directory '{slurm_logs_path}' does not exist. Creating...")
+    os.makedirs(slurm_logs_path, exist_ok=True)
+
+
+
 def read_metadata(mtdt_file):
     dd = pd.read_csv(mtdt_file)
     return(dict(zip(dd.phenotype.tolist(), dd.sumstat.tolist())))

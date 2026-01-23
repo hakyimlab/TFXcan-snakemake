@@ -6,8 +6,8 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --time=36:00:00
 #SBATCH --mem-per-cpu=8G
-#SBATCH --error=slurm_logs/enformer_predict.err
-#SBATCH --output=slurm_logs/enformer_predict.out
+#SBATCH --error=logs/slurm_logs/enformer_predict.err
+#SBATCH --output=logs/slurm_logs/enformer_predict.out
 #SBATCH --account=beagle3-exusers
 
 date

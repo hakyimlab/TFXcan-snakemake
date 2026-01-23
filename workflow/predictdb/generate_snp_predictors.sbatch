@@ -5,8 +5,8 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --time=36:00:00
 #SBATCH --mem-per-cpu=1G
-#SBATCH --error=slurm_logs/lEnpact_training.err
-#SBATCH --output=slurm_logs/lEnpact_training.log
+#SBATCH --error=logs/slurm_logs/lEnpact_training.err
+#SBATCH --output=logs/slurm_logs/lEnpact_training.log
 #SBATCH --account=pi-haky
 
 date

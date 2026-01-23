@@ -1,10 +1,4 @@
 
-
-
-
-
-
-
 # input summary statistic -> split by chromosomes
 checkpoint process_summary_statistics:
     output: directory(os.path.join(PROCESSED_SUMSTATS, '{phenotype}'))

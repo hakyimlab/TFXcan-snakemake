@@ -2,9 +2,9 @@
 ---
 pipeline_dir: '/beagle3/haky/users/temi/projects/TFXcan-snakemake'
 runname: 'childhood_asthma' # change this to the name of your project
-date: "2025-12-12" # if not provided will be set to the current date
+date: "2026-01-23" # if not provided will be set to the current date
 metadata: "metadata/metadata_childhood_asthma.txt" # the metadata file for the project
-scratch_dir: "/scratch/midway2/temi" # a folder that will be used to save large and temporary files
+scratch_dir: "/scratch/beagle3/temi" # a folder that will be used to save large and temporary files
 delete_enformer_outputs: False # should you delete enformer predictions after aggregating them? Saves disk space
 personalized_predictions: True # should you run personalized predictions?
 runSusie: False # by default, we do not run SuSiE but this will be changed in the future
@@ -23,9 +23,9 @@ genome:
 processing:
   LD_blocks: "metadata/EUR_LDBlocks.hg38.updated.bed"
   reference_annotations: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt # same as the one below; used to match the snps in the summary statistics file
-  GWAS_pvalue_threshold: 5e-4
-  selection_method: "topSNPs" # the other option is linkage which will use the ld block information
-  select_n_snps: 20
+  GWAS_pvalue_threshold: 5e-8
+  selection_method: "linkage" # the other option is linkage which will use the ld block information topSNPs
+  select_n_snps: 100
 
 # necessities for predictdb
 predictdb:
