@@ -10,17 +10,17 @@ global split_and_save
 
 # needed arguments 
 parser = argparse.ArgumentParser()
-parser.add_argument("--matrix", help="Path to file", type=str)
-parser.add_argument("--weights", help="Path to file", type=str)
-parser.add_argument("--metadata", help="Path to file", type=str)
-parser.add_argument("--split", help="", action=argparse.BooleanOptionalAction)
-parser.add_argument("--output_basename", help="", type=str)
-parser.add_argument("--subset_of_loci", help="", type=str, default=None)
+parser.add_argument("--matrix", help="[Input] The matrix of epigenomic features", type=str)
+parser.add_argument("--weights", help="[Input] The weights", type=str)
+parser.add_argument("--metadata", help="[Input] Metadata corresponding to the input matrix", type=str)
+parser.add_argument("--split", help="[Input] Split output by TF-tissue", action=argparse.BooleanOptionalAction)
+parser.add_argument("--output_basename", help="[Output] Basename for output files", type=str)
+parser.add_argument("--subset_of_loci", help="[Input] Subset of loci to process", type=str, default=None)
 args = parser.parse_args()
 
-# '/beagle3/haky/users/temi/projects/Enpact/files/ENPACT_734_2024-07-26.compiled_weights.lambda.1se.txt.gz'
+
 # enpact weights
-dt_weights = pd.read_table(args.weights).drop(columns = ['feature']) #pd.read_table("/beagle3/haky/users/temi/projects/Enpact/data/enpact/weights/ENPACT_734_2025-04-24.compiled_weights.with_intercept.lambda.1se.txt.gz").drop(columns = ['feature']) #
+dt_weights = pd.read_table(args.weights).drop(columns = ['feature'])
 
 intercept_matrix = dt_weights.iloc[0, :].to_numpy()
 weights_matrix = dt_weights.iloc[dt_weights.index != 0] 
@@ -71,7 +71,33 @@ if args.split:
     pool = multiprocessing.Pool(16)
     outputs_list = pool.starmap(split_and_save, itertools.product(mnames, [df_predictions], [args.output_basename]))
 
-    # for tf_tissue in mnames:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# for tf_tissue in mnames:
     #     df_tf_tissue = df[['locus', 'individual', tf_tissue]]
     #     df_tf_tissue = df_tf_tissue[['locus', 'individual', tf_tissue]].pivot(index='locus', columns='individual', values=tf_tissue)
     #     new_indices = [f'{tf_tissue}_{dd}' for dd in df_tf_tissue.index]

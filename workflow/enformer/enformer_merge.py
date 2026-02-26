@@ -12,12 +12,12 @@ def list_of_ints(arg):
 
 # needed arguments 
 parser = argparse.ArgumentParser()
-parser.add_argument("--config", help="Path to file", type=str, default=None)
-parser.add_argument("--predictions_logfile", help="Path to file", type=str)
-parser.add_argument("--predictions_directory", help="Path", type=str)
-parser.add_argument("--expected_shape", help="", type=list_of_ints)
-parser.add_argument("--output_directory", help="", type=str, required=True)
-parser.add_argument("--output_filename", help="", type=str, required=True)
+parser.add_argument("--config", help="[Input] Path to file", type=str, default=None)
+parser.add_argument("--predictions_logfile", help="[Input] Path to file", type=str)
+parser.add_argument("--predictions_directory", help="[Input] Path", type=str)
+parser.add_argument("--expected_shape", help="[Input] ", type=list_of_ints)
+parser.add_argument("--output_directory", help="[Output] Path", type=str, required=True)
+parser.add_argument("--output_filename", help="[Output] Filename", type=str, required=True)
 args = parser.parse_args()
 
 # some locations and folders

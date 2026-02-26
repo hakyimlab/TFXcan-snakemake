@@ -24,8 +24,8 @@ processing:
   LD_blocks: "metadata/EUR_LDBlocks.hg38.updated.bed"
   reference_annotations: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt # same as the one below; used to match the snps in the summary statistics file
   GWAS_pvalue_threshold: 5e-8
-  selection_method: "linkage" # the other option is linkage which will use the ld block information topSNPs
-  select_n_snps: 100
+  selection_method: "linkage" # options are topSNPs (selects all top snps) or linkage (uses ld information) 
+  select_n_snps: 100 # limit to at most this number 
 
 # necessities for predictdb
 predictdb:

@@ -1,19 +1,20 @@
-# this runs one locus at a time
-# change to calculate LD
-# https://merrimanlab.github.io/docs/locuszooms/multiple_lz_plots/
+# Author: Temi
+# Date: Thursday August 10 2023
+# Description: script to create predictors, ground truth and info files
+# Usage: Rscript select_top_snps.R [options]
 
 suppressPackageStartupMessages(library("optparse"))
 
 
 option_list <- list(
-    make_option("--chromosome", help='Chromsome number e.g. 1, 2, 3, ..., 22'),
-    make_option("--sumstats", help='A GWAS summary statistics file for the chromsome; should be a tsv file with columns: chrom, pos, ref, alt, pval, beta, se, zscore'),
-    make_option("--LDBlocks_info", help='A file for the LD blocks of where to run SuSie'),
-    make_option("--output_folder", help='The folder to put SuSie results in'),
-    make_option("--phenotype", help='A GWAS phenotype'),
-    make_option('--diagnostics_file', type='character', default=NULL, help='A file to write diagnostics to; default is NULL i.e no diagnostics file will be written'),
-    make_option("--selection_method", default = "linkage", help='How should the top SNPs be selected? Options are: linkage or topSNPs'),
-    make_option("--select_n_snps", default = 20, help='How many top SNPs should be selected?')
+    make_option("--chromosome", help='[Input] Chromosome number e.g. 1, 2, 3, ..., 22'),
+    make_option("--sumstats", help='[Input] A GWAS summary statistics file for the chromsome; should be a tsv file with columns: chrom, pos, ref, alt, pval, beta, se, zscore'),
+    make_option("--LDBlocks_info", help='[Input] A file for the LD blocks of where to run SuSie'),
+    make_option("--output_folder", help='[Output] The folder to put SuSie results in'),
+    make_option("--phenotype", help='[Input] A GWAS phenotype'),
+    make_option('--diagnostics_file', type='character', default=NULL, help='[Output] A file to write diagnostics to; default is NULL i.e no diagnostics file will be written'),
+    make_option("--selection_method", default = "linkage", help='[Input] How should the top SNPs be selected? Options are: linkage or topSNPs'),
+    make_option("--select_n_snps", default = 20, help='[Input] How many top SNPs should be selected?')
     
 )
 

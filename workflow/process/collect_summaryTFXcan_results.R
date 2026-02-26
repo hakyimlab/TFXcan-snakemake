@@ -6,9 +6,9 @@
 suppressPackageStartupMessages(library(optparse))
 #library(optparse)
 option_list <- list(
-    make_option("--input_files_pattern", help='a pattern for the predicted enpact scores'), 
-    make_option("--phenotype", default = NULL, help='the phenotype name'),
-    make_option("--output_file")
+    make_option("--input_files_pattern", help='[Input] A headerless file listing all the summary TFXcan results to be collected'), 
+    make_option("--phenotype", default = NULL, help='[Input] the phenotype name'),
+    make_option("--output_file", help='[Output] The output file')
 )
 
 opt <- optparse::parse_args(OptionParser(option_list=option_list))

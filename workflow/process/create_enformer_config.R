@@ -1,36 +1,28 @@
 # Author: Temi
 # Date: Thursday July 27 2023
 # Description: script used to create enformer predict parameters file
-# Usage: Rscript create_training_sets.R [OPTIONS]
+# Usage: Rscript create_enformer_config.R [OPTIONS]
 
 suppressPackageStartupMessages(library("optparse"))
 
 option_list <- list(
-    make_option("--phenotype", help='A GWAS phenotype e.g. alzheimers'),
-    make_option("--runname", help="The name of the dataset"),
-    make_option("--base_directives", help='A yaml file containing directives for enformer; will be used to create a json file for the enformer predict pipeline'),
-    make_option("--project_directory", help='A project directory for enformer predict'),
-	make_option("--predictors_file", help='predictor file containing the intervals to predict on'),
-    make_option("--model", help='enformer model'),
-	make_option("--fasta_file", help='fasta file, typically hg38'),
-    make_option("--date", help='fasta file, typically hg38'),
-    make_option("--parameters_file", help='the json file that will be created'),
-    make_option("--personalized_parameters_file", default=NULL, help='the json file that will be created'),
-    make_option("--copy_aggregation_config", default=NULL, help='the yaml file that will be created')
+    make_option("--phenotype", help='[Input] A GWAS phenotype e.g. alzheimers'),
+    make_option("--runname", help="[Input] The name of the dataset"),
+    make_option("--base_directives", help='[Input] A yaml file containing directives for enformer; will be used to create a json file for the enformer predict pipeline'),
+    make_option("--project_directory", help='[Input] A project directory for enformer predict'),
+	make_option("--predictors_file", help='[Input] predictor file containing the intervals to predict on'),
+    make_option("--model", help='[Input] enformer model path'),
+	make_option("--fasta_file", help='[Input] fasta file, typically hg38'),
+    make_option("--date", help='[Input] date'),
+    make_option("--parameters_file", help='[Output] the yaml file that will be created'),
+    make_option("--personalized_parameters_file", default=NULL, help='[Input] the yaml file containing personalized parameter'),
+    make_option("--copy_aggregation_config", default=NULL, help='[Input]')
 )
 
 opt <- parse_args(OptionParser(option_list=option_list))
 print(opt)
 
-# opt <- list()
-# opt$runname <- 'Asthma_GWAS' 
-# opt$phenotype <- 'asthma_children' 
-# opt$base_directives <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/config/enformer_base.yaml' 
-# opt$project_directory <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/data'
-# opt$parameters_file <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/misc/enformer_parameters_Asthma_GWAS_asthma_children.yaml'
-# # --project_directory data --predictors_file data/collection/asthma_children/asthma_children.EnformerLoci.txt --model /project2/haky/Data/enformer/raw --fasta_file /project2/haky/Data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta --parameters_file data/enformer_parameters/enformer_parameters_Asthma_GWAS_asthma_children.json --date 2024-01-31
 
-# opt$personalized_parameters_file <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/config/personalized_base.yaml'
 
 library(yaml)
 
@@ -100,3 +92,14 @@ yaml::write_yaml(enformer_parameters_json, opt$parameters_file, fileEncoding = "
 
 
 # /beagle3/haky/users/shared_software/TFXcan-pipeline-tools/bin/Rscript prepare/workflow/scripts/create_enformer_config.R --transcription_factor AR --tissue Breast --base_directives config/enformer_base.yaml --project_directory data/predictions_folder --predictors_file data/predictor_files/AR_Breast.predictors.txt --model "/project2/haky/Data/enformer/raw" --fasta_file "/project2/haky/Data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta" --parameters_file data/prediction_parameters/enformer_parameters_cistrome_AR_Breast.json
+
+
+# opt <- list()
+# opt$runname <- 'Asthma_GWAS' 
+# opt$phenotype <- 'asthma_children' 
+# opt$base_directives <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/config/enformer_base.yaml' 
+# opt$project_directory <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/data'
+# opt$parameters_file <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/misc/enformer_parameters_Asthma_GWAS_asthma_children.yaml'
+# # --project_directory data --predictors_file data/collection/asthma_children/asthma_children.EnformerLoci.txt --model /project2/haky/Data/enformer/raw --fasta_file /project2/haky/Data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta --parameters_file data/enformer_parameters/enformer_parameters_Asthma_GWAS_asthma_children.json --date 2024-01-31
+
+# opt$personalized_parameters_file <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/config/personalized_base.yaml'

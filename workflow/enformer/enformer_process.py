@@ -11,10 +11,10 @@ def list_of_ints(arg):
 
 # needed arguments 
 parser = argparse.ArgumentParser()
-parser.add_argument("--merged_h5_file", help="Path to file", type=str, default=None)
-parser.add_argument("--process_by_haplotype", help="Path to file", action=argparse.BooleanOptionalAction)
-parser.add_argument("--process_function", help="Path", type=str, default='sum')
-parser.add_argument("--output_basename", help="", type=str)
+parser.add_argument("--merged_h5_file", help="[Input] Path to file", type=str, default=None)
+parser.add_argument("--process_by_haplotype", help="[Input] Process by haplotype", action=argparse.BooleanOptionalAction)
+parser.add_argument("--process_function", help="[Input] Process function (sum or mean)", type=str, default='sum')
+parser.add_argument("--output_basename", help="[Output] Basename for output files", type=str)
 args = parser.parse_args()
 
 # read in the hdf5 file

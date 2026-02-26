@@ -1,19 +1,18 @@
 # Author: Temi
 # Date: Thursday August 10 2023
 # Description: script to create predictors, ground truth and info files
-# Usage: Rscript create_training_sets.R [options]
+# Usage: Rscript process_summary_statistics.R [options]
 
 suppressPackageStartupMessages(library("optparse"))
 
 option_list <- list(
-    make_option("--summary_stats_file", help='A GWAS summary statistics file; should be a tsv file with columns: chrom, pos, ref, alt, pval, beta, se, zscore'),
-    make_option("--output_folder", help='the output folder'),
-    make_option("--annotation_file", help = 'a GWAS phenotype'),
-    make_option("--pvalue_threshold", default=0.05, type='numeric', help = 'the pvalue threshold for significance; default is 5e-8'),
-    make_option('--diagnostics_file', type='character', default=NULL, help='A file to write diagnostics to; default is NULL i.e no diagnostics file will be written')
+    make_option("--summary_stats_file", help='[Input] A GWAS summary statistics file; should be a tsv file with columns: chrom, pos, ref, alt, pval, beta, se, zscore'),
+    make_option("--output_folder", help='[Output] The output folder'),
+    make_option("--annotation_file", help = '[Input] A file that contains allele information on the reference population data'),
+    make_option("--[Input] pvalue_threshold", default=5e-8, type='numeric', help = 'the pvalue threshold for significance; default is 5e-8'),
+    make_option('--[Output] diagnostics_file', type='character', default=NULL, help='A file to write diagnostics to; default is NULL i.e no diagnostics file will be written')
 )
 
-#source('/project/haky/users/temi/projects/TFXcan-snakemake/workflow/src/modules.R')
 
 opt <- parse_args(OptionParser(option_list=option_list))
 
@@ -23,21 +22,6 @@ library(glue)
 library(bigsnpr)
 
 print(opt)
-
-# opt <- list()
-# opt$summary_stats_file <- "/beagle3/haky/users/shared_data/from_david/asthma_children_hg38_chr17_35000000_45000000_Format.tsv.gz"
-# opt$annotation_file <- '/project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt'
-# opt$pvalue_threshold <- 5e-18
-# opt$diagnostics_file <- NULL
-
-
-# setwd('/beagle3/haky/users/temi/projects/TFXcan-snakemake')
-# opt <- list()
-# opt$summary_stats_file <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/sumstats/type_2_diabetes.suzuki.gwas_sumstats.hg38.processed.txt.gz'
-# opt$pvalue_threshold <- 5e-8
-# opt$output_folder <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/T2D_2025-01-24/processed_sumstats/t2d_suzuki'
-# opt$annotation_file <- '/project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt'
-# opt$diagnostics_folder <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/T2D_2025-01-24/diagnostics'
 
 chrom_filter <- c(1:22)
 if(!dir.exists(opt$output_folder)){dir.create(opt$output_folder)}
@@ -119,6 +103,33 @@ purrr::map(names(matched_stats), function(ns){
 }, .progress = TRUE)
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+# opt <- list()
+# opt$summary_stats_file <- "/beagle3/haky/users/shared_data/from_david/asthma_children_hg38_chr17_35000000_45000000_Format.tsv.gz"
+# opt$annotation_file <- '/project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt'
+# opt$pvalue_threshold <- 5e-18
+# opt$diagnostics_file <- NULL
+
+
+# setwd('/beagle3/haky/users/temi/projects/TFXcan-snakemake')
+# opt <- list()
+# opt$summary_stats_file <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/sumstats/type_2_diabetes.suzuki.gwas_sumstats.hg38.processed.txt.gz'
+# opt$pvalue_threshold <- 5e-8
+# opt$output_folder <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/T2D_2025-01-24/processed_sumstats/t2d_suzuki'
+# opt$annotation_file <- '/project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt'
+# opt$diagnostics_folder <- '/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/T2D_2025-01-24/diagnostics'
 
 
 # x <- split_dt[['1']]

@@ -1,15 +1,16 @@
-# this runs one locus at a time
-# change to calculate LD
-# https://merrimanlab.github.io/docs/locuszooms/multiple_lz_plots/
+# Author: Temi
+# Date: Thursday August 10 2023
+# Description: script to create predictors, ground truth and info files
+# Usage: Rscript collect_topsnps_results.R [options]
 
 suppressPackageStartupMessages(library("optparse"))
 
 option_list <- list(
-    make_option("--selection_dir", help='A list of files to combine'),
-    make_option("--filtered_sumstats", help='reference panel correlation matrix'),
-    make_option("--enformer_loci", help='reference panel correlation matrix'),
-    make_option("--phenotype", help='summary statistics sample size'),
-    make_option("--limit_number_of_loci", default = NULL, help='', type='')
+    make_option("--selection_dir", help='[Input] A list of files to combine'),
+    make_option("--filtered_sumstats", help='[Output] Processed summary statistics file'),
+    make_option("--enformer_loci", help='[Input] Processed list of loci for Enformer inference of epigenomic features'),
+    make_option("--phenotype", help='[Input] Name of the phenotype'),
+    make_option("--limit_number_of_loci", default = NULL, help='[Input] How many top loci should TFXcan be run at? Default is everything, but > 200 may be computationally expensive.', type='integer')
 )
 
 opt <- parse_args(OptionParser(option_list=option_list))  
