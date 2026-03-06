@@ -62,7 +62,7 @@ def one_hot_encode(sequence):
         raise Exception(f'[ERROR] Input to be one-hot encoded must be a str type. You provided a {type(sequence_encoded).__name__} type.')
 
     try:
-        sequence_encoded = kipoiseq.transforms.functional.one_hot_dna(sequence).astype(np.float32)[np.newaxis]
+        sequence_encoded = kipoiseq.transforms.functional.one_hot_dna(sequence).astype(np.float64)[np.newaxis]
         return(sequence_encoded)
     except KeyError as ke:
         return(None)

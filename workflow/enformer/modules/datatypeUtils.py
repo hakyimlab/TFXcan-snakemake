@@ -30,9 +30,10 @@ class DirectivesHolder:
     invalid_queries: str = None
 
     aggregate: Union[None, bool] = None
-    aggregate_by_width: bool = True
-    aggregation_width: int = None
+    #aggregate_by_width: bool = False
+    pad_width: int = None
     aggregation_function: str = None
+    slice_bins: bool = False
     bins_indices: Union[int, list] = None
     tracks_indices: Union[int, list] = None
     predictions_expected_shape: Union[tuple, list] = None
@@ -49,7 +50,6 @@ class DirectivesHolder:
     write_log: dict = None
     reverse_complement: bool = False
     tmp_config_path: str = None
-    aggregate_by_width: bool = True
     
     write_logdir: str = 'logs'
     run_date: str = DefaultVal(date.today().strftime("%Y-%m-%d"))

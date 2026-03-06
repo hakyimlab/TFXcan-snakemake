@@ -6,7 +6,6 @@
 # - collect_bins_and_tracks
 # - calculate_expected_shape
 
-
 import numpy as np
 
 def slice_bins_for_width(locus, bin_size=128, nbins=896, padding=0):
@@ -76,13 +75,13 @@ def collect_bins_and_tracks(predictions, bins_indices, tracks_indices):
         
 def calculate_expected_shape(params):
     if params['aggregate'] == True:
-        #params["by_function"] = 'aggByMean' if (params["by_function"] is None) or ("by_function" not in params.keys()) else params["by_function"]
-        if params["by_width"] == True:
+        if params["slice_bins"] == False:
             if isinstance(params["tracks_to_save"], list):
                 return((1, len(params['tracks_to_save'])))
             elif params["tracks_to_save"] is None:
                 return((1, 5313))
-        elif (params["by_width"] is None) or params["by_width"] == False:
+        elif params["slice_bins"] == True:
+            print(f'INFO - Cannot aggregate and slice bins at the same time; returning expected shape of (1, 5313)')
             if isinstance(params['tracks_to_save'], list):
                 return((1, len(params['tracks_to_save'])))
             elif params['tracks_to_save'] is None:
@@ -90,14 +89,41 @@ def calculate_expected_shape(params):
         else:
             return((1, 5313))
     elif params['aggregate'] == False:
-        if params['tracks_to_save'] is None:
-            if params['bins_to_save'] is None:
-                return((896, 5313))
-        elif isinstance(params['bins_to_save'], list):
+        if params['slice_bins'] == True:
+            if isinstance(params['bins_to_save'], list):
+                if isinstance(params['tracks_to_save'], list):
+                    return((len(params['bins_to_save']), len(params['tracks_to_save'])))
+                elif params['tracks_to_save'] is None:
+                    return((len(params['bins_to_save']), 5313))
+            elif params['bins_to_save'] is None:
+                if isinstance(params['tracks_to_save'], list):
+                    return((896, len(params['tracks_to_save'])))
+                elif params['tracks_to_save'] is None:
+                    return((896, 5313))
+        if params['slice_bins'] == False:
             if isinstance(params['tracks_to_save'], list):
-                return((len(params['bins_to_save']), len(params['tracks_to_save'])))
+                return((896, len(params['tracks_to_save'])))
             elif params['tracks_to_save'] is None:
-                return((len(params['bins_to_save']), 5313))
+                return((896, 5313))
+
+
+
+
+
+
+
+
+
+
+
+        # if params['tracks_to_save'] is None:
+        #     if params['bins_to_save'] is None:
+        #         return((896, 5313))
+        # elif isinstance(params['bins_to_save'], list):
+        #     if isinstance(params['tracks_to_save'], list):
+        #         return((len(params['bins_to_save']), len(params['tracks_to_save'])))
+        #     elif params['tracks_to_save'] is None:
+        #         return((len(params['bins_to_save']), 5313))
     
 
 

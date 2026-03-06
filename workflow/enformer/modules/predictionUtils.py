@@ -46,7 +46,7 @@ def enformer_predict_on_sequence(model, sample_input):
 
     Parameters:
         model: a tensorflow model
-        sample_input: a (1, 393216, 4) np.array that is a one-hot encoding of a sequence
+        sample_input: a dictionary mapping haplotype names to one-hot encoding(1, 393216, 4) np.array that is a one-hot encoding of a sequence
 
     Returns: A dictionary
         of the form {'haplotype': _predictions_}
@@ -58,8 +58,8 @@ def enformer_predict_on_sequence(model, sample_input):
         if not sequence_encoding.shape == (1, 393216, 4):
             raise Exception(f'[ERROR] Fatal. Input sequence shape is not appropriate')
         # prediction = model.predict_on_batch(sequence_encoding)['human'].numpy()[: , range(448 - 8, (448 + 8 + 1)), : ]
-        prediction = model.predict_on_batch(sequence_encoding)['human'].numpy()
-
+        # I want to use less memory, and np.float32 is enough precision for the predictions
+        prediction = model.predict_on_batch(sequence_encoding)['human'].numpy().astype(np.float32)
         prediction_output[haplotype] = prediction
         
     return(prediction_output)

@@ -94,7 +94,6 @@ def single_write_predictions_to_hdf5(haplotype_predictions, metadata, output_dir
         #print(f'[INFO] This is what is being saved {values.shape}')
         #print(values.shape)
         values = values[bins_to_aggregate[0]:bins_to_aggregate[1], : ].mean(axis=0)
-        #print(values.shape)
 
         houtput = os.path.join(output_dir, sample, key)
         if not os.path.exists(houtput): os.makedirs(houtput, exist_ok=True)

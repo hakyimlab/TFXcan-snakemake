@@ -1,4 +1,3 @@
-
 # Author: Temi
 # DAte: Wed Sept 25 2024
 # Description: This script is used for ENFORMER inference
@@ -6,14 +5,13 @@
 # - run_enformer
 # - return_prediction_function
 
-
 def run_enformer(filtered_check_result, batch_directives, module_directives):
 
     global enformer_model, fasta_extractor
 
     def enformer_predict_on_batch(batch_regions, samples, logging_dictionary, batch_directives, module_directives):
         import gc
-        #print("INFO - Garbage collection thresholds:", gc.get_threshold())
+        import pickle
 
         class AttrDict(dict):
             def __init__(self, *args, **kwargs):
@@ -39,17 +37,9 @@ def run_enformer(filtered_check_result, batch_directives, module_directives):
             batch_directives.predictions_expected_shape = (896, 5313)
             batch_directives.aggregate_by_width = False
 
-        # this could mean
-        # - check_queries returned nothing because
-            # - nothing should be returned - good ; and it should return none
-            # - something is wrong with check_queries ; and I should fix that
         if (not batch_regions) or (batch_regions is None):
             raise Exception(f'INFO - There are no regions to predict on in this batch {batch_directives.batch_number}.')
-
-        #print(f'GPU Memory at start of batch {batch_num} predict function is {loggerUtils.get_gpu_memory()}')
-        # gpu_fraction = 0.1
-        # gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=gpu_fraction)
-        # sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
+        
         if batch_directives.grow_memory == True:
             gpus = tf.config.experimental.list_physical_devices('GPU')
             if gpus:
@@ -60,14 +50,12 @@ def run_enformer(filtered_check_result, batch_directives, module_directives):
                 except RuntimeError as e:
                     raise Exception(f'RUNTIME ERROR - Batch {batch_directives.batch_number} of {type(e)} in module {__name__}')
         try:
-            #model = predictionUtils.get_model(model_path)
-            #model = enformer_model # check global definitions
             enformer_model = predictionUtils.get_model(batch_directives.model_path) # get the model
             fasta_extractor = sequencesUtils.get_fastaExtractor(batch_directives.fasta_file) # get the fasta file
 
             # == how to aggregate the predictions ==
             if batch_directives.aggregate == True:
-                aggregation_dict = {'by_width': batch_directives.aggregation_width, 'by_function': batch_directives.aggregation_function}
+                aggregation_dict = {'by_width': batch_directives.pad_width, 'by_function': batch_directives.aggregation_function}
             elif batch_directives.aggregate == False:
                 aggregation_dict = None
             elif batch_directives.aggregate == None:
@@ -119,16 +107,15 @@ def run_enformer(filtered_check_result, batch_directives, module_directives):
                                 print(f"WARNING - Removing {len(missing_samples)} missing samples from the input samples list.")
                                 v_samples = [s for s in v_samples if s not in missing_samples]
                             print(f"WARNING - Some samples cannot be found. But this job will continue")
-                    #logging_info_list = [] # collect all logging information here
+
+
                     sample_list = []
                     for sample in v_samples:
                         if samples_enformer_inputs['metadata']['sequence_source'] == 'var':
                             tic = time.perf_counter()
-
                             unfiltered_sample_predictions = predictionUtils.enformer_predict_on_sequence(model=enformer_model, sample_input=samples_enformer_inputs['sequence'][sample])
                         elif samples_enformer_inputs['metadata']['sequence_source'] in ['ref', 'random']:
                             tic = time.perf_counter()
-
                             unfiltered_sample_predictions = predictionUtils.enformer_predict_on_sequence(model=enformer_model, sample_input=samples_enformer_inputs['sequence'])
                         
                         toc = time.perf_counter()
@@ -140,37 +127,31 @@ def run_enformer(filtered_check_result, batch_directives, module_directives):
 
                             haplo_prediction_cur = np.squeeze(unfiltered_sample_predictions[hap], axis=0)
                             sample_predictions[hap] = copy.deepcopy(haplo_prediction_cur)
-                            #print(haplo_prediction_cur)
-                            #sample_predictions[hap] = collectUtils.collect_bins_and_tracks(haplo_prediction_cur, batch_directives.bins_indices, batch_directives.tracks_indices)
-                            #print(sample_predictions[hap])
+                            print(sample_predictions[hap][0:5, 0:5])
 
                             # should you aggregate or not:
-                            if batch_directives.aggregate == True:
-                                if batch_directives.aggregate_by_width == True:
-                                    binwidth = collectUtils.slice_bins_for_width(locus=input_region, bin_size=128, nbins=896, padding=batch_directives.aggregation_width)
-                                    # print(f'INFO - Aggregating by width: {binwidth}')
-                                    # print(f'INFO - {sample}\'s {hap} predictions shape is {sample_predictions[hap].shape}')
-                                    sample_predictions[hap] = sample_predictions[hap][binwidth[0]:binwidth[1], batch_directives.tracks_indices]
-                                    # print(f'INFO - {sample}\'s {hap} predictions shape is {sample_predictions[hap].shape}')
-                                    if batch_directives.aggregation_function == 'aggBySum':
-                                        sample_predictions[hap] = sample_predictions[hap].sum(axis=0).reshape(batch_directives.predictions_expected_shape)
-                                    elif batch_directives.aggregation_function == 'aggByMean':
-                                        sample_predictions[hap] = sample_predictions[hap].mean(axis=0).reshape(batch_directives.predictions_expected_shape)
-                                        # print(f'INFO - {sample}\'s {hap} predictions shape is {sample_predictions[hap].shape}')
-                                    elif batch_directives.aggregation_function == None:
-                                        pass
-                                    else:
-                                        raise Exception(f'ERROR - Unknown aggregation function: {batch_directives.aggregation_function}')
-                                elif batch_directives.aggregate_by_width == False:
-                                    # sample_predictions[hap] = sample_predictions[hap][batch_directives.bins_indices, batch_directives.tracks_indices]
-                                    if batch_directives.aggregation_function == 'aggBySum':
-                                        sample_predictions[hap] = sample_predictions[hap].sum(axis=0).reshape(batch_directives.predictions_expected_shape)
-                                    elif batch_directives.aggregation_function == 'aggByMean':
-                                        sample_predictions[hap] = sample_predictions[hap].mean(axis=0).reshape(batch_directives.predictions_expected_shape)
-                                    elif batch_directives.aggregation_function == None:
-                                        pass
-                                    else:
-                                        raise Exception(f'ERROR - Unknown aggregation function: {batch_directives.aggregation_function}')
+
+                            if batch_directives.aggregate == False:
+                                if batch_directives.slice_bins == True:
+                                    sample_predictions[hap] = sample_predictions[hap][batch_directives.bins_indices, batch_directives.tracks_indices].reshape(batch_directives.predictions_expected_shape)
+                                elif batch_directives.slice_bins == False:
+                                    sample_predictions[hap] = sample_predictions[hap].reshape(batch_directives.predictions_expected_shape)
+
+                            elif batch_directives.aggregate == True:
+                                #if batch_directives.aggregate_by_width == True:
+                                binwidth = collectUtils.slice_bins_for_width(locus=input_region, bin_size=128, nbins=896, padding=batch_directives.pad_width)
+                                sample_predictions[hap] = sample_predictions[hap][binwidth[0]:binwidth[1], batch_directives.tracks_indices]
+                                if batch_directives.aggregation_function == 'aggBySum':
+                                    sample_predictions[hap] = sample_predictions[hap].sum(axis=0).reshape(batch_directives.predictions_expected_shape)
+                                elif batch_directives.aggregation_function == 'aggByMean':
+                                    sample_predictions[hap] = sample_predictions[hap].mean(axis=0).reshape(batch_directives.predictions_expected_shape)
+                                elif batch_directives.aggregation_function == None:
+                                    pass
+                                else:
+                                    raise Exception(f'ERROR - Unknown aggregation function: {batch_directives.aggregation_function}')
+                            else:
+                                raise Exception(f'ERROR - Unknown aggregation function: {batch_directives.aggregation_function}')
+                                
 
                             # now ensure that the shape of the predictions is as expected
                             if sample_predictions[hap].shape != batch_directives.predictions_expected_shape:
@@ -192,6 +173,17 @@ def run_enformer(filtered_check_result, batch_directives, module_directives):
                     #print(f'INFO - shape dd {split_predictions[1].shape}')
                     completion_status = saveUtils.batch_write_predictions_to_hdf5(split_predictions, output_file = os.path.join(f'{batch_directives.output_file_prefix}.h5'), compress = True, aggregation = aggregation_dict)
                     ll = saveUtils.write_completion_status_to_csv(output_file = outfile, completion_status = completion_status)
+
+                    # save the encoded sequences as pickle files
+                    # os.makedirs(os.path.join(batch_directives.output_directory, "encodings"), exist_ok=True)
+                    # pkl_file = os.path.join(batch_directives.output_directory, "encodings", f'batch{batch_directives.batch_number}_{input_region}.encodings.pkl')
+                    # print(f'INFO - Saving the one-hot encoded sequences for batch {batch_directives.batch_number} and region {input_region} to {pkl_file}')
+                    # if not os.path.exists(os.path.dirname(pkl_file)):
+                    #     os.makedirs(os.path.dirname(pkl_file), exists_ok=True)
+
+                    # with open(pkl_file, 'wb') as pickle_file:
+                    #     pickle.dump(samples_enformer_inputs, pickle_file, protocol=pickle.HIGHEST_PROTOCOL) 
+                        
                 elif batch_directives.debugging == True:
                     return(output)
             elif batch_directives.batch_save == False:
@@ -213,14 +205,6 @@ def run_enformer(filtered_check_result, batch_directives, module_directives):
                 loggerUtils.write_logger(log_msg_type = 'cache', logfile = CACHE_LOG_FILE, message = msg_cac_log)
             
             del batch_directives, module_directives, aggregation_dict, logger_output, output, samples_enformer_inputs, sample_predictions, unfiltered_sample_predictions, sample_list, combined_predictions, split_predictions, completion_status, ll, enformer_model, fasta_extractor
- 
-            # Prints Garbage collector 
-            # as 0 object
-            # collected = gc.collect()
-            # print(f"Garbage collector: collected {collected} objects.")
-
-            # objects = gc.get_objects()
-            # print(objects)
 
         except (TypeError, AttributeError) as tfe:
             if batch_directives.write_log['logtypes']['error']:
@@ -233,20 +217,13 @@ def run_enformer(filtered_check_result, batch_directives, module_directives):
                 raise Exception(f'[ERROR] of {type(tfe).__name__} at batch {batch_directives.batch_number}')
         
     import time, gc
-    # with open(f'{batch_directives}') as f:
-    #     parameters = yaml.safe_load(f)
-    #     batch_directives = datatypeUtils.DirectivesHolder(**parameters)
 
-    # filter out nones
-    # filtered_check_result = [r for r in check_results if r is not None]
     if not filtered_check_result: # i.e. if the list is empty
         return(1)
     else:
         pqueries = [v for k, v in filtered_check_result.items()]
         pqueries = [l for l in pqueries for l in l]
         pqueries = list(set([d['query'] for d in pqueries]))
-        # print(f'{len(pqueries)}')
-        #print(pqueries)
 
         if pqueries:
             samples = list(filtered_check_result.keys())
@@ -256,8 +233,7 @@ def run_enformer(filtered_check_result, batch_directives, module_directives):
             
             toc = time.perf_counter()
             print(f"INFO - Time to predict on batch {batch_directives['batch_number']} is {toc - tic}")
-            # collected = gc.collect()
-            #print(f"Garbage collector: collected {collected} objects.")
+
             return(reg_prediction) # returns 0 returned by enformer_predict
         else:
             return(1)
@@ -279,31 +255,3 @@ def return_prediction_function(use_parsl, fxn=run_enformer):
         return parsl.app.app.python_app(fxn)
     elif use_parsl == False:
         return fxn
-    
-
-
-
-
-# if batch_directives.batch_save == True:
-#                                 output[input_region] = dict()
-#                                 output[input_region][sample] = sample_predictions
-#                         elif batch_directives.batch_save == False: 
-#                             if batch_directives.debugging == False:
-#                                 # otherwise, you can save the predictions ; prediction will be reshaped to (17, 5313) here
-#                                 sample_logging_info = saveUtils.save_haplotypes_h5_prediction(haplotype_predictions=sample_predictions, metadata=samples_enformer_inputs['metadata'], output_dir=batch_directives.output_directory, sample=sample, aggregate_by_width=batch_directives.aggregate_by_width)
-
-#                                 # check logging info/dictionary for the sample and the region
-#                                 logging_type = checksUtils.return_sample_logging_type(sample=sample, query_region=input_region, logging_dictonary=logging_dictionary)
-#                                 #print(logging_type)
-
-#                                 if logging_type == 'y':
-#                                     if (sample_logging_info is not None) and (len(sample_logging_info) == 4):
-#                                         predictions_log_file = os.path.join(batch_directives.prediction_logfiles_folder, f'{sample}_log.csv')
-#                                         sample_logging_info.extend([predict_time, retrieve_time])
-#                                         logger_output.append(loggerUtils.log_predictions(predictions_log_file=predictions_log_file, what_to_write=sample_logging_info))
-#                                     #print(f'Sample {sample} {input_region} haplotypes predictions have been logged.')
-#                                 elif logging_type == 'n':
-#                                     logger_output.append(1)
-#                                 continue
-#                             elif batch_directives.batch_save == True:
-#                                 continue

@@ -185,11 +185,16 @@ def main(args, script_path):
     # Check prediction size for correctness
     predictions_expected_shape = collectUtils.calculate_expected_shape(parameters["aggregation"])
     print(f'INFO - Expected shape of predictions is {predictions_expected_shape}')
-    bins_indices, tracks_indices = parameters['aggregation']['bins_to_save'], parameters['aggregation']['tracks_to_save']
-    by_width = True if isinstance(parameters['aggregation']['by_width'], int) else False
-    width = parameters['aggregation']['by_width']
-    if by_width:
-        print(f"INFO - Aggregating by width, and padding with +/-{width}")
+    slice_bins, bins_indices, tracks_indices = parameters['aggregation']['slice_bins'], parameters['aggregation']['bins_to_save'], parameters['aggregation']['tracks_to_save']
+
+    # should padding be used? If so, what width should be used? This is for aggregation
+    use_padding = parameters['aggregation']['pad_width']
+    # use_padding = True if isinstance(parameters['aggregation']['pad_width'], int) else False
+    # width = parameters['aggregation']['pad_width']
+
+    if parameters['aggregation']['aggregate'] == True and parameters['aggregation']['slice_bins'] == False:
+        if use_padding is not None:
+            print(f"INFO - Aggregating by width, and padding with +/-{use_padding}")
     by_function = 'aggByMean' if (parameters['aggregation']['by_function'] is None) or ("by_function" not in parameters['aggregation'].keys()) else parameters['aggregation']['by_function']
 
     # ==== to make this fast, pass multiple regions to one parsl app ======
@@ -239,9 +244,9 @@ def main(args, script_path):
                     output_files_list.append(f'{output_prefix}.h5')
                     batch_holder_dict = datatypeUtils.DirectivesHolder(use_parsl=use_parsl, batch_regions=list(region_list), 
                                                                     samples=list(sample_list), path_to_vcf=chr_vcf_file, batch_number=count, 
-                                                                    script_path=script_path, output_directory=output_dir, prediction_logfiles_folder=prediction_logfiles_folder, sequence_source=sequence_source, debugging=False, grow_memory=True, write_log=parameters['write_log'], reverse_complement=reverse_complement, mainRunScript=None, tmp_config_path=params_path, 
+                                                                    script_path=script_path, output_directory=output_dir, prediction_logfiles_folder=prediction_logfiles_folder, sequence_source=sequence_source, debugging=parameters['debugging'], grow_memory=True, write_log=parameters['write_log'], reverse_complement=reverse_complement, mainRunScript=None, tmp_config_path=params_path, slice_bins = slice_bins, 
                                                                     bins_indices = bins_indices, tracks_indices = tracks_indices, run_date=run_date, predictions_expected_shape=predictions_expected_shape, model_path=parameters['model_path'], fasta_file=parameters['fasta_file'],
-                                                                    aggregate = parameters["aggregation"]["aggregate"], aggregate_by_width = by_width, aggregation_width = width, aggregation_function = by_function, output_file_prefix=output_prefix, prediction_logfile = prediction_logfile, invalid_queries=invalid_queries)
+                                                                    aggregate = parameters["aggregation"]["aggregate"], pad_width = use_padding, aggregation_function = by_function, output_file_prefix=output_prefix, prediction_logfile = prediction_logfile, invalid_queries=invalid_queries)
                     batch_holder_dict = dataclasses.asdict(batch_holder_dict)
                     queries, queries_directives = check_for_batches_to_run(batch_dictionary=batch_holder_dict, module_directives = module_holder)
                     # print(queries)
