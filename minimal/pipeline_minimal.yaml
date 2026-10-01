@@ -1,53 +1,24 @@
-
 ---
-pipeline_dir: '/beagle3/haky/users/temi/projects/TFXcan-snakemake'
-runname: 'minimal_gwas' # change this to the name of your project
-date: "2025-11-18" # if not provided will be set to the current date
-metadata: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/metadata_CXCL9_protein_levels.txt" # the metadata file for the project
-scratch_dir: "/scratch/midway3/temi" # a folder that will be used to save large and temporary files
-delete_enformer_outputs: False # should you delete enformer predictions after aggregating them? Saves disk space
-personalized_predictions: True # should you run personalized predictions?
-runSusie: False # by default, we do not run SuSiE but this will be changed in the future
+# Minimal end-to-end test of TFXcan: 10 loci, 3 TF models (AR_Prostate, CTCF_Blood, CTCF_Liver).
+# Use it to check a setup before a real run. It is a smoke test, not an analysis: the p-value
+# threshold is relaxed (this GWAS has only 3 loci at 5e-8) so there are enough loci to factorize.
+#
+# Layered on the base config, which holds the reference data, software and Enformer settings:
+#   bash minimal/prepare_minimal_gwas.sh   # once; writes minimal/data/minimal.gwas_sumstats.hg38.processed.txt.gz
+#   snakemake -s snakefile.smk --configfile config/base_config.yaml minimal/pipeline_minimal.yaml --profile profiles/simple/ --resources load=100
+# Outputs go to data/minimal_<date>/. Expect ~1-2 h, most of it waiting for GPUs and model training.
 
-enpact_weights: weights/ENPACT_734_2025-04-24.compiled_weights.with_intercept.lambda.1se.txt.gz # the weights file for Enpact
+runname: "minimal"
+date: "2026-10-01"
+metadata: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/minimal/metadata_minimal.txt"
 
 input:
-  directory: "/project2/haky/Data/GWAS/CXCL9_protein_levels" # where is the GWAS summary statistics file?
+  directory: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/minimal/data"
 
+# 3 of the 734 Enpact models; must keep the intercept row first
+enpact_weights: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/minimal/weights/minimal_3models.with_intercept.weights.txt.gz"
 
-# genome file
-genome:
-  fasta: "files/Homo_sapiens_assembly38.fasta"
-
-# files needed to process the input GWAS and select SNPs 
 processing:
-  LD_blocks: "files/EUR_LDBlocks.hg38.updated.bed"
-  reference_annotations: files/EUR.snp_annot.txt # same as the one below; used to match the snps in the summary statistics file
-  GWAS_pvalue_threshold: 5e-8
-  selection_method: "topSNPs" # the other option is linkage which will use the ld block information
-  select_n_snps: 20
-
-# necessities for predictdb
-predictdb:
-  blacklist_regions: files/HLA_blocks.txt
-  conda_environment: /beagle3/haky/users/temi/software/conda_envs/predictdb_env
-  nextflow_main_executable: /beagle3/haky/users/temi/projects/TFXcan-snakemake/workflow/PredictDb-nextflow/main.nf
-  reference_genotypes: files/EUR.geno.txt
-  reference_annotations: files/EUR.snp_annot.txt
-
-# necessities for summary-TFXcan
-summaryTFXcan:
-  conda_environment: /beagle3/haky/users/temi/software/conda_envs/imlabtools
-  summaryXcan_executable: /beagle3/haky/users/temi/software/MetaXcan/software/SPrediXcan.py # this is the SPrediXcan.py script
-
-# necessities for Enformer
-enformer: 
-  base_directives: "config/enformer_base.yaml"
-  personalized_directives: "config/personalized_base.yaml"
-  model: "/project2/haky/Data/enformer/raw"
-  predict: "workflow/enformer/enformer_predict.py"
-  aggregate: "workflow/src/aggregate.py"
-  aggtype: "aggByCollect"
+  GWAS_pvalue_threshold: 1e-5 # 20 LD blocks have a hit at this threshold
+  limit_number_of_loci: 10
 ...
-
-# "/beagle3/haky/users/shared_pipelines/enformer_pipeline_aggregate/scripts/enformer_predict.py"

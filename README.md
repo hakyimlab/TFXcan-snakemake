@@ -1,9 +1,11 @@
 
 # TFXcan
-This pipeline tests TF binding-GWAS trait associations using SNP-based predictors of TF binding.
+TFXcan was developed to test transcription factor (TF) binding-GWAS trait associations using SNP-based predictors of TF binding.
+
+These SNP-based predictors are developed using Enformer, a sequence-to-function deep learning model. These predictors are called Enpact predictors. Enpact weights are linear combinations of epigenomic features and are stored [here](./weights). 
 
 ## Version: 
-TFXcan v3.0
+TFXcan v4.0
 
 ## Usage/Command:
 
@@ -23,10 +25,9 @@ TFXcan v3.0
 
 This pipeline depends on a number of software to do the following:
 
-1. Finemap GWAS SNPs (SuSie); optional because you can decide not to finemap and just use the top SNPs per locus [default]. **Note: the `runSusie: True` option is not currently functional** (a required rule file is missing) -- every config in this repo uses the default `runSusie: False` (top-SNPs-per-locus) path.
-2. Predict with Enformer (this dependency is optional) (Enformer, GPUs, pytorch)
-3. Train models of TF binding that is linear on SNPs (Nextflow, predictDB)
-4. Test TF binding-GWAS trait association (PrediXcan, Summary-PrediXcan, MetaXcan)
+1. Predict with Enformer (this dependency is optional) (Enformer, GPUs, pytorch)
+2. Train models of TF binding that is linear on SNPs (Nextflow, predictDB)
+3. Test TF binding-GWAS trait association (PrediXcan, Summary-PrediXcan, MetaXcan)
 
 We suggest the following to have a hitch-free environment:
 
@@ -40,7 +41,7 @@ In general, the pipeline expects:
 
 1. A yaml config or parameters file. Details are [here](./minimal/pipeline_minimal.yaml)
 2. A metadata sheet of the GWAS summary statistics. Details are [here](./minimal/minimal_gwas.txt)
-3. A number of files needed in the yaml config file. These can be downloaded from [here](https://uchicago.box.com/shared/static/kffo3k9zl16irrveysbnr05ww14qq1vd.gz). You will need to decompress this archive. 
+3. A number of files needed in the yaml config file. These can be downloaded from [here](https://uchicago.box.com/shared/static/kffo3k9zl16irrveysbnr05ww14qq1vd.gz). This is a direct download link. You will need to decompress this archive. 
 
 The GWAS summary statistics file should have the following columns
 (others headers are allowed but will be ignored): 
@@ -83,6 +84,6 @@ The output of the pipeline is the association results of the GWAS trait with the
 |...|...|...|...|...|
 |f5313|0.1|0.2|...|0.1|
 
-[X] The pipeline now matches SNPs with the reference panel and uses the matched SNPs for the PredictDB training. This is to ensure that the SNPs used for the PredictDB training are the same as the SNPs used for the GWAS.
+[X] SNPs are matched with the reference panel and uses the matched SNPs for the PredictDB training. This is to ensure that the SNPs used for the PredictDB training are the same as the SNPs used for the GWAS.
 
 [X] All software necessary for TFXcan are shipped with the pipeline. You only need to install the conda environment.
