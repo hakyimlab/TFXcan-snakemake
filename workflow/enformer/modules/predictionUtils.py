@@ -17,9 +17,7 @@
 
 
 import functools
-import numpy as np, time, h5py, os, sys
-import tensorflow as tf
-import sequencesUtils, checksUtils, collectUtils, loggerUtils, saveUtils, batchUtils
+import numpy as np
 
 class AttrDict(dict):
     def __init__(self, *args, **kwargs):
@@ -98,46 +96,16 @@ def check_for_batches_to_run(batch_dictionary, module_directives): #
     #print(batch_dictionary)
     sys.path.append(module_directives['path_to_modules'])
     exec(open(os.path.join(module_directives['path_to_modules'], 'datatypeUtils.py')).read(), globals())
-    
 
-    # spec = importlib.util.spec_from_file_location("predictionUtils", module_directives.predictionUtils)
-    # predictionUtils = importlib.util.module_from_spec(spec)
-    # #predictUtils_two.tmp_config_path = tmp_config_path
-    # spec.loader.exec_module(predictionUtils)
 
     spec = importlib.util.spec_from_file_location("checksUtils", module_directives['checksUtils'])
     checksUtils = importlib.util.module_from_spec(spec)
     #predictUtils_two.tmp_config_path = tmp_config_path
     spec.loader.exec_module(checksUtils)
 
-    # spec = importlib.util.spec_from_file_location("datatypeUtils", module_directives.checksUtils)
-    # datatypeUtils = importlib.util.module_from_spec(spec)
-    # #predictUtils_two.tmp_config_path = tmp_config_path
-    # spec.loader.exec_module(datatypeUtils)
-    # exec()
-
-
-    batch_directives = batch_dictionary #AttrDict(batch_dictionary)
-
-    # mpath = os.path.join(batch_directives.script_path, 'modules') #os.path.dirname(__file__) #
-    # sys.path.append(mpath)
+    batch_directives = batch_dictionary 
     
     faulthandler.enable() # to figure out where segmentation error is coming from
-    
-
-    # try:
-    #     import predictionRunUtils
-    # except ModuleNotFoundError as merr:
-    #     raise Exception(f'ERROR - {type(merr).__name__} at run_batch_predictions. Cannot locate either of predictionRunUtils.')
-
-    # I want to import predictUtils_two but I need it to be dynamic and imported with the path to the config file
-    # try:
-    #     import checksUtils, predictionUtils
-    #     #import predictUtils_two
-    # except ModuleNotFoundError as merr:
-    #     raise Exception(f'ERROR - {type(merr).__name__} at run_batch_predictions. Cannot locate either of `checkUtils` or `predictionUtils` modules.')
-
-    # check_results = {sample: checksUtils.check_queries(sample=sample, queries=batch_directives.batch_regions, output_dir=batch_directives.output_directory, prediction_logfiles_folder=batch_directives.prediction_logfiles_folder, sequence_source=batch_directives.sequence_source) for sample in batch_directives.samples}
 
     check_results = {sample: checksUtils.check_queries(sample=sample, queries=batch_directives["batch_regions"], output_dir=batch_directives['output_directory'], prediction_logfiles_folder=batch_directives['prediction_logfiles_folder'], sequence_source=batch_directives['sequence_source']) for sample in batch_directives['samples']}
 
@@ -150,6 +118,42 @@ def check_for_batches_to_run(batch_dictionary, module_directives): #
 
     return((filtered_check_result, batch_directives))
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+    # spec = importlib.util.spec_from_file_location("predictionUtils", module_directives.predictionUtils)
+    # predictionUtils = importlib.util.module_from_spec(spec)
+    # #predictUtils_two.tmp_config_path = tmp_config_path
+    # spec.loader.exec_module(predictionUtils)
+
+
+    # spec = importlib.util.spec_from_file_location("datatypeUtils", module_directives.checksUtils)
+    # datatypeUtils = importlib.util.module_from_spec(spec)
+    # #predictUtils_two.tmp_config_path = tmp_config_path
+    # spec.loader.exec_module(datatypeUtils)
+    # exec()
+
+
+
+#AttrDict(batch_dictionary)
+
+    # mpath = os.path.join(batch_directives.script_path, 'modules') #os.path.dirname(__file__) #
+    # sys.path.append(mpath)
 # def make_h5_db(h5_file, csv_file, files_list, files_path, dataset):
 #     import h5py
 #     import pandas as pd
@@ -190,3 +194,20 @@ def check_for_batches_to_run(batch_dictionary, module_directives): #
 #         # mainRun = importlib.util.module_from_spec(spec)
 #         # mainRun.tmp_config_path = batch_directives.tmp_config_path
 #         # spec.loader.exec_module(mainRun)
+
+
+    
+
+    # try:
+    #     import predictionRunUtils
+    # except ModuleNotFoundError as merr:
+    #     raise Exception(f'ERROR - {type(merr).__name__} at run_batch_predictions. Cannot locate either of predictionRunUtils.')
+
+    # I want to import predictUtils_two but I need it to be dynamic and imported with the path to the config file
+    # try:
+    #     import checksUtils, predictionUtils
+    #     #import predictUtils_two
+    # except ModuleNotFoundError as merr:
+    #     raise Exception(f'ERROR - {type(merr).__name__} at run_batch_predictions. Cannot locate either of `checkUtils` or `predictionUtils` modules.')
+
+    # check_results = {sample: checksUtils.check_queries(sample=sample, queries=batch_directives.batch_regions, output_dir=batch_directives.output_directory, prediction_logfiles_folder=batch_directives.prediction_logfiles_folder, sequence_source=batch_directives.sequence_source) for sample in batch_directives.samples}

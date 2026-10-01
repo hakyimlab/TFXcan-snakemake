@@ -1,7 +1,10 @@
 
-# Description:
-# Author: 
-# Date: 
+# Description: SCRATCH -- not sourced/called anywhere in the pipeline. Entirely commented-out
+#   exploratory code for SuSiE fine-mapping (running susieR::susie_rss per LD block, building
+#   R/correlation matrices from .ld files, extracting credible-set variants/PIPs). Related to
+#   the runSusie code path, which is not currently functional (see workflow/rules/archives/).
+# Author: Temi
+# Date: Wednesday January 31 2024
 
 
 

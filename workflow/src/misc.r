@@ -1,4 +1,10 @@
-
+# Description: SCRATCH/NOTES file, not a runnable script and not called from anywhere. The R
+#   code below (filtering a PredictDB covariance file down to models that passed QC) references
+#   `args`, which is never defined anywhere in this file (no `commandArgs()` call) -- as checked
+#   in, this errors immediately if sourced/run. Below the R code is a block of leftover sbatch
+#   directives, ad hoc shell commands (squeue/scancel/sinteractive), and a pasted Python
+#   traceback from an unrelated bpnet-lite run -- all just notes, not code to execute.
+# Author: Temi
 
 suppressMessages(library(dplyr))
 suppressMessages(library(RSQLite))
@@ -7,7 +13,7 @@ mdir <- '/project/haky/users/temi/projects/TFXcan-snakemake/output/lEnpact/pc_ri
 
 filtered_db <- file.path(mdir, 'filtered_db', 'predict_db_pc_risk_filtered.db')
 unfiltered_cov <- file.path(mdir, 'database', 'predict_db_pc_risk.txt.gz')
-filtered_cov <- args[3]
+filtered_cov <- args[3] # BUG: `args` is undefined anywhere in this file -- see header note
 
 
 # load db

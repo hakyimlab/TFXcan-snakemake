@@ -24,7 +24,12 @@ compressed_covariance_file=${1}
 sed_covariance_file=${2} # Covariances.varID.txt.gz
 
 # unpigz -c input.vcf.gz | sed 's/^chr//' | pigz > output.vcf.gz
+# fail on any error in the pipe: the original file is deleted by snakemake (temp) once this step succeeds
+set -euo pipefail
 unpigz -ck ${compressed_covariance_file} | sed -e 's/:/_/g' | pigz > ${sed_covariance_file}
+# make sure the new file is complete before the original can be removed
+gzip -t ${sed_covariance_file}
+[ "$(unpigz -c ${compressed_covariance_file} | wc -l)" -eq "$(unpigz -c ${sed_covariance_file} | wc -l)" ] || { echo "ERROR - ${sed_covariance_file} has a different number of lines than ${compressed_covariance_file}"; exit 1; }
 
 # decompress old file 
 #  ${decompressed_covariance_file} > ${sed_covariance_file} # replace : with _ in the file

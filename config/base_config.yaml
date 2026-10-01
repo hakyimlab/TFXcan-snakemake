@@ -1,0 +1,55 @@
+---
+# TFXcan base configuration for Midway3 (beagle3/caslake).
+# Shared settings: reference data, software, and default analysis choices. A run config then only
+# needs runname, date and metadata; anything it sets overrides this file. Use both, base first:
+#   snakemake -s snakefile.smk --configfile config/base_config.yaml config/<run>.yaml --profile profiles/simple/ --resources load=100
+
+# large intermediate files (Enformer per-locus results, trained models, factorization resamples) go here
+scratch_dir: "/scratch/midway3/temi"
+runSusie: False # True is not functional
+
+# GWAS summary statistics folder; metadata sumstat file names are relative to it
+input:
+  directory: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/sumstats"
+
+# must have an intercept row first: workflow/process/enpact_predict.py treats row 0 as the intercept
+enpact_weights: /beagle3/haky/users/temi/projects/TFXcan-snakemake/weights/ENPACT_734_2025-04-24.compiled_weights.with_intercept.lambda.1se.txt.gz
+
+genome:
+  fasta: "/project2/haky/Data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta"
+
+# GWAS processing and SNP selection (defaults; override per run if needed)
+processing:
+  LD_blocks: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/EUR_LDBlocks.hg38.updated.bed"
+  reference_annotations: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt
+  GWAS_pvalue_threshold: 5e-8
+  selection_method: "linkage" # linkage = top SNP per LD block; topSNPs = top select_n_snps per chromosome
+  select_n_snps: 100 # only used by topSNPs; PER CHROMOSOME
+  limit_number_of_loci: 100 # at most this many loci genome-wide (all of them if fewer); remove to keep everything
+  rank_by: "zscore" # pval or zscore (largest |z|); zscore avoids ties when p-values underflow to 0
+
+# training SNP-based TF-binding models (PredictDB, Nextflow)
+predictdb:
+  blacklist_regions: /beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/HLA_blocks.txt
+  nextflow_main_executable: /beagle3/haky/users/temi/projects/TFXcan-snakemake/workflow/PredictDb-nextflow/main.nf
+  reference_genotypes: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.geno.txt
+  reference_annotations: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt
+
+# association tests (S-PrediXcan)
+summaryTFXcan:
+  conda_environment: /beagle3/haky/users/temi/software/conda_envs/imlabtools
+  summaryXcan_executable: /beagle3/haky/users/temi/software/MetaXcan/software/SPrediXcan.py
+
+# Enformer predictions with better-enformer-predict: both haplotypes, middle bins averaged, haplotypes summed
+enformer:
+  better_predict: /beagle3/haky/users/temi/projects/better-enformer-predict/enformer_predict.py
+  model: "/project2/haky/Data/enformer/raw"
+  individuals: /beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/EUR_individuals.1KG.txt # 521 of these are in the VCFs
+  n_individuals: -1
+  vcf_pattern: /project2/haky/Data/1000G/vcf_snps_only/ALL.{chrom}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.vcf.gz # {chrom} = chr1, chr2, ...
+  pad_bins: 1 # average the two middle bins padded by 1 on each side (bins 446-449)
+  aggregation: mean
+  partition: beagle3
+  account: beagle3-exusers
+  time_per_locus: "01:00:00" # one 1-GPU job per locus (~5 min on an A100, ~9 min on an A40, plus ~1-2 min to load the model)
+...

@@ -1,0 +1,2 @@
+phenotype,sumstat
+human_height,giant_height_yengo_2022_eur.gwas_sumstats.hg38.processed.txt.gz

@@ -15,3 +15,6 @@ slurm_logs/**
 files/**
 tfxcan_files.tar.gz
 minimal/data/**
+.gitignore
+NOTES.md
+runs/**

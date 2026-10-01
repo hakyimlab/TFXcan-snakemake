@@ -14,12 +14,17 @@ option_list <- list(
     make_option("--phenotype", help='[Input] A GWAS phenotype'),
     make_option('--diagnostics_file', type='character', default=NULL, help='[Output] A file to write diagnostics to; default is NULL i.e no diagnostics file will be written'),
     make_option("--selection_method", default = "linkage", help='[Input] How should the top SNPs be selected? Options are: linkage or topSNPs'),
-    make_option("--select_n_snps", default = 20, help='[Input] How many top SNPs should be selected?')
-    
+    make_option("--select_n_snps", default = 20, help='[Input] How many top SNPs should be selected?'),
+    make_option("--rank_by", default = "pval", help='[Input] How should SNPs be ranked to pick the top ones? Options are: pval (smallest p-value) or zscore (largest absolute z-score). Use zscore when p-values underflow to 0 and tie.')
+
 )
 
-opt <- parse_args(OptionParser(option_list=option_list))  
+opt <- parse_args(OptionParser(option_list=option_list))
 print(opt)
+
+if(!opt$rank_by %in% c('pval', 'zscore')){
+    stop(glue::glue("ERROR - --rank_by must be pval or zscore, not {opt$rank_by}"))
+}
 
 library(data.table) |> suppressPackageStartupMessages()
 library(tidyverse) |> suppressPackageStartupMessages()
@@ -72,20 +77,29 @@ if(!is.null(opt$diagnostics_file)){
     diagfile <- NULL
 }
 
-findTopSNPPerLDBlock <- function(ld_window, summary_stats, diagnostics_file=NULL){
-    # get the LD block
-    ft <- summary_stats %>%
-        dplyr::filter(dplyr::between(pos, ld_window$start, ld_window$stop)) 
-    if(nrow(ft) == 0){
-        return(NULL)
+# order SNPs from most to least significant
+rankSNPs <- function(summary_stats, rank_by = 'pval'){
+    if(rank_by == 'zscore'){
+        summary_stats %>% dplyr::arrange(dplyr::desc(abs(zscore)))
     } else {
-        return(ft[which.min(ft$pval),])
+        summary_stats %>% dplyr::arrange(pval)
     }
 }
 
-findTopSNPPerByTop <- function(summary_stats, nSNPs, diagnostics_file=NULL){
+findTopSNPPerLDBlock <- function(ld_window, summary_stats, diagnostics_file=NULL, rank_by = 'pval'){
     # get the LD block
-    ft <- summary_stats %>% dplyr::arrange(pval) %>% dplyr::slice_head(n=nSNPs) 
+    ft <- summary_stats %>%
+        dplyr::filter(dplyr::between(pos, ld_window$start, ld_window$stop))
+    if(nrow(ft) == 0){
+        return(NULL)
+    } else {
+        return(rankSNPs(ft, rank_by) %>% dplyr::slice_head(n=1))
+    }
+}
+
+findTopSNPPerByTop <- function(summary_stats, nSNPs, diagnostics_file=NULL, rank_by = 'pval'){
+    # get the LD block
+    ft <- rankSNPs(summary_stats, rank_by) %>% dplyr::slice_head(n=nSNPs)
     if(nrow(ft) == 0){
         return(NULL)
     } else {
@@ -101,13 +115,13 @@ LD_block_split <- base::split(LD_block, LD_block$split)
 
 if(opt$selection_method == 'linkage'){
     print(glue("INFO - Selecting SNPs using linkage..."))
-    topsnps <- base::lapply(LD_block_split, findTopSNPPerLDBlock, sumstats, opt$diagnostics_file)
+    topsnps <- base::lapply(LD_block_split, findTopSNPPerLDBlock, sumstats, opt$diagnostics_file, opt$rank_by)
     topsnps <- dplyr::bind_rows(topsnps) %>%
         dplyr::mutate(phenotype = opt$phenotype) %>%
         dplyr::select(chr, pos, a0, a1, pval, beta, se, zscore, phenotype)
 } else if(opt$selection_method == 'topSNPs'){
     print(glue("INFO - Selecting the top {opt$select_n_snps} SNPs"))
-    topsnps <- findTopSNPPerByTop(sumstats, opt$select_n_snps, opt$diagnostics_file)
+    topsnps <- findTopSNPPerByTop(sumstats, opt$select_n_snps, opt$diagnostics_file, opt$rank_by)
 }
 
 

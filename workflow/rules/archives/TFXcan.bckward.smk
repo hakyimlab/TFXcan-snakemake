@@ -1,3 +1,9 @@
+# ARCHIVED -- moved here from workflow/rules/ because it's never included by snakefile.smk (no
+# `include:` statement references this file at all). It also calls scripts at their old
+# workflow/src/ paths that have since moved to workflow/process/. Looks like an earlier
+# alternate DAG design ("backward"?) that was superseded by TFXcan.noSusie.smk. Kept for
+# reference only.
+
 checkpoint process_summary_statistics:
     #input: lambda wildcards: os.path.join(INPUT_SUMSTATS, f'{run_list[wildcards.phenotype]}')
     # input: 

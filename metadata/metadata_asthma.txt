@@ -1,0 +1,3 @@
+phenotype,sumstat
+asthma_adults,asthma_adults.gwas_sumstats.hg38.processed.txt.gz
+asthma_children,asthma_children.gwas_sumstats.hg38.processed.txt.gz

@@ -8,7 +8,7 @@ TFXcan v3.0
 ## Usage/Command:
 
 1. conda activate /beagle3/haky/users/shared_software/TFXcan-pipeline-tools
-2. snakemake -s snakefile.smk --configfile config/pipeline.yaml --profile profiles/simple/ --resources load=45
+2. snakemake -s snakefile.smk --configfile config/pipeline.asthma.children.yaml --profile profiles/simple/ --resources load=45
 
  The `--resources load=45` flag makes sure that the PredictDB part of the pipeline does not run more than 9 jobs at a time on midway3 i.e 9*5. Any number could have been used but I chose multiples of 5. If your cluster allows you to run more than 100 jobs at a time, you can up this number.
 
@@ -17,13 +17,13 @@ TFXcan v3.0
 1. screen
 2. conda activate << conda environment >>  (see software section)
 3. export PATH=$PATH:/project2/haky/temi/software/homer/bin
-4. snakemake -s snakefile.smk --configfile config/pipeline.yaml --profile profiles/simple/ --resources load=45
+4. snakemake -s snakefile.smk --configfile config/pipeline.asthma.children.yaml --profile profiles/simple/ --resources load=45
 
 ## Software: 
 
 This pipeline depends on a number of software to do the following:
 
-1. Finemap GWAS SNPs (SuSie); optional because you can decide not to finemap and just use the top SNPs per locus [default]
+1. Finemap GWAS SNPs (SuSie); optional because you can decide not to finemap and just use the top SNPs per locus [default]. **Note: the `runSusie: True` option is not currently functional** (a required rule file is missing) -- every config in this repo uses the default `runSusie: False` (top-SNPs-per-locus) path.
 2. Predict with Enformer (this dependency is optional) (Enformer, GPUs, pytorch)
 3. Train models of TF binding that is linear on SNPs (Nextflow, predictDB)
 4. Test TF binding-GWAS trait association (PrediXcan, Summary-PrediXcan, MetaXcan)

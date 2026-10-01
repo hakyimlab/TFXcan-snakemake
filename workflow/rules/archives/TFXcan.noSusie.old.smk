@@ -1,3 +1,8 @@
+# ARCHIVED -- moved here from workflow/rules/ because it's never included by snakefile.smk (no
+# `include:` statement references this file). Superseded by TFXcan.noSusie.smk, which is the
+# live version of this same (runSusie: False) code path. Also calls scripts at their old
+# workflow/src/ paths that have since moved to workflow/process/. Kept for reference only.
+
 # rule process_summary_statistics:
 #     input: os.path.join(INPUT_SUMSTATS, '{phenotype}.liftover.logistic.assoc.tsv.gz')
 #     output: directory(os.path.join(PROCESSED_SUMSTATS, '{phenotype}'))

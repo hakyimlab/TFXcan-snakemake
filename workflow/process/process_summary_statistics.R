@@ -9,8 +9,8 @@ option_list <- list(
     make_option("--summary_stats_file", help='[Input] A GWAS summary statistics file; should be a tsv file with columns: chrom, pos, ref, alt, pval, beta, se, zscore'),
     make_option("--output_folder", help='[Output] The output folder'),
     make_option("--annotation_file", help = '[Input] A file that contains allele information on the reference population data'),
-    make_option("--[Input] pvalue_threshold", default=5e-8, type='numeric', help = 'the pvalue threshold for significance; default is 5e-8'),
-    make_option('--[Output] diagnostics_file', type='character', default=NULL, help='A file to write diagnostics to; default is NULL i.e no diagnostics file will be written')
+    make_option("--pvalue_threshold", default=5e-8, type='numeric', help = '[Input] the pvalue threshold for significance; default is 5e-8'),
+    make_option('--diagnostics_file', type='character', default=NULL, help='[Output] A file to write diagnostics to; default is NULL i.e no diagnostics file will be written')
 )
 
 

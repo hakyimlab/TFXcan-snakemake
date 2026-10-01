@@ -4,7 +4,7 @@
 # Usage: --> see README
 
 import pandas as pd
-import os, glob, sys, re
+import os, glob, sys, re, yaml
 from snakemake.io import glob_wildcards, Wildcards, expand
 import numpy as np
 import collections
@@ -39,6 +39,9 @@ LENPACT_DIR = os.path.join(config['scratch_dir'], 'lEnpact', runmeta) if os.path
 SUMMARYTFXCAN_DIR = os.path.join(DATA_DIR, 'summaryTFXcan')
 SUMMARY_OUTPUT = os.path.join(DATA_DIR, 'output')
 BENCHMARK_DIR = os.path.join(DATA_DIR, 'benchmark')
+# per-run folder for the factorization resamples, e.g. {scratch_dir}/tfxcan_factorization/{runname}_{date}
+TEMPORARY_DIR = os.path.join(config['scratch_dir'], 'tfxcan_factorization', runmeta) if os.path.exists(config['scratch_dir']) else os.path.join(DATA_DIR, 'tfxcan_factorization')
+FACTORIZATION_DIR = os.path.join(DATA_DIR, 'factorize')
 
 # make log directory
 import os
@@ -51,21 +54,48 @@ else:
     print(f"INFO - The directory '{slurm_logs_path}' does not exist. Creating...")
     os.makedirs(slurm_logs_path, exist_ok=True)
 
-
-
 def read_metadata(mtdt_file):
     dd = pd.read_csv(mtdt_file)
     return(dict(zip(dd.phenotype.tolist(), dd.sumstat.tolist())))
 
 run_list = read_metadata(config["metadata"])
 # read in the list of models
-enpact_models_list = pd.read_table(config["enpact_weights"]).columns[1:].tolist() #.model.tolist()#[0:5]
+# Use a pre-generated model names file (one name per line) if available to avoid parsing
+# the full weights file on every DAG build. Generate it once with:
+#   python3 -c "import pandas as pd; cols=pd.read_table('path/to/weights.gz').columns[1:].tolist(); open('metadata/enpact_model_names.txt','w').write('\n'.join(cols)+'\n')"
+_model_names_cache = os.path.join(os.path.dirname(config["enpact_weights"]), 'enpact_model_names.txt')
+if os.path.exists(_model_names_cache):
+    with open(_model_names_cache) as _f:
+        enpact_models_list = [l.strip() for l in _f if l.strip()]
+else:
+    enpact_models_list = pd.read_table(config["enpact_weights"]).columns[1:].tolist()
 
 # ensure that there is the reference panel annotation file
 if 'processing' in config.keys() and 'reference_annotations' in config['processing'].keys(): 
     REFERENCE_ANNOTATIONS = config['processing']['reference_annotations']
 elif 'predictdb' in config.keys() and 'reference_annotations' in config['predictdb'].keys():
     REFERENCE_ANNOTATIONS = config['predictdb']['reference_annotations']
+
+# enformer settings (better-enformer-predict); anything missing from config['enformer'] falls back to these defaults
+_enformer = config.get('enformer', {})
+_personalized = {}
+if _enformer.get('personalized_directives') and os.path.exists(_enformer['personalized_directives']):
+    with open(_enformer['personalized_directives']) as f:
+        _personalized = yaml.safe_load(f)
+_vcf = _personalized.get('vcf_files', {})
+ENFORMER_SETTINGS = {
+    'script': _enformer.get('better_predict', '/beagle3/haky/users/temi/projects/better-enformer-predict/enformer_predict.py'),
+    'conda_lib': _enformer.get('conda_lib', '/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib'),
+    'individuals': _enformer.get('individuals', _personalized.get('individuals')),
+    'n_individuals': _enformer.get('n_individuals', _personalized.get('n_individuals', -1)),
+    # {chrom} is replaced by e.g. chr1; older configs give a folder plus a chr{} pattern
+    'vcf_pattern': _enformer.get('vcf_pattern', os.path.join(_vcf.get('folder', ''), _vcf.get('files_pattern', '').replace('chr{}', '{chrom}'))),
+    'pad_bins': _enformer.get('pad_bins', 1),
+    'aggregation': _enformer.get('aggregation', 'mean'),
+    'partition': _enformer.get('partition', 'beagle3'),
+    'account': _enformer.get('account', 'beagle3-exusers'),
+    'time_per_locus': _enformer.get('time_per_locus', '01:00:00')  # each locus is one 1-GPU job (~5-10 min)
+}
 
 # checkpoint functions
 def collect_processed_summary_statistics(wildcards):
@@ -112,27 +142,39 @@ onstart:
         print(f'INFO - Running Susie is set to False. Choosing top SNPs per significant GWAS loci...')
 
 
+localrules: write_enformer_config
+
 rule all:
     input:
         [os.path.join(INPUT_SUMSTATS, f'{sumstat}') for sumstat in run_list.values()],
         expand(os.path.join(PROCESSED_SUMSTATS, '{phenotype}'), phenotype = run_list.keys()),
-        expand(os.path.join(ENFORMER_PARAMETERS, f'enformer_parameters_{runname}_{{phenotype}}.yaml'), phenotype = run_list.keys()),
-        expand(os.path.join(ENFORMER_PARAMETERS, f'aggregation_config_{runname}_{{phenotype}}.yaml'), phenotype = run_list.keys()),
-        expand(os.path.join(AGGREGATED_PREDICTIONS, f'{{phenotype}}.{runmeta}.h5'), phenotype = run_list.keys()),
         expand(os.path.join(AGGREGATED_PREDICTIONS, f'{{phenotype}}.{runmeta}.processed.metadata.tsv'), phenotype = run_list.keys()),
         expand(os.path.join(AGGREGATED_PREDICTIONS, f'{{phenotype}}.{runmeta}.processed.matrix.h5.gz'), phenotype = run_list.keys()),
         expand(os.path.join(PREDICTDB_DATA, "{phenotype}", '{phenotype}.{model}.enpact_scores.txt'), phenotype = run_list.keys(), model = enpact_models_list),
         expand(os.path.join(PREDICTDB_DATA, "{phenotype}", '{phenotype}.{model}.annotation.txt'), phenotype = run_list.keys(), model = enpact_models_list),
         expand(os.path.join(LENPACT_DIR, '{phenotype}', "{model}", 'models/filtered_db/predict_db_{phenotype}_filtered.db'), phenotype = run_list.keys(), model = enpact_models_list),
-        expand(os.path.join(LENPACT_DIR, '{phenotype}', "{model}", 'models/filtered_db/predict_db_{phenotype}_filtered.txt.gz'), phenotype = run_list.keys(), model = enpact_models_list),
         expand(os.path.join(LENPACT_DIR, '{phenotype}', "{model}", 'models/filtered_db/Covariances.varID.txt.gz'), phenotype = run_list.keys(), model = enpact_models_list),
         expand(os.path.join(SUMMARYTFXCAN_DIR, '{phenotype}', "{model}-{phenotype}.enpactScores.spredixcan.csv"), phenotype = run_list.keys(), model = enpact_models_list),
         expand(os.path.join(COLLECTION_DIR, '{phenotype}.summaryTFXcan.paths.txt'), phenotype = run_list.keys()),
-        expand(os.path.join(SUMMARY_OUTPUT, '{phenotype}.enpactScores.{rundate}.spredixcan.txt'), phenotype = run_list.keys(), rundate = [rundate])
+        expand(os.path.join(SUMMARY_OUTPUT, '{phenotype}.enpactScores.{rundate}.spredixcan.txt'), phenotype = run_list.keys(), rundate = [rundate]),
+        expand(os.path.join(FACTORIZATION_DIR, '{phenotype}.{runmeta}.zscores.matrices.rds'), phenotype = run_list.keys(), runmeta = [runmeta]),
+        expand(os.path.join(FACTORIZATION_DIR, '{phenotype}.{runmeta}.zratios.matrices.rds'), phenotype = run_list.keys(), runmeta = [runmeta]),
+        expand(os.path.join(FACTORIZATION_DIR, '{phenotype}.{runmeta}.random_subsets.txt'), phenotype = run_list.keys(), runmeta = [runmeta]),
+        expand(os.path.join(FACTORIZATION_DIR, '{phenotype}.{runmeta}.Iters.rds.gz'), phenotype = run_list.keys(), runmeta = [runmeta]),
+        expand(os.path.join(FACTORIZATION_DIR, '{phenotype}.{runmeta}.programs_clara_silhouette.txt.gz'), phenotype = run_list.keys(), runmeta = [runmeta]),
+        expand(os.path.join(FACTORIZATION_DIR, '{phenotype}.{runmeta}.programs_matrix.rds.gz'), phenotype = run_list.keys(), runmeta = [runmeta]),
+        expand(os.path.join(FACTORIZATION_DIR, '{phenotype}.{runmeta}.programs_corrmatrix.rds.gz'), phenotype = run_list.keys(), runmeta = [runmeta]),
+        expand(os.path.join(FACTORIZATION_DIR, '{phenotype}.{runmeta}.program_clusters.txt.gz'), phenotype = run_list.keys(), runmeta = [runmeta]),
+        expand(os.path.join(FACTORIZATION_DIR, '{phenotype}.{runmeta}.loci_assignments.txt.gz'), phenotype = run_list.keys(), runmeta = [runmeta])
 
+# NOTE: runSusie: True is NOT currently functional. It would include
+# workflow/rules/ruleAll.Susie.smk, which doesn't exist (never committed -- likely a typo for
+# ruleAll.noSusie.smk below) and workflow/rules/archives/TFXcan.Susie.smk, which was moved to
+# archives/ since it also calls scripts at stale paths. Every config in this repo sets
+# runSusie: False. Left in place (rather than removed) in case SuSiE support is revived.
 if config['runSusie'] == True:
     include: 'workflow/rules/ruleAll.Susie.smk'
-    include: 'workflow/rules/TFXcan.Susie.smk'
+    include: 'workflow/rules/archives/TFXcan.Susie.smk'
 elif config['runSusie'] == False:
     #include: 'workflow/rules/ruleAll.noSusie.smk'
     include: 'workflow/rules/TFXcan.noSusie.smk'

@@ -1,8 +1,6 @@
 
 
 import numpy as np
-import collectUtils
-
 
 def combine_predictions_from_dictionary(dd, separator=':', prefix='') -> dict:
     # https://www.geeksforgeeks.org/python-convert-nested-dictionary-into-flattened-dictionary/

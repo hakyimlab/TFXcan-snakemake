@@ -1,0 +1,55 @@
+
+---
+pipeline_dir: '/beagle3/haky/users/temi/projects/TFXcan-snakemake'
+runname: 'human_height' # change this variable name
+date: "2026-09-29"
+metadata: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/metadata_human_height.txt" # GIANT height (Yengo 2022), EUR, lifted over to hg38
+scratch_dir: "/scratch/midway3/temi"
+delete_enformer_outputs: False # should you delete enformer predictions after aggregating them? Saves disk space
+personalized_predictions: True # should you run personalized predictions?
+runSusie: False
+
+# must have an intercept row first: workflow/process/enpact_predict.py treats row 0 as the intercept
+enpact_weights: /beagle3/haky/users/temi/projects/TFXcan-snakemake/weights/ENPACT_734_2025-04-24.compiled_weights.with_intercept.lambda.1se.txt.gz
+
+input:
+  directory: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/data/sumstats" # where is the GWAS summary statistics file?
+
+genome:
+  fasta: "/project2/haky/Data/hg_sequences/hg38/Homo_sapiens_assembly38.fasta"
+
+processing:
+  LD_blocks: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/EUR_LDBlocks.hg38.updated.bed"
+  reference_annotations: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt
+  GWAS_pvalue_threshold: 5e-8
+  selection_method: "linkage" # top SNP per LD block; the other option is topSNPs, which takes the top select_n_snps per chromosome
+  select_n_snps: 100 # only used when selection_method is topSNPs; this is PER CHROMOSOME (select_top_snps.R runs once per chromosome)
+  limit_number_of_loci: 100 # genome-wide cap applied after combining chromosomes; remove to keep everything
+  rank_by: "zscore" # pval or zscore (largest |z|); zscore because 396 SNPs have pval = 0 (underflow) and would tie
+
+# necessities for predictdb
+predictdb:
+  blacklist_regions: /beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/HLA_blocks.txt
+  conda_environment: /beagle3/haky/users/temi/software/conda_envs/predictdb-env # not read by the pipeline; generate_snp_predictors.sbatch activates this env itself
+  nextflow_main_executable: /beagle3/haky/users/temi/projects/TFXcan-snakemake/workflow/PredictDb-nextflow/main.nf
+  reference_genotypes: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.geno.txt
+  reference_annotations: /project2/haky/Data/1000G/population_data/EUR/annot_files/EUR.snp_annot.txt
+
+summaryTFXcan:
+  conda_environment: /beagle3/haky/users/temi/software/conda_envs/imlabtools
+  summaryXcan_executable: /beagle3/haky/users/temi/software/MetaXcan/software/SPrediXcan.py # this is the SPrediXcan.py script
+
+# Enformer predictions with better-enformer-predict: both haplotypes, middle bins averaged, haplotypes summed
+enformer:
+  better_predict: /beagle3/haky/users/temi/projects/better-enformer-predict/enformer_predict.py
+  model: "/project2/haky/Data/enformer/raw"
+  individuals: /beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/EUR_individuals.1KG.txt # 521 of these are in the VCFs
+  n_individuals: -1
+  vcf_pattern: /project2/haky/Data/1000G/vcf_snps_only/ALL.{chrom}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.vcf.gz # {chrom} = chr1, chr2, ...
+  pad_bins: 1 # average the two middle bins padded by 1 on each side (bins 446-449)
+  aggregation: mean
+  partition: beagle3
+  account: beagle3-exusers
+  gpus: 4
+  time: "24:00:00"
+...

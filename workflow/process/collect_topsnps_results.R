@@ -10,7 +10,8 @@ option_list <- list(
     make_option("--filtered_sumstats", help='[Output] Processed summary statistics file'),
     make_option("--enformer_loci", help='[Input] Processed list of loci for Enformer inference of epigenomic features'),
     make_option("--phenotype", help='[Input] Name of the phenotype'),
-    make_option("--limit_number_of_loci", default = NULL, help='[Input] How many top loci should TFXcan be run at? Default is everything, but > 200 may be computationally expensive.', type='integer')
+    make_option("--limit_number_of_loci", default = NULL, help='[Input] How many top loci should TFXcan be run at? Default is everything, but > 200 may be computationally expensive.', type='integer'),
+    make_option("--rank_by", default = "pval", help='[Input] How to rank loci when limiting them: pval (smallest p-value) or zscore (largest absolute z-score)')
 )
 
 opt <- parse_args(OptionParser(option_list=option_list))  
@@ -50,9 +51,9 @@ fg <- lapply(finemapped_pattern, function(each_file){
 data.table::fwrite(fg, file=opt$filtered_sumstats, compress='gzip', quote=F, row.names=F, sep = '\t')
 
 if(!is.null(opt$limit_number_of_loci)){
-    subfg <- fg %>%
-        dplyr::arrange(pval) %>%
-        dplyr::slice(1:opt$limit_number_of_loci)
+    subfg <- if(opt$rank_by == 'zscore') dplyr::arrange(fg, dplyr::desc(abs(zscore))) else dplyr::arrange(fg, pval)
+    subfg <- subfg %>%
+        dplyr::slice_head(n = opt$limit_number_of_loci)
 } else {
     subfg <- as.data.frame(fg)
 }

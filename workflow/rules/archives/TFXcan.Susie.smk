@@ -1,3 +1,12 @@
+# ARCHIVED -- moved here from workflow/rules/ because this file is not currently functional.
+# It's conditionally included by snakefile.smk when runSusie: True, but that whole branch is
+# broken: it also tries to include workflow/rules/ruleAll.Susie.smk, which was never created
+# (likely a typo for the existing ruleAll.noSusie.smk). On top of that, several rules below
+# call scripts at their old workflow/src/ paths (e.g. process_summary_statistics.R,
+# create_enformer_config.R), which have since moved to workflow/process/. Every config in this
+# repo currently sets runSusie: False, so this file is dead weight in practice. Kept for
+# reference in case SuSiE fine-mapping support is revived.
+
 rule process_summary_statistics:
     input: os.path.join(INPUT_SUMSTATS, '{phenotype}.liftover.logistic.assoc.tsv.gz')
     output: directory(os.path.join(PROCESSED_SUMSTATS, '{phenotype}'))

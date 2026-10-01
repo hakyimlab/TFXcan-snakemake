@@ -51,3 +51,9 @@ snakemake -s snakefile.smk --configfile ./configs/pipeline_GTEx.yaml --profile p
 
 
 snakemake -s snakefile.smk --configfile config/pipeline.asthma.children.yaml --profile profiles/simple/ --resources load=60 -np
+
+
+screen
+conda activate /beagle3/haky/users/shared_software/TFXcan-pipeline-tools
+cd /beagle3/haky/users/temi/projects/TFXcan-snakemake
+snakemake -s snakefile.smk --configfile config/pipeline_pcrisk.chippeak.yaml --profile profiles/simple/ --resources load=60 -np -R prepare_files_for_predictDB

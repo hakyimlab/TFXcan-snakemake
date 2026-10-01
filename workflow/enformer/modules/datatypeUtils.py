@@ -54,8 +54,6 @@ class DirectivesHolder:
     write_logdir: str = 'logs'
     run_date: str = DefaultVal(date.today().strftime("%Y-%m-%d"))
     
-    
-
     def __post_init__(self):
         # Loop through the fields
         for field in fields(self):

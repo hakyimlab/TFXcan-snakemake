@@ -1,10 +1,15 @@
+# Author: Temi
+# Date: Thursday June 6 2024
+# Description: lifts over a GWAS summary-statistics file (chrom/pos + allele/effect columns)
+#   to another genome build, using an rtracklayer chain file
+# Usage: Rscript liftover.R --input_file <tsv> --chain_file <.chain/.chain.gz> --output_file <tsv.gz>
 
 suppressPackageStartupMessages(library("optparse"))
 
 option_list <- list(
-    make_option("--input_file", help='A list of files to combine'),
-    make_option("--chain_file", help='reference panel correlation matrix'),
-    make_option("--output_file", help='reference panel correlation matrix')
+    make_option("--input_file", help='GWAS summary statistics file with columns: chr, pos, alt, ref, variant_id, beta, se, pval, zscore'),
+    make_option("--chain_file", help='liftOver chain file for the source->target genome build conversion'),
+    make_option("--output_file", help='output path for the lifted-over, gzip-compressed tsv')
 )
 
 opt <- parse_args(OptionParser(option_list=option_list)) 

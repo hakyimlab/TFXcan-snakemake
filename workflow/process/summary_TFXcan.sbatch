@@ -1,10 +1,11 @@
 #!/bin/bash
 
 # Author: Temi
-# Description: S-PrediXcan on TFPred Scores for any phenotype
-# Usage: sbatch --export=gwas_file=phenotype_gwas_sumstats.txt.gz,phenotype=phenotype spredixcan_ADT_tfscores.sbatch
+# Description: Runs S-PrediXcan (SPrediXcan.py) for one phenotype's GWAS against one SNP-based
+#   TF-binding ("lEnpact") model DB, producing the per-model association results file.
+# Usage: sbatch summary_TFXcan.sbatch <phenotype> <model_db> <output_file> <gwas_folder> \
+#   <gwas_file_pattern> <covariances> <exec_file=SPrediXcan.py> <conda_environment>
 # Date: Mon Aug 7 2023
-# Variables: gwas_file, phenotype
 
 
 date
