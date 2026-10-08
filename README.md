@@ -14,6 +14,11 @@ This is a version that runs a minimal TFXcan. You can edit and input your own GW
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/hakyimlab/TFXcan-snakemake/blob/tfxcan-v4.0/colab/TFXcan_colab.ipynb)
 
 
+### Access to a computing cluster
+
+If you have access to a computing cluster, you could download the colab notebook, connect to your GPUs (if you have that resource), and run. 
+
+Otherwise, you can submit a snakemake job as below:
 1. conda activate /beagle3/haky/users/shared_software/TFXcan-pipeline-tools
 2. snakemake -s snakefile.smk --configfile config/pipeline.asthma.children.yaml --profile profiles/simple/ --resources load=45
 
