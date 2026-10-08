@@ -76,7 +76,7 @@ if 'processing' in config.keys() and 'reference_annotations' in config['processi
 elif 'predictdb' in config.keys() and 'reference_annotations' in config['predictdb'].keys():
     REFERENCE_ANNOTATIONS = config['predictdb']['reference_annotations']
 
-# enformer settings (better-enformer-predict); anything missing from config['enformer'] falls back to these defaults
+# enformer settings (workflow/enformer/enformer_predict.py); anything missing from config['enformer'] falls back to these defaults
 _enformer = config.get('enformer', {})
 _personalized = {}
 if _enformer.get('personalized_directives') and os.path.exists(_enformer['personalized_directives']):
@@ -84,7 +84,7 @@ if _enformer.get('personalized_directives') and os.path.exists(_enformer['person
         _personalized = yaml.safe_load(f)
 _vcf = _personalized.get('vcf_files', {})
 ENFORMER_SETTINGS = {
-    'script': _enformer.get('better_predict', '/beagle3/haky/users/temi/projects/better-enformer-predict/enformer_predict.py'),
+    'script': 'workflow/enformer/enformer_predict.py',
     'conda_lib': _enformer.get('conda_lib', '/beagle3/haky/users/shared_software/TFXcan-pipeline-tools/lib'),
     'individuals': _enformer.get('individuals', _personalized.get('individuals')),
     'n_individuals': _enformer.get('n_individuals', _personalized.get('n_individuals', -1)),

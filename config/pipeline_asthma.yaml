@@ -29,7 +29,6 @@ summaryTFXcan:
   conda_environment: /beagle3/haky/users/temi/software/conda_envs/imlabtools
   summaryXcan_executable: /beagle3/haky/users/temi/software/MetaXcan/software/SPrediXcan.py
 enformer:
-  better_predict: /beagle3/haky/users/temi/projects/better-enformer-predict/enformer_predict.py
   model: /project2/haky/Data/enformer/raw
   individuals: /beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/EUR_individuals.1KG.txt
   n_individuals: -1

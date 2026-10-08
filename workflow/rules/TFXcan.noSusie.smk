@@ -64,10 +64,10 @@ checkpoint collect_top_snps_results:
         Rscript workflow/process/collect_topsnps_results.R --selection_dir {input} --phenotype {wildcards.phenotype} --filtered_sumstats {output.filtered_sumstats} --enformer_loci {output.enformer_loci} --rank_by {params.rank_by} {params.limit_flag}
         """
 
-# ==== Enformer (better-enformer-predict): one GPU job per locus, then one merge ====
+# ==== Enformer (workflow/enformer/enformer_predict.py): one GPU job per locus, then one merge ====
 # each locus: both haplotypes of every individual, middle bins averaged, haplotypes summed
 
-# write the better-enformer-predict config for this phenotype
+# write the enformer_predict.py config for this phenotype
 rule write_enformer_config:
     input:
         loci = rules.collect_top_snps_results.output.enformer_loci

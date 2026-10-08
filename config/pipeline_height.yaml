@@ -39,9 +39,8 @@ summaryTFXcan:
   conda_environment: /beagle3/haky/users/temi/software/conda_envs/imlabtools
   summaryXcan_executable: /beagle3/haky/users/temi/software/MetaXcan/software/SPrediXcan.py # this is the SPrediXcan.py script
 
-# Enformer predictions with better-enformer-predict: both haplotypes, middle bins averaged, haplotypes summed
+# Enformer predictions (workflow/enformer/enformer_predict.py): both haplotypes, middle bins averaged, haplotypes summed
 enformer:
-  better_predict: /beagle3/haky/users/temi/projects/better-enformer-predict/enformer_predict.py
   model: "/project2/haky/Data/enformer/raw"
   individuals: /beagle3/haky/users/temi/projects/TFXcan-snakemake/metadata/EUR_individuals.1KG.txt # 521 of these are in the VCFs
   n_individuals: -1
