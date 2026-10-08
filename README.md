@@ -11,7 +11,7 @@ TFXcan v4.0
 
 ### Using Colab
 This is a version that runs a minimal TFXcan. You can edit and input your own GWAS. 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/hakyimlab/TFXcan-snakemake/blob/tfxcan-v4.0/colab/TFXcan_colab.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/hakyimlab/TFXcan-snakemake/blob/main/colab/TFXcan_colab.ipynb)
 
 
 ### Access to a computing cluster
