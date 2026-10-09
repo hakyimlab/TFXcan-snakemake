@@ -1,0 +1,82 @@
+---
+# TFXcan pipeline: template with every setting the pipeline reads.
+# Copy it, replace each /path/to/... and <...> with your own values, and run with this one file:
+#   snakemake -s snakefile.smk --configfile config/my_run.yaml --profile profiles/simple/ --resources load=100
+# Relative paths are relative to the repository root, where snakemake is run.
+# Files marked (in repo) ship with the repository and usually need no change.
+#
+# Not set here: the Slurm account and default partition are in profiles/simple/config.yaml, and some rules
+# set their own partition, memory and time in workflow/rules/TFXcan.noSusie.smk.
+
+# ---------------------------------------------------------------- run
+
+runname: "my_run"        # letters, numbers, underscores; outputs go to data/<runname>_<date>/
+date: "2026-01-31"       # quote it; set a fixed date to resume a run. Leave empty (date:) to use today's date
+runSusie: False          # must be False; True is not functional
+
+# CSV with one row per GWAS: header "phenotype,sumstat"; sumstat is a file name inside input.directory
+#   phenotype,sumstat
+#   my_trait,my_trait.gwas_sumstats.hg38.processed.txt.gz
+metadata: "/path/to/metadata_my_run.txt"
+
+input:
+  # folder with the GWAS summary statistics named in the metadata file. Each file: tab-separated, hg38,
+  # columns chrom pos variant_id ref alt pval zscore beta se [rsid]; alt is the effect allele.
+  # minimal/prepare_minimal_gwas.sh shows how to make one from a GWAS Catalog harmonised file.
+  directory: "/path/to/gwas_folder"
+
+# large intermediate files (Enformer per-locus results, trained models, factorization resamples).
+# If this folder does not exist, they go to data/<runname>_<date>/ instead.
+scratch_dir: "/path/to/scratch"
+
+# ---------------------------------------------------------------- reference data
+
+# Enpact weights: one column per TF-tissue model, first row = intercept (in repo). For a quick test,
+# minimal/weights/minimal_3models.with_intercept.weights.txt.gz has 3 models.
+enpact_weights: "weights/ENPACT_734_2025-04-24.compiled_weights.with_intercept.lambda.1se.txt.gz"
+
+genome:
+  fasta: "/path/to/Homo_sapiens_assembly38.fasta"   # hg38, with a .fai index next to it
+
+# GWAS processing and locus selection
+processing:
+  LD_blocks: "metadata/EUR_LDBlocks.hg38.updated.bed"            # (in repo)
+  reference_annotations: "/path/to/EUR.snp_annot.txt"            # 1000 Genomes EUR SNP annotation (varID per SNP)
+  GWAS_pvalue_threshold: 5e-8
+  selection_method: "linkage"   # linkage = top SNP per LD block; topSNPs = top select_n_snps per chromosome
+  select_n_snps: 100            # only used by topSNPs; per chromosome
+  limit_number_of_loci: 100     # at most this many loci genome-wide; remove the line to keep all
+  rank_by: "zscore"             # zscore (largest |z|) or pval; zscore avoids ties when p-values underflow to 0
+
+# Enformer predictions for each locus x individual (workflow/enformer/enformer_predict.py)
+enformer:
+  model: "/path/to/enformer_model"   # Enformer TensorFlow SavedModel folder (saved_model.pb + variables/)
+  individuals: "metadata/EUR_individuals.1KG.txt"   # (in repo) one ID per line; must be in the VCFs and the genotypes
+  n_individuals: -1                  # -1 = all individuals in the file that are in the VCFs
+  # phased 1000 Genomes VCFs, one per chromosome, bgzipped + .tbi; {chrom} becomes chr1, chr2, ...
+  vcf_pattern: "/path/to/vcfs/ALL.{chrom}.shapeit2_integrated_SNPs_v2a_27022019.GRCh38.phased.vcf.gz"
+  pad_bins: 1                        # average the 2 middle Enformer bins plus this many on each side
+  aggregation: "mean"                # mean or sum over those bins; the two haplotypes are then summed
+  conda_lib: "/path/to/conda_env/lib"   # added to LD_LIBRARY_PATH for the GPU jobs (CUDA libraries)
+  partition: "<gpu_partition>"       # Slurm partition and account for the one-GPU-per-locus jobs
+  account: "<gpu_account>"
+  time_per_locus: "01:00:00"         # ~5 min/locus on an A100 for 521 individuals, ~9 min on an A40, + 1-2 min model load
+  # older configs instead give personalized_directives: a YAML with individuals, n_individuals and
+  # vcf_files: {folder, files_pattern}; the settings above take precedence over it
+
+# Training SNP-based models of TF binding (PredictDB, Nextflow). The conda environment for this step is set
+# in workflow/predictdb/generate_snp_predictors.sbatch; it needs Nextflow 24.04 (26.04+ cannot parse it).
+predictdb:
+  nextflow_main_executable: "workflow/PredictDb-nextflow/main.nf"   # (in repo)
+  reference_genotypes: "/path/to/EUR.geno.txt"         # varID + 0/1/2 dosage per individual, same individuals as above
+  reference_annotations: "/path/to/EUR.snp_annot.txt"  # same file as processing.reference_annotations
+  blacklist_regions: "metadata/HLA_blocks.txt"         # (in repo) required, but not applied yet: HLA loci are kept
+
+# Association tests (S-PrediXcan from MetaXcan: https://github.com/hakyimlab/MetaXcan)
+summaryTFXcan:
+  conda_environment: "/path/to/imlabtools_env"                # Python 3.7 env with pandas 0.25 for MetaXcan
+  summaryXcan_executable: "/path/to/MetaXcan/software/SPrediXcan.py"
+
+# Factorization (workflow/factorize/) has no settings here: 1000 resamples in 10 batches, flashier with
+# ebnm_point_exponential priors and greedy_Kmax 40, all set in workflow/rules/TFXcan.noSusie.smk.
+...

@@ -4,19 +4,19 @@
 # threshold is relaxed (this GWAS has only 3 loci at 5e-8) so there are enough loci to factorize.
 #
 # Layered on the base config, which holds the reference data, software and Enformer settings:
-#   bash minimal/prepare_minimal_gwas.sh   # once; writes minimal/data/minimal.gwas_sumstats.hg38.processed.txt.gz
+#   bash minimal/prepare_minimal_gwas.sh   # once; downloads the GWAS and writes minimal/data/minimal.gwas_sumstats.hg38.processed.txt.gz
 #   snakemake -s snakefile.smk --configfile config/base_config.yaml minimal/pipeline_minimal.yaml --profile profiles/simple/ --resources load=100
 # Outputs go to data/minimal_<date>/. Expect ~1-2 h, most of it waiting for GPUs and model training.
 
 runname: "minimal"
 date: "2026-10-01"
-metadata: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/minimal/metadata_minimal.txt"
+metadata: "./minimal/metadata_minimal.txt"
 
 input:
-  directory: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/minimal/data"
+  directory: "./minimal/data"
 
 # 3 of the 734 Enpact models; must keep the intercept row first
-enpact_weights: "/beagle3/haky/users/temi/projects/TFXcan-snakemake/minimal/weights/minimal_3models.with_intercept.weights.txt.gz"
+enpact_weights: "./minimal/weights/minimal_3models.with_intercept.weights.txt.gz"
 
 processing:
   GWAS_pvalue_threshold: 1e-5 # 20 LD blocks have a hit at this threshold

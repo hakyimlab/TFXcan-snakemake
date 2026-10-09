@@ -50,7 +50,7 @@ All of these software are self-contained in this repository. You only need to in
 In general, the pipeline expects:
 
 1. A yaml config or parameters file. Details are [here](./minimal/pipeline_minimal.yaml)
-2. A metadata sheet of the GWAS summary statistics. Details are [here](./minimal/minimal_gwas.txt)
+2. A metadata sheet of the GWAS summary statistics. Details are [here](./minimal/metadata_minimal.txt)
 3. A number of files needed in the yaml config file. These can be downloaded from [here](https://uchicago.box.com/shared/static/kffo3k9zl16irrveysbnr05ww14qq1vd.gz). This is a direct download link. You will need to decompress this archive. 
 
 The GWAS summary statistics file should have the following columns
