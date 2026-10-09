@@ -1,0 +1,16 @@
+# S-PrediXcan (MetaXcan) environment. MetaXcan needs these older versions, so it is kept apart from tfxcan.yaml.
+#   mamba env create -f container/envs/imlabtools.yaml
+#   git clone https://github.com/hakyimlab/MetaXcan.git      # SPrediXcan.py is in MetaXcan/software/
+# Then set summaryTFXcan.conda_environment and summaryTFXcan.summaryXcan_executable in the config.
+name: imlabtools
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.7
+  - numpy=1.18
+  - scipy=1.4
+  - pandas=0.25.3
+  - statsmodels=0.11
+  - patsy
+  - h5py=2.10

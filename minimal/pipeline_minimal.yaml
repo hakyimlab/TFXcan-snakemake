@@ -10,10 +10,11 @@
 
 runname: "minimal"
 date: "2026-10-01"
-metadata: "./minimal/metadata_minimal.txt"
-
 input:
   directory: "./minimal/data"
+
+gwas:
+  minimal_gwas: "minimal.gwas_sumstats.hg38.processed.txt.gz"   # phenotype: file in input.directory
 
 # 3 of the 734 Enpact models; must keep the intercept row first
 enpact_weights: "./minimal/weights/minimal_3models.with_intercept.weights.txt.gz"

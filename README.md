@@ -18,8 +18,9 @@ This is a version that runs a minimal TFXcan. You can edit and input your own GW
 
 If you have access to a computing cluster, you could download the colab notebook, connect to your GPUs (if you have that resource), and run. 
 
-Otherwise, you can submit a snakemake job as below:
-1. conda activate /beagle3/haky/users/shared_software/TFXcan-pipeline-tools
+Otherwise if you want results faster, you can submit a snakemake job as below:
+
+1. conda activate `<<conda environment>>`
 2. snakemake -s snakefile.smk --configfile config/pipeline.asthma.children.yaml --profile profiles/simple/ --resources load=45
 
  The `--resources load=45` flag makes sure that the PredictDB part of the pipeline does not run more than 9 jobs at a time on midway3 i.e 9*5. Any number could have been used but I chose multiples of 5. If your cluster allows you to run more than 100 jobs at a time, you can up this number.
@@ -27,9 +28,10 @@ Otherwise, you can submit a snakemake job as below:
 ### To use screen [preferred]:
 
 1. screen
-2. conda activate << conda environment >>  (see software section)
-3. export PATH=$PATH:/project2/haky/temi/software/homer/bin
-4. snakemake -s snakefile.smk --configfile config/pipeline.asthma.children.yaml --profile profiles/simple/ --resources load=45
+2. conda activate `<< conda environment >>`  (see software section)
+4. snakemake -s snakefile.smk --configfile config/job_config.yaml --profile profiles/simple/ --resources load=45
+
+Within the profiles/ directory is the slurm configuration. You many need to modify this to suit your computing cluster. 
 
 ## Software: 
 
@@ -39,18 +41,22 @@ This pipeline depends on a number of software to do the following:
 2. Train models of TF binding that is linear on SNPs (Nextflow, predictDB)
 3. Test TF binding-GWAS trait association (PrediXcan, Summary-PrediXcan, MetaXcan)
 
+### Conda
 We suggest the following to have a hitch-free environment:
 
-1. Use conda to create an environment and install the software with the [environment file](/beagle3/haky/users/shared_software/TFXcan-pipeline-tools)
+1. Use conda to create an environment and install the software with the [environment files](./container/envs/) in there.
 
 All of these software are self-contained in this repository. You only need to install the conda environment. 
+
+### Apptainer/singularity
+If you are familiar with how to use a container, the pipeline also allows that. There is a [definition file](./container/tfxcan.def) that can be used to build the environment.
 
 ## Input:
 
 In general, the pipeline expects:
 
-1. A yaml config or parameters file. Details are [here](./minimal/pipeline_minimal.yaml)
-2. A metadata sheet of the GWAS summary statistics. Details are [here](./minimal/metadata_minimal.txt)
+1. A yaml config or parameters file. There is a [template configuration file](./config/template_config.yaml) that can be edited. There is also a [minimal yaml file](./minimal/pipeline_minimal.yaml).
+2. The GWAS summary statistics to run, listed under `gwas:` in the yaml file (`phenotype: file name`, with the files in `input.directory`). See the [template](./config/template_config.yaml) and the [minimal yaml file](./minimal/pipeline_minimal.yaml). Older configs use a separate metadata CSV (`metadata:`), which still works.
 3. A number of files needed in the yaml config file. These can be downloaded from [here](https://uchicago.box.com/shared/static/kffo3k9zl16irrveysbnr05ww14qq1vd.gz). This is a direct download link. You will need to decompress this archive. 
 
 The GWAS summary statistics file should have the following columns
@@ -84,6 +90,8 @@ The output of the pipeline is the association results of the GWAS trait with the
 
 
 ## Updates:
+
+[X] Fri Oct 9 2026: Removed the need to supply a separate metadata txt file. GWAS file(s) can be pointed directly in the input yaml. 
 
 [X] To predict TF/tissue binding, the pipeline takes in a dataframe of weights. 
 

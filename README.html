@@ -53,27 +53,23 @@ ul.task-list li input[type="checkbox"] {
 <section id="tfxcan" class="level1">
 <h1>TFXcan</h1>
 <p>TFXcan was developed to test transcription factor (TF) binding-GWAS trait associations using SNP-based predictors of TF binding.</p>
-<p>These SNP-based predictors are developed using Enformer, a sequence-to-function deep learning model. These predictors are called Enpact predictors. Enpact weights are linear combinations of epigenomic features and are stored in ./weights. .</p>
-<pre class="mermaid"><code>flowchart TD
-    A[GWAS summary statistics] --&gt; B[Pick top SNP per LD block&lt;br/&gt;= loci to test]
-    B --&gt; C[Enformer predicts epigenomic features&lt;br/&gt;at each locus in 1000G EUR individuals]
-    C --&gt; D[Apply Enpact weights&lt;br/&gt;= predicted TF binding per TF-tissue]
-    D --&gt; E[Train SNP predictors of TF binding&lt;br/&gt;PredictDb elastic net on genotypes]
-    E --&gt; F[Association test&lt;br/&gt;Summary-PrediXcan with GWAS z-scores]
-    A -. z-scores .-&gt; F
-    F --&gt; G[TF binding–trait associations]
-    G --&gt; H[Factorization into TF programs&lt;br/&gt;optional]</code></pre>
+<p>These SNP-based predictors are developed using Enformer, a sequence-to-function deep learning model. These predictors are called Enpact predictors. Enpact weights are linear combinations of epigenomic features and are stored <a href="./weights">here</a>.</p>
 <section id="version" class="level2">
 <h2 class="anchored" data-anchor-id="version">Version:</h2>
 <p>TFXcan v4.0</p>
 </section>
 <section id="usagecommand" class="level2">
 <h2 class="anchored" data-anchor-id="usagecommand">Usage/Command:</h2>
-<ol type="1">
-<li>conda activate /beagle3/haky/users/shared_software/TFXcan-pipeline-tools</li>
-<li>snakemake -s snakefile.smk –configfile config/pipeline.asthma.children.yaml –profile profiles/simple/ –resources load=45</li>
-</ol>
+<section id="using-colab" class="level3">
+<h3 class="anchored" data-anchor-id="using-colab">Using Colab</h3>
+<p>This is a version that runs a minimal TFXcan. You can edit and input your own GWAS. <a href="https://colab.research.google.com/github/hakyimlab/TFXcan-snakemake/blob/main/colab/TFXcan_colab.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></p>
+</section>
+<section id="access-to-a-computing-cluster" class="level3">
+<h3 class="anchored" data-anchor-id="access-to-a-computing-cluster">Access to a computing cluster</h3>
+<p>If you have access to a computing cluster, you could download the colab notebook, connect to your GPUs (if you have that resource), and run.</p>
+<p>Otherwise, you can submit a snakemake job as below: 1. conda activate /beagle3/haky/users/shared_software/TFXcan-pipeline-tools 2. snakemake -s snakefile.smk –configfile config/pipeline.asthma.children.yaml –profile profiles/simple/ –resources load=45</p>
 <p>The <code>--resources load=45</code> flag makes sure that the PredictDB part of the pipeline does not run more than 9 jobs at a time on midway3 i.e 9*5. Any number could have been used but I chose multiples of 5. If your cluster allows you to run more than 100 jobs at a time, you can up this number.</p>
+</section>
 <section id="to-use-screen-preferred" class="level3">
 <h3 class="anchored" data-anchor-id="to-use-screen-preferred">To use screen [preferred]:</h3>
 <ol type="1">
@@ -102,9 +98,9 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="input">Input:</h2>
 <p>In general, the pipeline expects:</p>
 <ol type="1">
-<li>A yaml config or parameters file. Details are <a href="./minimal/pipeline_minimal.yaml">here</a></li>
-<li>A metadata sheet of the GWAS summary statistics. Details are <a href="./minimal/minimal_gwas.txt">here</a></li>
-<li>A number of files needed in the yaml config file. These can be downloaded from <a href="https://uchicago.box.com/shared/static/kffo3k9zl16irrveysbnr05ww14qq1vd.gz">here</a>. You will need to decompress this archive.</li>
+<li>A yaml config or parameters file. There is a <a href="./config/template_config.yaml">template configuration file</a> that can be edited. There is also a <a href="./minimal/pipeline_minimal.yaml">minimal yaml file</a>.</li>
+<li>The GWAS summary statistics to run, listed under <code>gwas:</code> in the yaml file (<code>phenotype: file name</code>, with the files in <code>input.directory</code>). See the <a href="./config/template_config.yaml">template</a> and the <a href="./minimal/pipeline_minimal.yaml">minimal yaml file</a>. Older configs use a separate metadata CSV (<code>metadata:</code>), which still works.</li>
+<li>A number of files needed in the yaml config file. These can be downloaded from <a href="https://uchicago.box.com/shared/static/kffo3k9zl16irrveysbnr05ww14qq1vd.gz">here</a>. This is a direct download link. You will need to decompress this archive.</li>
 </ol>
 <p>The GWAS summary statistics file should have the following columns (others headers are allowed but will be ignored):</p>
 <pre><code>|chrom|pos|variant_id|ref|alt|pval|zscore|beta|se|
@@ -135,6 +131,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="updates" class="level2">
 <h2 class="anchored" data-anchor-id="updates">Updates:</h2>
+<p>[X] Fri Oct 9 2026: Removed the need to supply a separate metadata txt file. GWAS file(s) can be pointed directly in the input yaml.</p>
 <p>[X] To predict TF/tissue binding, the pipeline takes in a dataframe of weights.</p>
 <table class="caption-top table">
 <thead>

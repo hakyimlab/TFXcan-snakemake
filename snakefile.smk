@@ -58,7 +58,13 @@ def read_metadata(mtdt_file):
     dd = pd.read_csv(mtdt_file)
     return(dict(zip(dd.phenotype.tolist(), dd.sumstat.tolist())))
 
-run_list = read_metadata(config["metadata"])
+# GWAS to run: either a gwas: mapping in the config (phenotype: file) or, in older configs, a metadata CSV
+if config.get('gwas') and config.get('metadata'):
+    raise ValueError("Set either 'gwas' or 'metadata' in the config, not both")
+if config.get('gwas'):
+    run_list = {str(k): str(v) for k, v in config['gwas'].items()}
+else:
+    run_list = read_metadata(config['metadata'])
 # read in the list of models
 # Use a pre-generated model names file (one name per line) if available to avoid parsing
 # the full weights file on every DAG build. Generate it once with:

@@ -14,16 +14,18 @@ runname: "my_run"        # letters, numbers, underscores; outputs go to data/<ru
 date: "2026-01-31"       # quote it; set a fixed date to resume a run. Leave empty (date:) to use today's date
 runSusie: False          # must be False; True is not functional
 
-# CSV with one row per GWAS: header "phenotype,sumstat"; sumstat is a file name inside input.directory
-#   phenotype,sumstat
-#   my_trait,my_trait.gwas_sumstats.hg38.processed.txt.gz
-metadata: "/path/to/metadata_my_run.txt"
-
 input:
-  # folder with the GWAS summary statistics named in the metadata file. Each file: tab-separated, hg38,
+  # folder with the GWAS summary statistics listed under gwas. Each file: tab-separated, hg38,
   # columns chrom pos variant_id ref alt pval zscore beta se [rsid]; alt is the effect allele.
   # minimal/prepare_minimal_gwas.sh shows how to make one from a GWAS Catalog harmonised file.
   directory: "/path/to/gwas_folder"
+
+# GWAS to run, one per line: phenotype name (letters, numbers, underscores) -> file name inside input.directory
+# (an absolute path also works). Each phenotype is processed and tested separately.
+# Older configs give a CSV instead, metadata: "/path/to/metadata.txt" with header phenotype,sumstat; use one or the other.
+gwas:
+  my_trait: "my_trait.gwas_sumstats.hg38.processed.txt.gz"
+  # my_other_trait: "my_other_trait.gwas_sumstats.hg38.processed.txt.gz"
 
 # large intermediate files (Enformer per-locus results, trained models, factorization resamples).
 # If this folder does not exist, they go to data/<runname>_<date>/ instead.

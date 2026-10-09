@@ -1,2 +1,0 @@
-phenotype,sumstat
-minimal_gwas,minimal.gwas_sumstats.hg38.processed.txt.gz

@@ -1,0 +1,63 @@
+# TFXcan main environment: Snakemake, GWAS processing (R), Enformer (TensorFlow, GPU), Enpact,
+# model training (PredictDb-nextflow) and factorization.
+#   mamba env create -f container/envs/tfxcan.yaml        (or micromamba / conda)
+#   conda activate tfxcan
+#   conda env config vars set LD_LIBRARY_PATH=$CONDA_PREFIX/lib && conda activate tfxcan   # see below
+#   Rscript container/envs/install_r_packages.R           # flashier and ebnm are not on conda-forge
+# LD_LIBRARY_PATH: TensorFlow comes from pip and otherwise loads the system libstdc++, which on older
+# Linux (e.g. RHEL 8) is too old for the conda packages imported after it (pandas: GLIBCXX_3.4.29 not found).
+# S-PrediXcan needs its own, older environment: container/envs/imlabtools.yaml.
+name: tfxcan
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - python=3.11
+  - pip
+  # workflow
+  - snakemake-minimal=7.25.0
+  - parallel
+  - pigz
+  - bcftools
+  - htslib
+  # Python: Enformer inputs/outputs and Enpact scores
+  - numpy=2.1           # TensorFlow 2.19 allows <2.2; pinning it here stops pip replacing conda's numpy
+  - pandas=2.2
+  - pytables
+  - pyyaml
+  - pyfaidx
+  - cyvcf2
+  # R: GWAS processing, locus selection, results, factorization
+  - r-base=4.3
+  - r-tidyverse
+  - r-data.table
+  - r-r.utils           # data.table::fread on .gz files
+  - r-optparse
+  - r-glue
+  - r-bigsnpr
+  - r-jsonlite
+  - r-yaml
+  - r-cluster
+  - r-factoextra
+  # model training: PredictDb-nextflow. Nextflow 26.04+ cannot parse its config, so keep 24.04.
+  - nextflow=24.04.4
+  - openjdk=17
+  - r-glmnet
+  - r-rsqlite
+  - r-reshape2
+  # dependencies of flashier/ebnm, from conda so that install_r_packages.R compiles nothing big
+  - r-ashr
+  - r-mixsqp
+  - r-irlba
+  - r-softimpute
+  - r-trust
+  - r-truncnorm
+  - r-ggrepel
+  - r-cowplot
+  - r-rtsne
+  - r-uwot
+  - r-remotes
+  - pip:
+      # Enformer; bundles the CUDA libraries it needs (GPU driver comes from the host)
+      - tensorflow[and-cuda]==2.19.0

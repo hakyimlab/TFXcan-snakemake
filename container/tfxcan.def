@@ -1,0 +1,78 @@
+Bootstrap: docker
+From: ubuntu:22.04
+
+# TFXcan software in one Apptainer/Singularity image: the environments in container/envs/ plus MetaXcan.
+# Reference data (genome, Enformer model, 1000 Genomes files) and the pipeline code are NOT inside;
+# mount them with -B. Build from the repository root:
+#   apptainer build --fakeroot tfxcan.sif container/tfxcan.def
+# GPU steps (Enformer) need --nv:
+#   apptainer exec --nv -B /path/to/data tfxcan.sif python3 workflow/enformer/enformer_predict.py --config ...
+
+%labels
+    Name TFXcan
+    Version 4.0
+    Source https://github.com/hakyimlab/TFXcan-snakemake
+
+%help
+    TFXcan pipeline software. On PATH: python3 (TensorFlow 2.19), Rscript (R 4.3), snakemake 7.25,
+    nextflow 24.04, parallel, bcftools, pigz.
+    S-PrediXcan: $IMLABTOOLS/bin/python $METAXCAN/software/SPrediXcan.py
+    Run any command:  apptainer exec [--nv] -B /path/to/data tfxcan.sif <command>
+
+%files
+    container/envs/tfxcan.yaml /opt/envs/tfxcan.yaml
+    container/envs/imlabtools.yaml /opt/envs/imlabtools.yaml
+    container/envs/install_r_packages.R /opt/envs/install_r_packages.R
+
+%environment
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export PATH=/opt/envs/tfxcan/bin:$PATH
+    # pip's TensorFlow would otherwise load the host libstdc++ (too old for pandas on e.g. RHEL 8)
+    export LD_LIBRARY_PATH=/opt/envs/tfxcan/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+    export JAVA_HOME=/opt/envs/tfxcan
+    export IMLABTOOLS=/opt/envs/imlabtools
+    export METAXCAN=/opt/MetaXcan
+    export NXF_HOME=${NXF_HOME:-$HOME/.nextflow}   # Nextflow's cache; the image is read-only
+    export NXF_DISABLE_CHECK_LATEST=true
+    unset R_HOME R_LIBS R_LIBS_USER                 # use the image's R library, not the host's
+    export PYTHONNOUSERSITE=1                       # ignore ~/.local Python packages from the host
+
+%post
+    set -eu
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update -q
+    apt-get install -y -q --no-install-recommends ca-certificates curl bzip2 git procps locales
+    rm -rf /var/lib/apt/lists/*
+
+    # micromamba, only to build the environments
+    curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xj -C /usr/local bin/micromamba
+    export MAMBA_ROOT_PREFIX=/opt/micromamba
+    micromamba create -y -q -p /opt/envs/tfxcan -f /opt/envs/tfxcan.yaml
+    micromamba create -y -q -p /opt/envs/imlabtools -f /opt/envs/imlabtools.yaml
+
+    # flashier and ebnm come from CRAN
+    env -u R_HOME PATH=/opt/envs/tfxcan/bin:$PATH Rscript /opt/envs/install_r_packages.R
+
+    # MetaXcan (S-PrediXcan), pinned. The same commit the Midway runs used; they ran a copy with small local
+    # edits (Python 3 fixes, numpy.matrix -> array), but upstream gave identical S-PrediXcan z-scores.
+    git clone -q https://github.com/hakyimlab/MetaXcan.git /opt/MetaXcan
+    git -C /opt/MetaXcan checkout -q aca75164070513b2616e0608891fca8b874fa934
+    rm -rf /opt/MetaXcan/.git
+
+    # keep the image small
+    micromamba clean -y -a
+    rm -rf /opt/micromamba/pkgs /root/.cache /tmp/*
+    find /opt/envs -name '__pycache__' -type d -prune -exec rm -rf {} +
+
+%test
+    set -eu
+    python3 -c "import tensorflow, pandas, numpy, tables, yaml, pyfaidx, cyvcf2; print('python OK, tensorflow', tensorflow.__version__)"
+    Rscript -e 'for (p in c("tidyverse","data.table","R.utils","optparse","glue","bigsnpr","jsonlite","yaml","cluster","factoextra","glmnet","RSQLite","reshape2","ebnm","flashier")) suppressPackageStartupMessages(library(p, character.only = TRUE)); cat("R OK\n")'
+    snakemake --version
+    nextflow -version >/dev/null && echo "nextflow OK"
+    parallel --version >/dev/null && bcftools --version >/dev/null && pigz --version >/dev/null && echo "tools OK"
+    $IMLABTOOLS/bin/python $METAXCAN/software/SPrediXcan.py --help >/dev/null && echo "S-PrediXcan OK"
+
+%runscript
+    exec "$@"
